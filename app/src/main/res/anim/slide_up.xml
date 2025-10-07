@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File animasi untuk efek geser ke atas -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <!-- Animasi untuk menggerakkan elemen dari bawah (100%) ke posisi normal (0%) -->
+    <translate
+        android:fromYDelta="100%"
+        android:toYDelta="0%"
+        android:duration="800" />
+
+    <!-- Animasi untuk membuat elemen muncul secara perlahan (fade in) -->
+    <alpha
+        android:fromAlpha="0.3"
+        android:toAlpha="1.0"
+        android:duration="800" />
+</set>
