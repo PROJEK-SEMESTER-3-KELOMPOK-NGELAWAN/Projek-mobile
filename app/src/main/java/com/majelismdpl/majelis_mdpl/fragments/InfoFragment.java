@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.majelis_mdpl.R;
-import com.example.majelis_mdpl.activities.LoginActivity;
-import com.example.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
+import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 
 public class InfoFragment extends Fragment {
 

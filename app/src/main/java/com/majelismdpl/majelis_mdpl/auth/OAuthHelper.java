@@ -2,7 +2,7 @@ package com.majelismdpl.majelis_mdpl.auth;
 
 import android.net.Uri;
 
-import com.example.majelis_mdpl.models.GoogleAuthResponse;
+import com.majelismdpl.majelis_mdpl.models.GoogleAuthResponse;
 
 public class OAuthHelper {
 

@@ -1,7 +1,7 @@
 package com.majelismdpl.majelis_mdpl.api;
 
-import com.example.majelis_mdpl.models.LoginResponse;
-import com.example.majelis_mdpl.utils.Constants;
+import com.majelismdpl.majelis_mdpl.models.LoginResponse;
+import com.majelismdpl.majelis_mdpl.utils.Constants;
 
 import retrofit2.Call;
 import retrofit2.http.Field;

@@ -1,6 +1,6 @@
 package com.majelismdpl.majelis_mdpl.api;
 
-import com.example.majelis_mdpl.utils.ApiConfig;
+import com.majelismdpl.majelis_mdpl.utils.ApiConfig;
 
 import java.util.concurrent.TimeUnit;
 

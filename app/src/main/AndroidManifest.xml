@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.majelismdpl.majelis_mdpl">
+    package="com.example.majelis_mdpl">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -17,6 +17,9 @@
         android:theme="@style/Theme.Majelis_MDPL"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name="com.majelismdpl.majelis_mdpl.tes"
+            android:exported="false" />
         <activity
             android:name="com.majelismdpl.majelis_mdpl.activities.WelcomeActivity"
             android:exported="true"

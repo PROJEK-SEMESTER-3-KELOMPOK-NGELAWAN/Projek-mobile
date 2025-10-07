@@ -5,7 +5,7 @@ import android.net.Uri;
 
 import androidx.browser.customtabs.CustomTabsIntent;
 
-import com.example.majelis_mdpl.utils.ApiConfig;
+import com.majelismdpl.majelis_mdpl.utils.ApiConfig;
 
 public class GoogleAuthManager {
 

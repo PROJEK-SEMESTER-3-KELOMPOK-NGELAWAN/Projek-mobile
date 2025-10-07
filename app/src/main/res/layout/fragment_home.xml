@@ -86,11 +86,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="12px"
+                    android:layout_marginTop="12dp"
                     android:background="?attr/selectableItemBackground"
                     android:paddingVertical="8dp"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:minHeight="48dp">
 
                     <TextView
                         android:layout_width="0dp"
@@ -272,8 +273,7 @@
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginStart="8dp"
-                    android:src="@drawable/ic_chevron_right"
-                    android:tint="@color/blue" />
+                    android:src="@drawable/ic_chevron_right"/>
             </LinearLayout>
 
             <!-- Divider -->
