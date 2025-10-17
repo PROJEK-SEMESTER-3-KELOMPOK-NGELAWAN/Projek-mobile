@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 
@@ -20,6 +20,7 @@ public class InfoFragment extends Fragment {
 
     public InfoFragment() {
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -51,6 +52,7 @@ public class InfoFragment extends Fragment {
                 }
             }
         });
+
         return view;
     }
 }

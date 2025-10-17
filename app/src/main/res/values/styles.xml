@@ -1,0 +1,13 @@
+<resources>
+    <!-- Base application theme. -->
+    <style
+        name="Theme.Majelis_MDPL"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="RoundedImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+</resources>

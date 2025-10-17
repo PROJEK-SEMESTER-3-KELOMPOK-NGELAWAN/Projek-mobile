@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.majelis_mdpl">
+    package="com.majelismdpl.majelis_mdpl">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -10,62 +10,63 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/mdpl_icon"
         android:label="Majelis MDPL"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/icon_mdpl"
         android:supportsRtl="true"
         android:theme="@style/Theme.Majelis_MDPL"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
-            android:name="com.majelismdpl.majelis_mdpl.tes"
-            android:exported="false" />
-        <activity
-            android:name="com.majelismdpl.majelis_mdpl.activities.WelcomeActivity"
+            android:name=".activities.WelcomeActivity"
             android:exported="true"
             android:label="Majelis MDPL"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name="com.majelismdpl.majelis_mdpl.activities.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="false"
             android:label="Login"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name="com.majelismdpl.majelis_mdpl.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="false"
             android:label="Majelis MDPL - Dashboard"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name="com.majelismdpl.majelis_mdpl.activities.OAuthCallbackActivity"
+            android:name=".activities.OAuthCallbackActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoDisplay">
+
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="oauth"
-                    android:scheme="majelismdpl" />
+                <data android:scheme="majelismdpl"
+                    android:host="oauth" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="intent" />
             </intent-filter>
+
         </activity>
+
     </application>
 
 </manifest>

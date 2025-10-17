@@ -1,3 +1,33 @@
 <resources>
-    <string name="app_name">Majelis_MDPL</string>
+    <string name="app_name">Majelis MPDL</string>
+    <string name="history_title">Riwayat Trip</string>
+    <string name="status_completed">Selesai</string>
+
+    <!-- Sample Data -->
+    <string name="sample_mountain_name">Gunung Bromo</string>
+    <string name="sample_date">12-13 Agustus 2025</string>
+    <string name="sample_participants">15 peserta</string>
+    <string name="sample_rating">4.8</string>
+
+    <!-- Content Descriptions for Accessibility -->
+    <string name="mountain_icon_desc">Ikon Gunung</string>
+    <string name="rating_icon_desc">Ikon Bintang Rating</string>
+
+        <string name="gambar_perjalanan">Gambar Perjalanan</string>
+        <string name="pendakian_gunung_ijen">Pendakian Gunung Ijen</string>
+        <string name="tanggal_trip">12-13 Agustus 2025</string>
+        <string name="status_pembayaran">Status Pembayaran</string>
+        <string name="lunas">Lunas</string>
+        <string name="titik_kumpul">Titik Kumpul</string>
+        <string name="icon_lokasi">Icon Lokasi</string>
+        <string name="icon_panah">Icon Panah</string>
+        <string name="peserta_trip">Peserta Trip</string>
+        <string name="icon_peserta">Icon Peserta</string>
+        <string name="jumlah_peserta">15 Orang</string>
+        <string name="grup_whatsapp">Grup WhatsApp</string>
+        <string name="icon_whatsapp">Icon WhatsApp</string>
+        <string name="gabung">Gabung</string>
+        <string name="dokumentasi">Dokumentasi</string>
+        <string name="icon_kamera">Icon Kamera</string>
+        <string name="sos_tombol_darurat">SOS Tombol Darurat</string>
 </resources>

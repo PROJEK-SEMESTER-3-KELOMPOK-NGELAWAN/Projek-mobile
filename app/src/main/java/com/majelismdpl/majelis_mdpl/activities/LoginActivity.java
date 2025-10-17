@@ -10,13 +10,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.example.majelis_mdpl.R;
-
+import com.majelismdpl.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.auth.GoogleAuthManager;
+import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.majelismdpl.majelis_mdpl.auth.GoogleAuthManager;
-import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -159,10 +158,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Tampilkan error pada field
         usernameLayout.setError("Username atau password salah");
-        passwordLayout.setError("Gunakan: user / user123");
+        passwordLayout.setError("Username atau password salah");
 
         // Tampilkan toast error
-        Toast.makeText(this, "Username atau password salah!\nGunakan: user / user123", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_LONG).show();
 
         // Clear password field untuk keamanan
         if (passwordInput != null) {

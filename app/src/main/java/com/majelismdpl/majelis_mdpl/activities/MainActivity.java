@@ -5,16 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.majelis_mdpl.R;
-import com.majelismdpl.majelis_mdpl.fragments.HomeFragment;
+
+import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.fragments.HistoryFragment;
-import com.majelismdpl.majelis_mdpl.fragments.ProfileFragment;
+import com.majelismdpl.majelis_mdpl.fragments.HomeFragment;
 import com.majelismdpl.majelis_mdpl.fragments.InfoFragment;
+import com.majelismdpl.majelis_mdpl.fragments.ProfileFragment;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,6 +89,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return false;
-    }
 
+    }
 }

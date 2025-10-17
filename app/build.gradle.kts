@@ -4,11 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.example.majelis_mdpl"
+    namespace = "com.majelismdpl.majelis_mdpl"
     compileSdk = 36
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
-        applicationId = "com.example.myapplicationactivity"
+        applicationId = "com.majelismdpl.majelis_mdpl"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -27,8 +31,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -72,11 +76,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-//    GOOGLE OAUTH
+    // GOOGLE OAUTH
     implementation("androidx.browser:browser:1.7.0")
 }
-
-
-
 
 
