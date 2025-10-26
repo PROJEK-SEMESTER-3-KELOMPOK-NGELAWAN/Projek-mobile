@@ -17,8 +17,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
+        <!-- [PERUBAHAN] SplashActivity sekarang menjadi titik awal (launcher) -->
         <activity
-            android:name=".activities.WelcomeActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true"
             android:label="Majelis MDPL"
             android:screenOrientation="portrait">
@@ -27,6 +28,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- [PERUBAHAN] WelcomeActivity tidak lagi menjadi launcher -->
+        <activity
+            android:name=".activities.WelcomeActivity"
+            android:exported="false"
+            android:label="Majelis MDPL"
+            android:screenOrientation="portrait" />
+        <!-- intent-filter launcher telah dipindahkan -->
+
 
         <activity
             android:name=".activities.LoginActivity"

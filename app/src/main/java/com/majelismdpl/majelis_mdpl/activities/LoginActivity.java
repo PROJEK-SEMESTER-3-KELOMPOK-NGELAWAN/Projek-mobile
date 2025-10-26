@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
     private void startIntroAnimation() {
         if (loginContainer != null) {
             try {
-                Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+                Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
                 loginContainer.startAnimation(slideUp);
             } catch (Exception e) {
                 Log.e(TAG, "Animation file not found: " + e.getMessage());
@@ -93,8 +93,14 @@ public class LoginActivity extends AppCompatActivity {
     private void setupClickListeners() {
         if (loginButton != null) {
             loginButton.setOnClickListener(v -> {
-                String username = usernameInput.getText().toString().trim();
-                String password = passwordInput.getText().toString().trim();
+                if (usernameInput == null || passwordInput == null) {
+                    Toast.makeText(this, "Terjadi kesalahan pada form. Coba lagi.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                CharSequence ucs = usernameInput.getText();
+                CharSequence pcs = passwordInput.getText();
+                String username = ucs != null ? ucs.toString().trim() : "";
+                String password = pcs != null ? pcs.toString().trim() : "";
                 clearFieldErrors();
 
                 if (validateInputs(username, password)) {
@@ -119,12 +125,12 @@ public class LoginActivity extends AppCompatActivity {
         boolean isValid = true;
 
         if (username.isEmpty()) {
-            usernameLayout.setError("Username tidak boleh kosong");
+            if (usernameLayout != null) usernameLayout.setError("Username tidak boleh kosong");
             isValid = false;
         }
 
         if (password.isEmpty()) {
-            passwordLayout.setError("Password tidak boleh kosong");
+            if (passwordLayout != null) passwordLayout.setError("Password tidak boleh kosong");
             isValid = false;
         }
 
@@ -148,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
         setLoadingState(true);
 
         // Simulasi delay untuk UX yang lebih baik
-        new android.os.Handler().postDelayed(() -> {
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             if (isValidCredentials(username, password)) {
                 // Login berhasil
                 handleLoginSuccess(username);
@@ -177,8 +183,8 @@ public class LoginActivity extends AppCompatActivity {
         Log.w(TAG, "Login failed - Invalid credentials");
 
         // Tampilkan error pada field
-        usernameLayout.setError("Username atau password salah");
-        passwordLayout.setError("Username atau password salah");
+        if (usernameLayout != null) usernameLayout.setError("Username atau password salah");
+        if (passwordLayout != null) passwordLayout.setError("Username atau password salah");
 
         // Tampilkan toast error
         Toast.makeText(this, "Username atau password salah!", Toast.LENGTH_LONG).show();

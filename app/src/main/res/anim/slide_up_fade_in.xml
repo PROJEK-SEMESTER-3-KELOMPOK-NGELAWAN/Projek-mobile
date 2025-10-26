@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File animasi untuk menggeser elemen dari bawah dan membuatnya muncul -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator"
+    android:fillAfter="true">
+
+    <!--
+      Animasi untuk menggerakkan elemen dari 50dp di bawah
+      posisi normalnya ke posisi normal (0%).
+    -->
+    <translate
+        android:fromYDelta="50dp"
+        android:toYDelta="0%"
+        android:duration="400" /> <!-- Durasi 0.4 detik -->
+
+    <!-- Animasi untuk membuat elemen muncul (fade in) dari transparan -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="400" />
+
+</set>
