@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    // Temporarily disabled - uncomment after adding google-services.json
+    // id("com.google.gms.google-services")
 }
 
 android {
@@ -51,6 +53,9 @@ dependencies {
 
     // Fragment Support (Untuk Bottom Navigation)
     implementation("androidx.fragment:fragment:1.6.2")
+    
+    // ViewPager2 untuk swipe gesture
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
     // Firebase Dependencies
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))

@@ -23,5 +23,16 @@
     <color name="tripGreen">#2ECC71</color>
     <color name="tripBlue">#3498DB</color>
     <color name="tripRed">#E74C3C</color>
+    <color name="brown">#8B4513</color>
+    <color name="navSelected">#F39C12</color>
+    <color name="navUnselected">#999999</color>
+
+    <!-- Adaptive colors -->
+    <color name="background">#F5F5F5</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="onSurface">#000000</color>
+    <color name="onBackground">#000000</color>
+    <color name="cardBackground">#FFFFFF</color>
+    <color name="dividerColor">#EEEEEE</color>
 
 </resources>

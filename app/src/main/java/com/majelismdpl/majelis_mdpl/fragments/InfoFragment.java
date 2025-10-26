@@ -29,7 +29,8 @@ public class InfoFragment extends Fragment {
 
         Button btnLogout = view.findViewById(R.id.btn_logout);
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Logout menggunakan SharedPrefManager yang sudah ada
@@ -51,7 +52,8 @@ public class InfoFragment extends Fragment {
                     getActivity().finishAffinity();
                 }
             }
-        });
+            });
+        }
 
         return view;
     }

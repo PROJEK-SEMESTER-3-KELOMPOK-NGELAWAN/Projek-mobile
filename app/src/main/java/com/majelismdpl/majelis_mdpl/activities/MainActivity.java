@@ -5,10 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.fragments.HistoryFragment;
@@ -16,11 +22,15 @@ import com.majelismdpl.majelis_mdpl.fragments.HomeFragment;
 import com.majelismdpl.majelis_mdpl.fragments.InfoFragment;
 import com.majelismdpl.majelis_mdpl.fragments.ProfileFragment;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavigationView;
+    private ViewPager2 viewPager;
+    private LinearLayout navHome, navHistory, navProfile, navInfo;
+    private ImageView iconHome, iconHistory, iconProfile, iconInfo;
+    private TextView labelHome, labelHistory, labelProfile, labelInfo;
+    private int selectedNavItem = R.id.nav_home;
+    private boolean isUserSwipe = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,36 +46,141 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        
+        // Initialize ViewPager2
+        viewPager = findViewById(R.id.view_pager);
+        setupViewPager();
+        
+        // Initialize navigation items
+        initializeNavigation();
 
-        // Meload fragment default (Home) saat aplikasi pertama kali dibuka
+        // Set default page
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
+            viewPager.setCurrentItem(0, false);
+            setSelectedNav(R.id.nav_home);
+        }
+    }
+
+    private void setupViewPager() {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        viewPager.setAdapter(adapter);
+        
+        // Listener untuk sinkronisasi swipe dengan navbar
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if (isUserSwipe) {
+                    updateNavFromViewPager(position);
+                }
+            }
+        });
+    }
+
+    private void updateNavFromViewPager(int position) {
+        switch (position) {
+            case 0:
+                setSelectedNav(R.id.nav_home);
+                break;
+            case 1:
+                setSelectedNav(R.id.nav_history);
+                break;
+            case 2:
+                setSelectedNav(R.id.nav_profile);
+                break;
+            case 3:
+                setSelectedNav(R.id.nav_info);
+                break;
+        }
+    }
+
+    private void initializeNavigation() {
+        // Find all navigation items
+        navHome = findViewById(R.id.nav_home);
+        navHistory = findViewById(R.id.nav_history);
+        navProfile = findViewById(R.id.nav_profile);
+        navInfo = findViewById(R.id.nav_info);
+
+        // Find all icons
+        iconHome = findViewById(R.id.icon_home);
+        iconHistory = findViewById(R.id.icon_history);
+        iconProfile = findViewById(R.id.icon_profile);
+        iconInfo = findViewById(R.id.icon_info);
+
+        // Find all labels
+        labelHome = findViewById(R.id.label_home);
+        labelHistory = findViewById(R.id.label_history);
+        labelProfile = findViewById(R.id.label_profile);
+        labelInfo = findViewById(R.id.label_info);
+
+        // Set click listeners
+        navHome.setOnClickListener(v -> onNavItemClicked(R.id.nav_home));
+        navHistory.setOnClickListener(v -> onNavItemClicked(R.id.nav_history));
+        navProfile.setOnClickListener(v -> onNavItemClicked(R.id.nav_profile));
+        navInfo.setOnClickListener(v -> onNavItemClicked(R.id.nav_info));
+    }
+
+    private void onNavItemClicked(int navId) {
+        int position = 0;
+
+        if (navId == R.id.nav_home) {
+            position = 0;
+        } else if (navId == R.id.nav_history) {
+            position = 1;
+        } else if (navId == R.id.nav_profile) {
+            position = 2;
+        } else if (navId == R.id.nav_info) {
+            position = 3;
         }
 
-        // Listener ketika ikon bottom navigation diklik
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-            int itemId = item.getItemId();
+        isUserSwipe = false;
+        viewPager.setCurrentItem(position, true);
+        setSelectedNav(navId);
+        isUserSwipe = true;
+    }
 
-            if (itemId == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
-            } else if (itemId == R.id.nav_history) {
-                selectedFragment = new HistoryFragment();
-            } else if (itemId == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
-            } else if (itemId == R.id.nav_info) {
-                selectedFragment = new InfoFragment();
-            }
+    private void setSelectedNav(int navId) {
+        selectedNavItem = navId;
+        
+        // Reset all items to unselected state
+        resetNavItem(navHome, iconHome, labelHome);
+        resetNavItem(navHistory, iconHistory, labelHistory);
+        resetNavItem(navProfile, iconProfile, labelProfile);
+        resetNavItem(navInfo, iconInfo, labelInfo);
 
-            // Animasi sederhana pada ikon menu yang diklik
-            View iconView = bottomNavigationView.findViewById(itemId);
-            if (iconView instanceof ImageView) {
-                animateMenuItem((ImageView) iconView);
-            }
+        // Set selected item
+        if (navId == R.id.nav_home) {
+            setNavItemSelected(navHome, iconHome, labelHome);
+        } else if (navId == R.id.nav_history) {
+            setNavItemSelected(navHistory, iconHistory, labelHistory);
+        } else if (navId == R.id.nav_profile) {
+            setNavItemSelected(navProfile, iconProfile, labelProfile);
+        } else if (navId == R.id.nav_info) {
+            setNavItemSelected(navInfo, iconInfo, labelInfo);
+        }
+    }
 
-            return loadFragment(selectedFragment);
-        });
+    private void resetNavItem(LinearLayout navItem, ImageView icon, TextView label) {
+        // Reset background ke transparent
+        navItem.setBackgroundResource(R.drawable.nav_item_background);
+        icon.setColorFilter(ContextCompat.getColor(this, R.color.navUnselected));
+        label.setVisibility(View.GONE);
+        label.setTextColor(ContextCompat.getColor(this, R.color.navUnselected));
+    }
+
+    private void setNavItemSelected(LinearLayout navItem, ImageView icon, TextView label) {
+        // Get primary color from resources
+        int primaryColor = ContextCompat.getColor(this, R.color.navSelected);
+        
+        // Set background coklat untuk item yang dipilih
+        navItem.setBackgroundResource(R.drawable.nav_item_selected_bg);
+        
+        icon.setColorFilter(primaryColor);
+        label.setVisibility(View.VISIBLE);
+        label.setTextColor(primaryColor);
+        
+        // Animate icon
+        animateMenuItem(icon);
     }
 
     // Fungsi animasi scale pada ikon yang dipilih
@@ -79,16 +194,32 @@ public class MainActivity extends AppCompatActivity {
         scaleY.start();
     }
 
-    // Fungsi mengganti fragment yang aktif
-    private boolean loadFragment(Fragment fragment) {
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
-            return true;
+    // ViewPager Adapter
+    private class ViewPagerAdapter extends FragmentStateAdapter {
+        public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
         }
-        return false;
 
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0:
+                    return new HomeFragment();
+                case 1:
+                    return new HistoryFragment();
+                case 2:
+                    return new ProfileFragment();
+                case 3:
+                    return new InfoFragment();
+                default:
+                    return new HomeFragment();
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return 4; // Jumlah fragment
+        }
     }
 }

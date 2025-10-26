@@ -34,7 +34,27 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_login);
+        
+        // Set status bar sesuai dengan tema (light/dark mode)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+            
+            // Cek apakah sedang dalam dark mode
+            int nightModeFlags = getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK;
+            boolean isDarkMode = nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+            
+            int flags = android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                       android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            
+            // Set light status bar hanya untuk light mode
+            if (!isDarkMode && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                flags |= android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+            
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+        }
 
         // Cek apakah user sudah login
 

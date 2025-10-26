@@ -5,25 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/background"
     tools:context="fragments.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-    android:id="@+id/appBarLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/tripOrange"
-    app:elevation="4dp">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIconTint="@android:color/white"
-        app:title="Detail Perjalanan"
-        app:titleTextColor="@android:color/white" />
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        app:elevation="4dp">
 
-</com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIconTint="?attr/colorOnSurface"
+            app:title="Detail Perjalanan"
+            app:titleTextColor="?attr/colorOnSurface" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -81,13 +81,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="12dp"
-                android:layout_marginBottom="8dp"> <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/status_pembayaran"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"/>
+                android:layout_marginBottom="8dp"> 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/status_pembayaran"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
