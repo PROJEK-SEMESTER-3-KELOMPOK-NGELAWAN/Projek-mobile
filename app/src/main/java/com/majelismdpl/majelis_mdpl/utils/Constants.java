@@ -9,6 +9,11 @@ public class Constants {
     public static final String KEY_USERNAME = "username";
     public static final String KEY_ROLE = "role";
     public static final String KEY_IS_LOGGED_IN = "is_logged_in";
+    public static final String KEY_EMAIL = "email";
+    public static final String KEY_WHATSAPP = "whatsapp";
+    public static final String KEY_ADDRESS = "address";
+    public static final String KEY_PASSWORD = "password";
+    public static final String KEY_PROFILE_PHOTO = "profile_photo";
 
     // App constants
     public static final String PROJECT_NAME = "Majelis MDPL";

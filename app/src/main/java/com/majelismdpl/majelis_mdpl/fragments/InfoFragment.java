@@ -30,28 +30,25 @@ public class InfoFragment extends Fragment {
         Button btnLogout = view.findViewById(R.id.btn_logout);
 
         if (btnLogout != null) {
-            btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Logout menggunakan SharedPrefManager yang sudah ada
-                if (getActivity() != null) {
-                    SharedPrefManager.getInstance(getActivity()).logout();
-
-                    // Bersihkan fragment stack
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            btnLogout.setOnClickListener(v -> {
+                if (getActivity() == null) {
+                    return;
                 }
 
+                // Logout menggunakan SharedPrefManager yang sudah ada
+                SharedPrefManager.getInstance(requireActivity()).logout();
+
+                // Bersihkan fragment stack
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                 // Intent ke LoginActivity
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                Intent intent = new Intent(requireActivity(), LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
 
                 // Tutup activity
-                if (getActivity() != null) {
-                    getActivity().finishAffinity();
-                }
-            }
+                requireActivity().finishAffinity();
             });
         }
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- File animasi untuk efek fade out (menghilang) -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator">
+
+    <!-- Animasi untuk membuat elemen menghilang (fade out) -->
+    <!-- Ini akan dijalankan di WelcomeActivity (layar lama) -->
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:duration="800" /> <!-- Durasinya disamakan dengan slide_in -->
+</set>
+

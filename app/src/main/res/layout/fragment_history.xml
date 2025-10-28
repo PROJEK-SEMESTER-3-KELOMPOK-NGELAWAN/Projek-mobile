@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context="fragments.HistoryFragment">
 
-    <!-- Latar belakang gambar seperti halaman login -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,7 +14,6 @@
         android:src="@color/colorBackground"
         android:contentDescription="@null" />
 
-    <!-- App Bar / Header -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -29,20 +27,20 @@
             android:layout_height="?attr/actionBarSize"
             app:title="@string/history_title"
             app:titleTextColor="?attr/colorOnSurface"
-            app:contentInsetStart="16dp" />
+            app:contentInsetStart="16dp"
+
+            app:titleCentered="false"  />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Ganti NestedScrollView dengan RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
+        android:padding="0dp"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/item_trip_history" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

@@ -34,11 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="12dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="160dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp">
                 <ImageView
@@ -54,10 +54,10 @@
                 android:id="@+id/tv_trip_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/pendakian_gunung_ijen"
                 android:textColor="@android:color/black"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -67,28 +67,28 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/tanggal_trip"
                 android:textColor="@color/tripGray"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#EEEEEE"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
 
             <RelativeLayout
                 android:id="@+id/menu_status_pembayaran"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="12dp"
-                android:layout_marginBottom="8dp"> 
+                android:paddingVertical="10dp"
+                android:layout_marginBottom="6dp"> 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="@string/status_pembayaran"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/lunas"
                     android:textColor="@color/tripGreen"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"/>
             </RelativeLayout>
 
@@ -104,13 +104,15 @@
                 android:id="@+id/menu_titik_kumpul"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/bg_item_menu_card"
-                android:padding="16dp">
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:id="@+id/icon_titik_kumpul"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_location"
                     android:contentDescription="@string/icon_lokasi" />
@@ -118,32 +120,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="12dp"
                     android:layout_toEndOf="@id/icon_titik_kumpul"
                     android:text="@string/titik_kumpul"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
+
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:id="@+id/arrow_titik_kumpul"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/icon_panah"
                     android:src="@drawable/ic_arrow_right"
-                    app:tint="@color/tripGray"
-                    android:contentDescription="@string/icon_panah" />
+                    app:tint="@color/tripGray" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/menu_peserta_trip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/bg_item_menu_card"
-                android:padding="16dp">
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:id="@+id/icon_peserta"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_people"
                     android:contentDescription="@string/icon_peserta" />
@@ -151,15 +156,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="12dp"
                     android:layout_toEndOf="@id/icon_peserta"
                     android:text="@string/peserta_trip"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
                 <ImageView
                     android:id="@+id/arrow_peserta"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_arrow_right"
@@ -173,20 +178,22 @@
                     android:layout_toStartOf="@id/arrow_peserta"
                     android:text="@string/jumlah_peserta"
                     android:textColor="@color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/menu_grup_whatsapp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/bg_item_menu_card"
-                android:padding="16dp">
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:id="@+id/icon_whatsapp"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_whatsapp"
                     android:contentDescription="@string/icon_whatsapp" />
@@ -194,15 +201,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="12dp"
                     android:layout_toEndOf="@id/icon_whatsapp"
                     android:text="@string/grup_whatsapp"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
                 <ImageView
                     android:id="@+id/arrow_whatsapp"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_arrow_right"
@@ -216,7 +223,7 @@
                     android:layout_toStartOf="@id/arrow_whatsapp"
                     android:text="@string/gabung"
                     android:textColor="@color/tripBlue"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"/>
             </RelativeLayout>
 
@@ -224,13 +231,15 @@
                 android:id="@+id/menu_dokumentasi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:background="@drawable/bg_item_menu_card"
-                android:padding="16dp">
+                android:padding="12dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:id="@+id/icon_dokumentasi"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_camera"
                     android:contentDescription="@string/icon_kamera" />
@@ -238,14 +247,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="12dp"
                     android:layout_toEndOf="@id/icon_dokumentasi"
                     android:text="@string/dokumentasi"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"/>
+                    android:textSize="14sp"/>
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_arrow_right"
@@ -253,22 +262,29 @@
                     android:contentDescription="@string/icon_panah" />
             </RelativeLayout>
 
-            <TextView
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/tv_sos_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/bg_sos_button_outlined"
-                android:paddingLeft="16dp"
-                android:paddingTop="10dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="10dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/sos_tombol_darurat"
-                android:textColor="@color/tripRed"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:textAllCaps="false"
+                android:minHeight="52dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:stateListAnimator="@null"
+                app:elevation="0dp"
+                app:backgroundTint="@color/tripRed"
+                app:cornerRadius="26dp"
+                app:rippleColor="@android:color/white"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
