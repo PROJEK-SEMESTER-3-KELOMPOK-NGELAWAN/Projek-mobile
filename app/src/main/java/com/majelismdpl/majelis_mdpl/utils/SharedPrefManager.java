@@ -19,6 +19,7 @@ public class SharedPrefManager {
         return instance;
     }
 
+    // Fungsi ini sudah benar. Panggil ini saat login berhasil.
     public void saveLoginData(String username, String role) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.KEY_USERNAME, username);
@@ -27,6 +28,7 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+    // Fungsi ini sudah benar. Ini yang akan dipakai SplashActivity.
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(Constants.KEY_IS_LOGGED_IN, false);
     }
@@ -93,9 +95,12 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+    // --- INI ADALAH PERUBAHANNYA ---
     public void logout() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
+        // Tambahkan baris ini untuk memastikan status login di-reset dengan benar
+        editor.putBoolean(Constants.KEY_IS_LOGGED_IN, false);
         editor.apply();
     }
 }

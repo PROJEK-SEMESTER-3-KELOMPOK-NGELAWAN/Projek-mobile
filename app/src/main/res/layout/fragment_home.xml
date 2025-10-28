@@ -21,7 +21,8 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIconTint="?attr/colorOnSurface"
             app:title="Detail Perjalanan"
-            app:titleTextColor="?attr/colorOnSurface" />
+            app:titleTextColor="?attr/colorOnSurface"
+            app:titleCentered="true" /> ```
 
     </com.google.android.material.appbar.AppBarLayout>
 

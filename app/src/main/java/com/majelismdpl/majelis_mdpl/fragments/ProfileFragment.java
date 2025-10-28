@@ -1,36 +1,41 @@
 package com.majelismdpl.majelis_mdpl.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ImageView; // BARU: Import ImageView
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
-import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
 import com.majelismdpl.majelis_mdpl.activities.EditProfileActivity;
+import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
-import androidx.appcompat.app.AlertDialog;
 
 public class ProfileFragment extends Fragment {
 
-    private TextInputEditText etUsername, etPassword, etWhatsapp, etEmail, etAlamat;
-    private Button btnEditProfile, btnLogout;
+    private TextView tvNamaPengguna, tvUsername, tvPassword, tvWhatsApp, tvEmail, tvAlamat;
+    private View btnEditProfile;
+    private TextView btnKeluar;
     private ImageView ivProfile;
-    private TextView tvHeaderName, tvHeaderEmail;
-    private ActivityResultLauncher<String[]> pickImageLauncher;
-    private boolean isEditing = false;
+
+    // --- BARU: Variabel untuk logika password ---
+    private ImageView ivPasswordToggle;
+    private boolean isPasswordVisible = false;
+    private String realPassword = ""; // Untuk menyimpan password asli
+    // -------------------------------------------
+
+    private ActivityResultLauncher<Intent> editProfileLauncher;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -39,32 +44,21 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
-            if (uri != null) {
-                try {
-                    if (getContext() != null) {
-                        requireContext().getContentResolver().takePersistableUriPermission(
-                                uri,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        );
+        editProfileLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK || result.getResultCode() == Activity.RESULT_CANCELED) {
+                        populateProfile();
                     }
-                    if (ivProfile != null) {
-                        ivProfile.setImageURI(uri);
-                    }
-                    if (getContext() != null) {
-                        SharedPrefManager.getInstance(getContext()).setProfilePhotoUri(uri.toString());
-                    }
-                } catch (SecurityException | IllegalArgumentException ignored) {
-                    // Abaikan jika tidak bisa menampilkan/menyimpan URI
                 }
-            }
-        });
+        );
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        // Pastikan nama layout Anda sudah benar
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -72,54 +66,34 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        etUsername = view.findViewById(R.id.etUsername);
-        etPassword = view.findViewById(R.id.etPassword);
-        etWhatsapp = view.findViewById(R.id.etWhatsapp);
-        etEmail = view.findViewById(R.id.etEmail);
-        etAlamat = view.findViewById(R.id.etAlamat);
-        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        btnLogout = view.findViewById(R.id.btnLogout);
+        // Hubungkan ke ID dari layout
+        tvNamaPengguna = view.findViewById(R.id.tvNamaPengguna);
+        tvUsername = view.findViewById(R.id.tvUsername);
+        tvPassword = view.findViewById(R.id.tvPassword);
+        tvWhatsApp = view.findViewById(R.id.tvWhatsApp);
+        tvEmail = view.findViewById(R.id.tvEmail);
+        tvAlamat = view.findViewById(R.id.tvAlamat);
         ivProfile = view.findViewById(R.id.ivProfile);
-        tvHeaderName = view.findViewById(R.id.tvHeaderName);
-        tvHeaderEmail = view.findViewById(R.id.tvHeaderEmail);
+        btnEditProfile = view.findViewById(R.id.btnEditProfile);
+        btnKeluar = view.findViewById(R.id.btnKeluar);
 
-        // Nonaktifkan input saat awal
-        setEditing(false);
+        // BARU: Hubungkan ImageView mata
+        ivPasswordToggle = view.findViewById(R.id.ivPasswordToggle);
 
-        // Load saved profile photo if available
-        if (getContext() != null && ivProfile != null) {
-            String savedUri = SharedPrefManager.getInstance(getContext()).getProfilePhotoUri();
-            if (savedUri != null && !savedUri.isEmpty()) {
-                try {
-                    ivProfile.setImageURI(Uri.parse(savedUri));
-                } catch (SecurityException | IllegalArgumentException ignored) {
-                    // Abaikan jika URI tidak valid/izin ditolak
-                }
-            }
-        }
-
-        // Tap to change photo
-        if (ivProfile != null) {
-            ivProfile.setOnClickListener(v -> {
-                if (pickImageLauncher != null) {
-                    pickImageLauncher.launch(new String[]{"image/*"});
-                }
-            });
-        }
-
+        // Memuat data profil saat fragment dibuat
         populateProfile();
+        loadProfileImage();
 
         btnEditProfile.setOnClickListener(v -> {
             if (getActivity() == null) return;
             Intent intent = new Intent(requireActivity(), EditProfileActivity.class);
-            startActivity(intent);
+            editProfileLauncher.launch(intent);
         });
 
-        btnLogout.setOnClickListener(v -> {
+        btnKeluar.setOnClickListener(v -> {
             if (getActivity() == null) return;
-
             new AlertDialog.Builder(requireContext())
-                    .setTitle("Logout")
+                    .setTitle("Keluar")
                     .setMessage("Anda yakin ingin keluar?")
                     .setPositiveButton("Ya", (dialog, which) -> {
                         SharedPrefManager.getInstance(requireActivity()).logout();
@@ -131,12 +105,46 @@ public class ProfileFragment extends Fragment {
                     .setNegativeButton("Batal", null)
                     .show();
         });
+
+        // --- BARU: Logika untuk klik ikon mata ---
+        ivPasswordToggle.setOnClickListener(v -> {
+            // Balik status visibilitas
+            isPasswordVisible = !isPasswordVisible;
+
+            if (isPasswordVisible) {
+                // Jika ingin TAMPILKAN password
+                tvPassword.setText(realPassword); // Tampilkan password asli
+                ivPasswordToggle.setImageResource(R.drawable.ic_view_eye); // Ganti ikon ke mata terbuka
+                ivPasswordToggle.setAlpha(1.0f); // (Opsional) pastikan ikon jelas
+            } else {
+                // Jika ingin SEMBUNYIKAN password
+                tvPassword.setText("••••••••••"); // Tampilkan bintang
+                ivPasswordToggle.setImageResource(R.drawable.ic_hide_eye); // Ganti ikon ke mata tertutup
+                ivPasswordToggle.setAlpha(0.7f); // (Opsional) samakan tampilan dengan XML
+            }
+        });
+        // ---------------------------------------
     }
 
     @Override
     public void onResume() {
         super.onResume();
         populateProfile();
+        loadProfileImage();
+    }
+
+    private void loadProfileImage() {
+        if (getContext() != null && ivProfile != null) {
+            String savedUri = SharedPrefManager.getInstance(getContext()).getProfilePhotoUri();
+            if (savedUri != null && !savedUri.isEmpty()) {
+                try {
+                    ivProfile.setImageURI(Uri.parse(savedUri));
+                } catch (SecurityException | IllegalArgumentException ignored) {
+                }
+            } else {
+                // ivProfile.setImageResource(R.drawable.icon_leaf);
+            }
+        }
     }
 
     private void populateProfile() {
@@ -146,45 +154,42 @@ public class ProfileFragment extends Fragment {
         String email = pref.getEmail();
         String whatsapp = pref.getWhatsapp();
         String address = pref.getAddress();
+
+        // --- BARU: Logika pengambilan password ---
+        // 1. Ambil password asli dan simpan di variabel
         String password = pref.getPassword();
+        this.realPassword = nonNull(password, ""); // Simpan password asli
 
-        if (etUsername != null) {
-            etUsername.setText(nonNull(username, ""));
+        // 2. Selalu reset ke status tersembunyi setiap kali data dimuat
+        isPasswordVisible = false;
+        if (tvPassword != null) {
+            tvPassword.setText("••••••••••"); // Selalu tampilkan bintang saat awal
         }
-        if (etEmail != null) {
-            etEmail.setText(nonNull(email, ""));
+        if (ivPasswordToggle != null) {
+            ivPasswordToggle.setImageResource(R.drawable.ic_hide_eye); // Selalu reset ikon
+            ivPasswordToggle.setAlpha(0.7f);
         }
-        if (etWhatsapp != null) {
-            etWhatsapp.setText(nonNull(whatsapp, ""));
-        }
-        if (etAlamat != null) {
-            etAlamat.setText(nonNull(address, ""));
-        }
-        if (etPassword != null) {
-            etPassword.setText(nonNull(password, ""));
-        }
+        // ----------------------------------------
 
-        if (tvHeaderName != null) {
-            tvHeaderName.setText(nonNull(username, ""));
+        // Set data ke TextViews
+        if (tvNamaPengguna != null) {
+            tvNamaPengguna.setText(nonNull(username, "Nama Pengguna"));
         }
-        if (tvHeaderEmail != null) {
-            tvHeaderEmail.setText(nonNull(email, ""));
+        if (tvUsername != null) {
+            tvUsername.setText(nonNull(username, "-"));
         }
-    }
-
-    private void setEditing(boolean editing) {
-        isEditing = editing;
-        if (etUsername != null) etUsername.setEnabled(editing);
-        if (etPassword != null) etPassword.setEnabled(editing);
-        if (etWhatsapp != null) etWhatsapp.setEnabled(editing);
-        if (etEmail != null) etEmail.setEnabled(editing);
-        if (etAlamat != null) etAlamat.setEnabled(editing);
-        if (btnEditProfile != null) {
-            btnEditProfile.setText(editing ? "Simpan" : "Edit Profil");
+        if (tvEmail != null) {
+            tvEmail.setText(nonNull(email, "-"));
+        }
+        if (tvWhatsApp != null) {
+            tvWhatsApp.setText(nonNull(whatsapp, "-"));
+        }
+        if (tvAlamat != null) {
+            tvAlamat.setText(nonNull(address, "-"));
         }
     }
 
     private String nonNull(String value, String fallback) {
-        return value == null || value.isEmpty() ? fallback : value;
+        return (value == null || value.isEmpty() || value.equals("null")) ? fallback : value;
     }
 }
