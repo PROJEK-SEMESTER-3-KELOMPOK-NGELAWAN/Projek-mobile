@@ -3,16 +3,18 @@ package com.majelismdpl.majelis_mdpl.models;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.TextView; // Pastikan TextView di-import
+// Import ImageView jika Anda ingin memuat gambar
+// import android.widget.ImageView;
+// import com.google.android.material.imageview.ShapeableImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.majelismdpl.majelis_mdpl.R;
-
+// Import library untuk gambar, contoh: Glide
+// import com.bumptech.glide.Glide;
 import java.util.List;
-import java.util.Locale;
+import java.util.Locale; // Import untuk format string
 
 public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.TripViewHolder> {
 
@@ -25,23 +27,42 @@ public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.
     @NonNull
     @Override
     public TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_trip_history, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_history, parent, false);
         return new TripViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
-        Trip currentTrip = tripList.get(position);
+        // Ambil data di posisi ini
+        Trip trip = tripList.get(position);
 
-        holder.mountainName.setText(currentTrip.getMountainName());
-        holder.tripDate.setText(currentTrip.getDate());
-        holder.participantCount.setText(String.format(Locale.getDefault(), "%d peserta", currentTrip.getParticipants()));
-        holder.status.setText(currentTrip.getStatus());
-        holder.rating.setText(String.valueOf(currentTrip.getRating()));
+        // === Mulai Set Data ke View ===
 
-        // Di sini Anda bisa menggunakan library seperti Glide atau Picasso untuk memuat gambar
-        // Contoh: Glide.with(holder.itemView.getContext()).load(currentTrip.getImageUrl()).into(holder.mountainIcon);
+        // 1. Set Nama Gunung
+        holder.tvMountainName.setText(trip.getNamaGunung());
+
+        // 2. Set Tanggal
+        holder.tvTripDate.setText(trip.getTanggal());
+
+        // 3. Set Status
+        holder.tvStatus.setText(trip.getStatus());
+
+        // 4. Set Jumlah Peserta (format string agar lebih baik)
+        String participantText = String.format(Locale.getDefault(), "%d Peserta", trip.getPeserta());
+        holder.tvParticipantCount.setText(participantText);
+
+        // 5. Set Rating (ubah double/angka ke String)
+        holder.tvRating.setText(String.valueOf(trip.getRating()));
+
+        // 6. Set Gambar (Opsional - Perlu library tambahan seperti Glide)
+        // Jika Anda ingin memuat gambar dari 'url_rinjani', 'url_semeru', dll.
+        // Hapus komentar di bawah ini dan tambahkan Glide ke build.gradle Anda
+        /*
+        Glide.with(holder.itemView.getContext())
+             .load(trip.getImageUrl()) // Asumsi getImageUrl() mengembalikan URL/resource
+             .placeholder(R.color.colorIconBackground) // Gambar sementara
+             .into(holder.ivMountainIcon);
+        */
     }
 
     @Override
@@ -49,22 +70,33 @@ public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.
         return tripList.size();
     }
 
+    // Fungsi filter (sudah benar)
+    public void filterList(List<Trip> filteredList) {
+        this.tripList = filteredList;
+        notifyDataSetChanged();
+    }
+
+    // === ViewHolder (Sudah Disesuaikan dengan ID XML) ===
     public static class TripViewHolder extends RecyclerView.ViewHolder {
-        ImageView mountainIcon;
-        TextView mountainName;
-        TextView tripDate;
-        TextView participantCount;
-        TextView status;
-        TextView rating;
+
+        // Deklarasikan semua View dari XML
+        // ShapeableImageView ivMountainIcon;
+        TextView tvMountainName;
+        TextView tvTripDate;
+        TextView tvParticipantCount;
+        TextView tvStatus;
+        TextView tvRating;
 
         public TripViewHolder(@NonNull View itemView) {
             super(itemView);
-            mountainIcon = itemView.findViewById(R.id.iv_mountain_icon);
-            mountainName = itemView.findViewById(R.id.tv_mountain_name);
-            tripDate = itemView.findViewById(R.id.tv_trip_date);
-            participantCount = itemView.findViewById(R.id.tv_participant_count);
-            status = itemView.findViewById(R.id.tv_status);
-            rating = itemView.findViewById(R.id.tv_rating);
+
+            // Hubungkan View dengan ID di file XML
+            // ivMountainIcon = itemView.findViewById(R.id.iv_mountain_icon);
+            tvMountainName = itemView.findViewById(R.id.tv_mountain_name);
+            tvTripDate = itemView.findViewById(R.id.tv_trip_date);
+            tvParticipantCount = itemView.findViewById(R.id.tv_participant_count);
+            tvStatus = itemView.findViewById(R.id.tv_status);
+            tvRating = itemView.findViewById(R.id.tv_rating);
         }
     }
 }

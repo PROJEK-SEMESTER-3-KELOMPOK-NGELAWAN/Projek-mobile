@@ -67,6 +67,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"/>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,13 +76,19 @@
                 app:boxCornerRadiusTopEnd="50dp"
                 app:boxCornerRadiusBottomStart="50dp"
                 app:boxCornerRadiusBottomEnd="50dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                app:boxStrokeColor="@color/text_input_colors"
+                app:hintTextColor="@color/text_input_colors">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Username"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+
+                    android:textCursorDrawable="@drawable/cursor_black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -93,13 +100,19 @@
                 app:boxCornerRadiusTopEnd="50dp"
                 app:boxCornerRadiusBottomStart="50dp"
                 app:boxCornerRadiusBottomEnd="50dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                app:boxStrokeColor="@color/text_input_colors"
+                app:hintTextColor="@color/text_input_colors">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+
+                    android:textCursorDrawable="@drawable/cursor_black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -110,13 +123,19 @@
                 app:boxCornerRadiusTopEnd="50dp"
                 app:boxCornerRadiusBottomStart="50dp"
                 app:boxCornerRadiusBottomEnd="50dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                app:boxStrokeColor="@color/text_input_colors"
+                app:hintTextColor="@color/text_input_colors">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+
+                    android:textCursorDrawable="@drawable/cursor_black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -127,13 +146,19 @@
                 app:boxCornerRadiusTopEnd="50dp"
                 app:boxCornerRadiusBottomStart="50dp"
                 app:boxCornerRadiusBottomEnd="50dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                app:boxStrokeColor="@color/text_input_colors"
+                app:hintTextColor="@color/text_input_colors">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etWhatsapp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="WhatsApp"
-                    android:inputType="phone" />
+                    android:inputType="phone"
+
+                    android:textCursorDrawable="@drawable/cursor_black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -144,7 +169,11 @@
                 app:boxCornerRadiusTopEnd="50dp"
                 app:boxCornerRadiusBottomStart="50dp"
                 app:boxCornerRadiusBottomEnd="50dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+                app:boxStrokeColor="@color/text_input_colors"
+                app:hintTextColor="@color/text_input_colors">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etAlamat"
                     android:layout_width="match_parent"
@@ -152,7 +181,9 @@
                     android:hint="Alamat"
                     android:inputType="textMultiLine"
                     android:minLines="1"
-                    android:gravity="top"/>
+                    android:gravity="top"
+
+                    android:textCursorDrawable="@drawable/cursor_black" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -160,7 +191,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Simpan Perubahan"
-                android:backgroundTint="#FDA521"
+                android:backgroundTint="#FFCF81"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 app:cornerRadius="50dp"
@@ -171,12 +202,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Batal"
-                android:backgroundTint="#E9E9E9"
+                android:backgroundTint="#F2F2F2"
                 android:textColor="#F44336"
                 android:textStyle="bold"
                 app:cornerRadius="50dp"
-                app:strokeColor="#DDDDDD"
-                app:strokeWidth="1dp"/>
+                app:strokeColor="#FF8B8B"
+                app:strokeWidth="1dp">
+
+            </com.google.android.material.button.MaterialButton>
 
         </LinearLayout>
     </ScrollView>

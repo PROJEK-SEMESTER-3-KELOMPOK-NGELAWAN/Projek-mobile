@@ -1,43 +1,58 @@
 package com.majelismdpl.majelis_mdpl.models;
 
 public class Trip {
-    private String mountainName;
-    private String date;
-    private int participants;
-    private String status;
-    private double rating;
-    private String imageUrl;
+    String namaGunung;
+    String tanggal;
+    int peserta;    // <-- Tipe datanya 'int'
+    String status;
+    double rating;  // <-- Tipe datanya 'double'
+    String imageUrl;
 
-    public Trip(String mountainName, String date, int participants, String status, double rating, String imageUrl) {
-        this.mountainName = mountainName;
-        this.date = date;
-        this.participants = participants;
+    // Constructor
+    public Trip(String namaGunung, String tanggal, int peserta, String status, double rating, String imageUrl) {
+        this.namaGunung = namaGunung;
+        this.tanggal = tanggal;
+        this.peserta = peserta;
         this.status = status;
         this.rating = rating;
         this.imageUrl = imageUrl;
     }
 
-    // Getter methods
-    public String getMountainName() {
-        return mountainName;
+    // --- GETTERS (Ini yang penting untuk adapter & filter) ---
+
+    public String getNamaGunung() {
+        return namaGunung;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public int getParticipants() {
-        return participants;
+    public String getTanggal() {
+        return tanggal;
     }
 
     public String getStatus() {
         return status;
     }
 
+    // ==========================================
+    // TAMBAHKAN DUA METODE DI BAWAH INI
+    // ==========================================
+
+    /**
+     * Getter untuk jumlah peserta.
+     * @return Tipe data int
+     */
+    public int getPeserta() {
+        return peserta;
+    }
+
+    /**
+     * Getter untuk rating.
+     * @return Tipe data double
+     */
     public double getRating() {
         return rating;
     }
 
+    // (Opsional) Getter untuk URL gambar
     public String getImageUrl() {
         return imageUrl;
     }
