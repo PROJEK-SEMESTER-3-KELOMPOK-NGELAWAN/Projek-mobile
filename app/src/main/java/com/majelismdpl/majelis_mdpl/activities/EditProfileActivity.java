@@ -24,37 +24,42 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private TextInputEditText etUsername, etEmail, etWhatsapp, etAlamat, etPassword;
     private MaterialButton btnSimpan, btnBatal;
-
-    // --- Variabel Baru dari Logika Ganti Foto ---
     private ShapeableImageView ivProfileEdit;
     private TextView tvGantiFoto;
     private ActivityResultLauncher<String[]> pickImageLauncher;
-    private SharedPrefManager prefManager; // Dibuat jadi variabel global
-    // -------------------------------------------
+    private SharedPrefManager prefManager;
+
+    // --- BARU: Variabel untuk menyimpan data LAMA ---
+    private String originalUsername;
+    private String originalEmail;
+    private String originalWhatsapp;
+    private String originalAlamat;
+    private String originalPassword;
+    private boolean isFotoBerubah = false;
+    // ---------------------------------------------
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        // Inisialisasi prefManager di atas
         prefManager = SharedPrefManager.getInstance(this);
 
         // --- BARU: Registrasi Activity Result Launcher untuk Ganti Foto ---
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (uri != null) {
                 try {
-                    // Ambil izin persisten untuk URI
                     getContentResolver().takePersistableUriPermission(
                             uri,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                     );
 
-                    // Tampilkan gambar baru di ImageView
                     ivProfileEdit.setImageURI(uri);
-
-                    // Langsung simpan URI ke SharedPref
                     prefManager.setProfilePhotoUri(uri.toString());
+
+                    // --- BARU: Tandai bahwa foto telah berubah ---
+                    isFotoBerubah = true;
+                    // -------------------------------------------
 
                 } catch (SecurityException e) {
                     e.printStackTrace();
@@ -73,81 +78,126 @@ public class EditProfileActivity extends AppCompatActivity {
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
 
-        // --- BARU: Menghubungkan View (Foto) ---
+        // Menghubungkan View (Foto)
         ivProfileEdit = findViewById(R.id.ivProfileEdit);
         tvGantiFoto = findViewById(R.id.tvGantiFoto);
-        // -------------------------------------
 
-        // Memuat data yang ada (termasuk foto)
-        populateFields();
-        loadProfileImage(); // BARU
+        // --- DIPERBARUI: Memuat data dan MENYIMPAN data original ---
+        populateFieldsAndStoreOriginals();
+        loadProfileImage();
 
         // Set Listener untuk Tombol Simpan/Batal
-        btnSimpan.setOnClickListener(v -> saveProfile());
+        btnSimpan.setOnClickListener(v -> saveProfileIfChanged()); // Diubah ke fungsi baru
         btnBatal.setOnClickListener(v -> {
             setResult(Activity.RESULT_CANCELED);
             finish();
         });
 
-        // --- BARU: Listener untuk Ganti Foto ---
+        // Listener untuk Ganti Foto
         View.OnClickListener gantiFotoListener = v -> {
-            // Meluncurkan pemilih gambar dari galeri
             pickImageLauncher.launch(new String[]{"image/*"});
         };
         ivProfileEdit.setOnClickListener(gantiFotoListener);
         tvGantiFoto.setOnClickListener(gantiFotoListener);
-        // ----------------------------------------
     }
 
-    private void populateFields() {
-        // Menggunakan prefManager global
-        if (etUsername != null) etUsername.setText(prefManager.getUsername());
-        if (etEmail != null) etEmail.setText(prefManager.getEmail());
-        if (etWhatsapp != null) etWhatsapp.setText(prefManager.getWhatsapp());
-        if (etAlamat != null) etAlamat.setText(prefManager.getAddress());
-        if (etPassword != null) etPassword.setText(prefManager.getPassword());
+    /**
+     * DIPERBARUI: Fungsi ini sekarang juga menyimpan data asli ke variabel global
+     * sebelum menampilkannya di EditText.
+     */
+    private void populateFieldsAndStoreOriginals() {
+        // 1. Ambil data dari SharedPreferences
+        originalUsername = prefManager.getUsername();
+        originalEmail = prefManager.getEmail();
+        originalWhatsapp = prefManager.getWhatsapp();
+        originalAlamat = prefManager.getAddress();
+        originalPassword = prefManager.getPassword();
+
+        // 2. Lakukan null check untuk keamanan
+        if (originalUsername == null) originalUsername = "";
+        if (originalEmail == null) originalEmail = "";
+        if (originalWhatsapp == null) originalWhatsapp = "";
+        if (originalAlamat == null) originalAlamat = "";
+        if (originalPassword == null) originalPassword = "";
+
+        // 3. Tampilkan data di EditText
+        if (etUsername != null) etUsername.setText(originalUsername);
+        if (etEmail != null) etEmail.setText(originalEmail);
+        if (etWhatsapp != null) etWhatsapp.setText(originalWhatsapp);
+        if (etAlamat != null) etAlamat.setText(originalAlamat);
+        if (etPassword != null) etPassword.setText(originalPassword);
     }
 
-    // --- BARU: Fungsi untuk memuat foto profil yang ada ---
     private void loadProfileImage() {
         String savedUri = prefManager.getProfilePhotoUri();
         if (savedUri != null && !savedUri.isEmpty()) {
             try {
                 ivProfileEdit.setImageURI(Uri.parse(savedUri));
             } catch (SecurityException | IllegalArgumentException e) {
-                // Jika URI tidak valid, set gambar default
                 ivProfileEdit.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
             }
         } else {
-            // Set gambar default jika tidak ada URI
             ivProfileEdit.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
         }
     }
-    // ----------------------------------------------------
 
-    private void saveProfile() {
-        String username = textOf(etUsername);
-        String email = textOf(etEmail);
-        String whatsapp = textOf(etWhatsapp);
-        String address = textOf(etAlamat);
-        String password = textOf(etPassword);
+    /**
+     * FUNGSI BARU: Ini adalah inti dari logika yang Anda minta.
+     * Fungsi ini akan mengecek perubahan sebelum memanggil saveProfile().
+     */
+    private void saveProfileIfChanged() {
+        // 1. Ambil semua data BARU dari EditText
+        String newUsername = textOf(etUsername);
+        String newEmail = textOf(etEmail);
+        String newWhatsapp = textOf(etWhatsapp);
+        String newAddress = textOf(etAlamat);
+        String newPassword = textOf(etPassword);
 
-        if (TextUtils.isEmpty(username)) {
+        // Validasi dasar (Username tidak boleh kosong)
+        if (TextUtils.isEmpty(newUsername)) {
             Toast.makeText(this, "Username tidak boleh kosong", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Menggunakan prefManager global
-        // (Foto sudah disimpan saat dipilih, jadi ini hanya simpan data teks)
-        prefManager.saveProfile(username, email, whatsapp, address, password);
+        // 2. Bandingkan data BARU dengan data LAMA
+        boolean isUsernameChanged = !newUsername.equals(originalUsername);
+        boolean isEmailChanged = !newEmail.equals(originalEmail);
+        boolean isWhatsappChanged = !newWhatsapp.equals(originalWhatsapp);
+        boolean isAlamatChanged = !newAddress.equals(originalAlamat);
+        boolean isPasswordChanged = !newPassword.equals(originalPassword);
 
-        Toast.makeText(this, "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
+        // 3. Cek apakah ada SALAH SATU data yang berubah (termasuk foto)
+        boolean isDataBerubah = isUsernameChanged ||
+                isEmailChanged ||
+                isWhatsappChanged ||
+                isAlamatChanged ||
+                isPasswordChanged ||
+                isFotoBerubah;
 
-        setResult(Activity.RESULT_OK); // Memberi tahu ProfileFragment untuk refresh
-        finish();
+        // 4. Terapkan Logika
+        if (isDataBerubah) {
+            // JIKA ADA PERUBAHAN, simpan data
+            // (Foto sudah disimpan saat dipilih, jadi ini hanya simpan data teks)
+            prefManager.saveProfile(newUsername, newEmail, newWhatsapp, newAddress, newPassword);
+            Toast.makeText(this, "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
+            setResult(Activity.RESULT_OK); // Memberi tahu ProfileFragment untuk refresh
+            finish();
+
+        } else {
+            // JIKA TIDAK ADA PERUBAHAN
+            // Tampilkan pop-up sesuai permintaan Anda
+            Toast.makeText(this, "data anda belum di perbarui", Toast.LENGTH_LONG).show();
+        }
     }
 
+    /**
+     * DIPERBARUI: Dibuat lebih aman untuk menghindari NullPointerException.
+     * Sekarang mengembalikan string kosong ("") jika null.
+     */
     private String textOf(TextInputEditText editText) {
-        return editText == null || editText.getText() == null ? null : editText.getText().toString().trim();
+        if (editText == null || editText.getText() == null) {
+            return ""; // Kembalikan string kosong, BUKAN null
+        }
+        return editText.getText().toString().trim();
     }
 }
