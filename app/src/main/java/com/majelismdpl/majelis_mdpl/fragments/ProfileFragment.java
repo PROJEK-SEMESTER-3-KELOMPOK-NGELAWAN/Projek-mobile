@@ -1,7 +1,9 @@
 package com.majelismdpl.majelis_mdpl.fragments;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri; // (BARU) Impor untuk URI
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,39 +12,57 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-
-// (OPSIONAL) Import Glide jika Anda ingin memuat gambar profil dari URL
-// import com.bumptech.glide.Glide;
 
 import com.google.android.material.button.MaterialButton;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.activities.EditProfileActivity;
 import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
-
-// (DIUBAH) Pastikan Anda mengimpor model User Anda
 import com.majelismdpl.majelis_mdpl.models.User;
 
 public class ProfileFragment extends Fragment {
 
-    // 1. Deklarasikan semua View Anda
     private ImageView ivProfile;
     private TextView tvNamaPengguna, tvUsername, tvPassword, tvWhatsApp, tvEmail, tvAlamat;
     private MaterialButton btnEditProfile, btnKeluar;
+    private ActivityResultLauncher<Intent> editProfileLauncher;
 
     public ProfileFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Inisialisasi launcher (Ini sudah benar)
+        editProfileLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // Panggil populateProfileData() untuk refresh SEMUA data
+                            // (termasuk foto yang baru)
+                            populateProfileData();
+                            Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate layout untuk fragment ini
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -50,7 +70,7 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 2. Hubungkan View dengan ID dari XML
+        // Hubungkan View (Ini sudah benar)
         ivProfile = view.findViewById(R.id.ivProfile);
         tvNamaPengguna = view.findViewById(R.id.tvNamaPengguna);
         tvUsername = view.findViewById(R.id.tvUsername);
@@ -61,42 +81,50 @@ public class ProfileFragment extends Fragment {
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnKeluar = view.findViewById(R.id.btnKeluar);
 
-        // 3. Panggil metode untuk mengisi data
         populateProfileData();
-
-        // 4. Atur OnClickListener untuk Tombol
         setupClickListeners();
     }
 
     /**
-     * Mengisi data pengguna ke TextViews.
-     * Ambil data dari SharedPrefManager Anda.
+     * Mengisi data pengguna ke TextViews DAN ImageView.
      */
     private void populateProfileData() {
         if (getContext() == null) return;
 
         try {
-            // (FIX) Ini sekarang akan BERHASIL!
+            // Ambil data user
             User user = SharedPrefManager.getInstance(getContext()).getUser();
 
             if (user != null) {
-                // (FIX) Semua baris ini akan terisi dengan data yang benar
-                // Pastikan getNama(), getUsername(), dll. ada di User.java
+                // Set semua data Teks (Sudah benar)
                 tvNamaPengguna.setText(user.getNama());
                 tvUsername.setText(user.getUsername());
-                tvPassword.setText("••••••••••"); // Password JANGAN pernah ditampilkan
+                tvPassword.setText("••••••••••");
                 tvWhatsApp.setText(user.getWhatsapp());
                 tvEmail.setText(user.getEmail());
                 tvAlamat.setText(user.getAlamat());
 
-                // (OPSIONAL) Muat gambar profil
-                // if (user.getFotoUrl() != null && !user.getFotoUrl().isEmpty()) {
-                //     Glide.with(this).load(user.getFotoUrl()).into(ivProfile);
-                // }
+                // --- (LOGIKA BARU DIMULAI DI SINI) ---
+                // Muat gambar profil yang disimpan
+                String fotoUriString = SharedPrefManager.getInstance(getContext()).getProfilePhotoUri();
+                if (fotoUriString != null && !fotoUriString.isEmpty()) {
+                    try {
+                        // Ubah string URI kembali menjadi URI dan set ke ImageView
+                        ivProfile.setImageURI(Uri.parse(fotoUriString));
+                    } catch (SecurityException | IllegalArgumentException e) {
+                        // Tangani jika URI tidak valid atau izin dicabut
+                        e.printStackTrace();
+                        ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl); // Gambar default
+                    }
+                } else {
+                    // Tampilkan gambar default jika tidak ada URI yang disimpan
+                    ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
+                }
+                // --- (LOGIKA BARU SELESAI) ---
 
             } else {
                 Toast.makeText(getContext(), "Data pengguna tidak ditemukan", Toast.LENGTH_SHORT).show();
-                logoutUser(); // Panggil logout jika data user null
+                logoutUser();
             }
 
         } catch (Exception e) {
@@ -106,26 +134,29 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Mengatur semua listener klik untuk tombol di fragment ini.
+     * Mengatur semua listener klik.
+     * (Logika ini sudah benar)
      */
     private void setupClickListeners() {
         if (getContext() == null) return;
 
-        // Tombol Edit Profil
         btnEditProfile.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), EditProfileActivity.class);
-            startActivity(intent);
+
+            // Logika pengiriman data Anda ke EditProfileActivity sudah tidak diperlukan
+            // karena EditProfileActivity sekarang memuat dari SharedPref.
+            // Tapi tidak apa-apa jika dibiarkan, kode di EditProfileActivity
+            // akan menimpanya dengan data dari SharedPref.
+
+            // (DIUBAH) Gunakan launcher
+            editProfileLauncher.launch(intent);
         });
 
-        // Tombol Keluar
         btnKeluar.setOnClickListener(v -> {
             showLogoutDialog();
         });
     }
 
-    /**
-     * Menampilkan dialog konfirmasi logout.
-     */
     private void showLogoutDialog() {
         if (getContext() == null) return;
         new AlertDialog.Builder(getContext())
@@ -137,21 +168,12 @@ public class ProfileFragment extends Fragment {
                 .show();
     }
 
-    /**
-     * Menghandle proses logout.
-     */
     private void logoutUser() {
         if (getContext() == null) return;
-
-        // Hapus sesi
         SharedPrefManager.getInstance(getContext()).logout();
-
-        // Arahkan ke LoginActivity
         Intent intent = new Intent(getContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
-        // Tutup Activity saat ini (MainActivity)
         if (getActivity() != null) {
             getActivity().finish();
         }
