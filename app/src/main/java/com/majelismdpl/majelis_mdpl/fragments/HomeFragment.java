@@ -1,10 +1,12 @@
 package com.majelismdpl.majelis_mdpl.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.majelismdpl.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.activities.MeetingPoint;
 
 public class HomeFragment extends Fragment {
 
@@ -20,7 +23,6 @@ public class HomeFragment extends Fragment {
     }
 
     @Nullable
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -36,17 +38,15 @@ public class HomeFragment extends Fragment {
         ImageView ivTripImage = view.findViewById(R.id.iv_trip_image);
 
         // Set data statis
-        if (tvTripTitle != null) {
-            tvTripTitle.setText("Pendakian Gunung Ijen");
-        }
-        if (tvTripDate != null) {
-            tvTripDate.setText("12-13 Agustus 2025");
-        }
-        if (ivTripImage != null) {
-            ivTripImage.setImageResource(R.drawable.ic_gunung_ijen);
-        }
+        tvTripTitle.setText("Pendakian Gunung Ijen");
+        tvTripDate.setText("12-13 Agustus 2025");
+        ivTripImage.setImageResource(R.drawable.ic_gunung_ijen);
 
-        // Untuk komponen lain seperti Status Pembayaran, Jumlah Peserta, dll,
-        // datanya sudah diatur langsung di file XML melalui @string/...
+        RelativeLayout menuTitikKumpul = view.findViewById(R.id.menu_titik_kumpul);
+        menuTitikKumpul.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), MeetingPoint.class);
+            startActivity(intent);
+
+    });
     }
 }

@@ -34,5 +34,11 @@
     <color name="onBackground">#000000</color>
     <color name="cardBackground">#FFFFFF</color>
     <color name="dividerColor">#EEEEEE</color>
+    <color name="cream_bg">#F4EBD0</color>
+    <color name="cream_light">#FAF3E0</color>
+    <color name="cream_card">#FFF8E7</color>
+    <color name="brown_dark">#5A4632</color>
+    <color name="brown_text">#7B5E3B</color>
+
 
 </resources>
