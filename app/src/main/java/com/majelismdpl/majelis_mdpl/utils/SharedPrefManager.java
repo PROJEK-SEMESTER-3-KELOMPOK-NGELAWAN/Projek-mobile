@@ -3,13 +3,20 @@ package com.majelismdpl.majelis_mdpl.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+// (PENTING) Pastikan import ini ada
+import com.google.gson.Gson;
+import com.majelismdpl.majelis_mdpl.models.LoginResponse;
+import com.majelismdpl.majelis_mdpl.models.User; // Pastikan import User ada
+
 public class SharedPrefManager {
     private static final String SHARED_PREF_NAME = Constants.PREF_NAME;
     private static SharedPrefManager instance;
     private final SharedPreferences sharedPreferences;
+    private final Gson gson; // Tambahkan Gson
 
     private SharedPrefManager(Context context) {
         sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        gson = new Gson(); // Inisialisasi Gson
     }
 
     public static synchronized SharedPrefManager getInstance(Context context) {
@@ -19,88 +26,95 @@ public class SharedPrefManager {
         return instance;
     }
 
-    // Fungsi ini sudah benar. Panggil ini saat login berhasil.
-    public void saveLoginData(String username, String role) {
+    /**
+     * Menyimpan data lengkap saat login (User + Role + Status).
+     * Dipanggil oleh LoginActivity.
+     */
+    public void saveLoginResponse(LoginResponse loginResponse) {
+        if (loginResponse.isSuccess() && loginResponse.getUser() != null) {
+            // Simpan objek User-nya
+            saveUser(loginResponse.getUser());
+
+            // Simpan data tambahan
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(Constants.KEY_IS_LOGGED_IN, true);
+            editor.putString(Constants.KEY_ROLE, loginResponse.getRole());
+            editor.apply();
+        }
+    }
+
+    /**
+     * (BARU) Menyimpan HANYA objek User.
+     * Ini akan dipanggil oleh EditProfileActivity saat memperbarui profil.
+     */
+    public void saveUser(User user) {
+        if (user == null) return;
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.KEY_USERNAME, username);
-        editor.putString(Constants.KEY_ROLE, role);
-        editor.putBoolean(Constants.KEY_IS_LOGGED_IN, true);
+        String userJson = gson.toJson(user);
+        editor.putString(Constants.KEY_USER_DATA, userJson);
         editor.apply();
     }
 
-    // Fungsi ini sudah benar. Ini yang akan dipakai SplashActivity.
+    /**
+     * Mengambil objek User yang sedang login.
+     * Ini dipanggil oleh ProfileFragment DAN EditProfileActivity.
+     */
+    public User getUser() {
+        String userJson = sharedPreferences.getString(Constants.KEY_USER_DATA, null);
+        if (userJson != null) {
+            return gson.fromJson(userJson, User.class); // Ubah String kembali ke objek User
+        }
+        return null; // Kembalikan null jika tidak ada data user
+    }
+
+    /**
+     * Cek status login, dipanggil oleh SplashActivity.
+     */
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(Constants.KEY_IS_LOGGED_IN, false);
     }
 
-    public String getUsername() {
-        return sharedPreferences.getString(Constants.KEY_USERNAME, null);
-    }
-
-    public void setUsername(String username) {
-        sharedPreferences.edit().putString(Constants.KEY_USERNAME, username).apply();
-    }
-
-    public String getEmail() {
-        return sharedPreferences.getString(Constants.KEY_EMAIL, null);
-    }
-
-    public void setEmail(String email) {
-        sharedPreferences.edit().putString(Constants.KEY_EMAIL, email).apply();
-    }
-
-    public String getWhatsapp() {
-        return sharedPreferences.getString(Constants.KEY_WHATSAPP, null);
-    }
-
-    public void setWhatsapp(String whatsapp) {
-        sharedPreferences.edit().putString(Constants.KEY_WHATSAPP, whatsapp).apply();
-    }
-
-    public String getAddress() {
-        return sharedPreferences.getString(Constants.KEY_ADDRESS, null);
-    }
-
-    public void setAddress(String address) {
-        sharedPreferences.edit().putString(Constants.KEY_ADDRESS, address).apply();
-    }
-
-    public String getPassword() {
-        return sharedPreferences.getString(Constants.KEY_PASSWORD, null);
-    }
-
-    public void setPassword(String password) {
-        sharedPreferences.edit().putString(Constants.KEY_PASSWORD, password).apply();
-    }
-
-    public String getProfilePhotoUri() {
-        return sharedPreferences.getString(Constants.KEY_PROFILE_PHOTO, null);
-    }
-
-    public void setProfilePhotoUri(String uri) {
-        sharedPreferences.edit().putString(Constants.KEY_PROFILE_PHOTO, uri).apply();
-    }
-
+    /**
+     * Mengambil Role (jika diperlukan).
+     */
     public String getRole() {
         return sharedPreferences.getString(Constants.KEY_ROLE, null);
     }
 
-    public void saveProfile(String username, String email, String whatsapp, String address, String password) {
+    /**
+     * Menghapus semua data sesi saat logout.
+     */
+    public void logout() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        if (username != null) editor.putString(Constants.KEY_USERNAME, username);
-        if (email != null) editor.putString(Constants.KEY_EMAIL, email);
-        if (whatsapp != null) editor.putString(Constants.KEY_WHATSAPP, whatsapp);
-        if (address != null) editor.putString(Constants.KEY_ADDRESS, address);
-        if (password != null) editor.putString(Constants.KEY_PASSWORD, password);
+        editor.clear(); // Hapus semua data
+        editor.putBoolean(Constants.KEY_IS_LOGGED_IN, false); // Pastikan status logout
         editor.apply();
     }
 
-    // --- INI ADALAH PERUBAHANNYA ---
-    public void logout() {
+    // --- Metode untuk Foto Profil (Disimpan Terpisah) ---
+
+    /**
+     * Menyimpan URI foto profil yang dipilih.
+     * Dipanggil oleh EditProfileActivity.
+     */
+    public void setProfilePhotoUri(String uriString) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        // Tambahkan baris ini untuk memastikan status login di-reset dengan benar
-        editor.putBoolean(Constants.KEY_IS_LOGGED_IN, false);
+        if (uriString != null) {
+            editor.putString(Constants.KEY_PROFILE_PHOTO_URI, uriString);
+        } else {
+            editor.remove(Constants.KEY_PROFILE_PHOTO_URI);
+        }
         editor.apply();
     }
+
+    /**
+     * Mengambil URI foto profil yang tersimpan.
+     * Dipanggil oleh EditProfileActivity dan ProfileFragment.
+     */
+    public String getProfilePhotoUri() {
+        return sharedPreferences.getString(Constants.KEY_PROFILE_PHOTO_URI, null);
+    }
+
+    // --- SEMUA METODE LAMA (saveProfile, getUsername, getEmail, dll.) TELAH DIHAPUS ---
 }

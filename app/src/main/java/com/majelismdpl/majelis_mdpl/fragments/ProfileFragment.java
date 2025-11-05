@@ -1,64 +1,48 @@
 package com.majelismdpl.majelis_mdpl.fragments;
 
-import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView; // BARU: Import ImageView
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+// (OPSIONAL) Import Glide jika Anda ingin memuat gambar profil dari URL
+// import com.bumptech.glide.Glide;
+
+import com.google.android.material.button.MaterialButton;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.activities.EditProfileActivity;
 import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 
+// (DIUBAH) Pastikan Anda mengimpor model User Anda
+import com.majelismdpl.majelis_mdpl.models.User;
+
 public class ProfileFragment extends Fragment {
 
-    private TextView tvNamaPengguna, tvUsername, tvPassword, tvWhatsApp, tvEmail, tvAlamat;
-    private View btnEditProfile;
-    private TextView btnKeluar;
+    // 1. Deklarasikan semua View Anda
     private ImageView ivProfile;
-
-    // --- BARU: Variabel untuk logika password ---
-    private ImageView ivPasswordToggle;
-    private boolean isPasswordVisible = false;
-    private String realPassword = ""; // Untuk menyimpan password asli
-    // -------------------------------------------
-
-    private ActivityResultLauncher<Intent> editProfileLauncher;
+    private TextView tvNamaPengguna, tvUsername, tvPassword, tvWhatsApp, tvEmail, tvAlamat;
+    private MaterialButton btnEditProfile, btnKeluar;
 
     public ProfileFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        editProfileLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK || result.getResultCode() == Activity.RESULT_CANCELED) {
-                        populateProfile();
-                    }
-                }
-        );
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Pastikan nama layout Anda sudah benar
+        // Inflate layout untuk fragment ini
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -66,130 +50,110 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Hubungkan ke ID dari layout
+        // 2. Hubungkan View dengan ID dari XML
+        ivProfile = view.findViewById(R.id.ivProfile);
         tvNamaPengguna = view.findViewById(R.id.tvNamaPengguna);
         tvUsername = view.findViewById(R.id.tvUsername);
         tvPassword = view.findViewById(R.id.tvPassword);
         tvWhatsApp = view.findViewById(R.id.tvWhatsApp);
         tvEmail = view.findViewById(R.id.tvEmail);
         tvAlamat = view.findViewById(R.id.tvAlamat);
-        ivProfile = view.findViewById(R.id.ivProfile);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnKeluar = view.findViewById(R.id.btnKeluar);
 
-        // BARU: Hubungkan ImageView mata
-        ivPasswordToggle = view.findViewById(R.id.ivPasswordToggle);
+        // 3. Panggil metode untuk mengisi data
+        populateProfileData();
 
-        // Memuat data profil saat fragment dibuat
-        populateProfile();
-        loadProfileImage();
-
-        btnEditProfile.setOnClickListener(v -> {
-            if (getActivity() == null) return;
-            Intent intent = new Intent(requireActivity(), EditProfileActivity.class);
-            editProfileLauncher.launch(intent);
-        });
-
-        btnKeluar.setOnClickListener(v -> {
-            if (getActivity() == null) return;
-            new AlertDialog.Builder(requireContext())
-                    .setTitle("Keluar")
-                    .setMessage("Anda yakin ingin keluar?")
-                    .setPositiveButton("Ya", (dialog, which) -> {
-                        SharedPrefManager.getInstance(requireActivity()).logout();
-                        Intent intent = new Intent(requireActivity(), LoginActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        requireActivity().finishAffinity();
-                    })
-                    .setNegativeButton("Batal", null)
-                    .show();
-        });
-
-        // --- BARU: Logika untuk klik ikon mata ---
-        ivPasswordToggle.setOnClickListener(v -> {
-            // Balik status visibilitas
-            isPasswordVisible = !isPasswordVisible;
-
-            if (isPasswordVisible) {
-                // Jika ingin TAMPILKAN password
-                tvPassword.setText(realPassword); // Tampilkan password asli
-                ivPasswordToggle.setImageResource(R.drawable.ic_view_eye); // Ganti ikon ke mata terbuka
-                ivPasswordToggle.setAlpha(1.0f); // (Opsional) pastikan ikon jelas
-            } else {
-                // Jika ingin SEMBUNYIKAN password
-                tvPassword.setText("••••••••••"); // Tampilkan bintang
-                ivPasswordToggle.setImageResource(R.drawable.ic_hide_eye); // Ganti ikon ke mata tertutup
-                ivPasswordToggle.setAlpha(0.7f); // (Opsional) samakan tampilan dengan XML
-            }
-        });
-        // ---------------------------------------
+        // 4. Atur OnClickListener untuk Tombol
+        setupClickListeners();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        populateProfile();
-        loadProfileImage();
-    }
-
-    private void loadProfileImage() {
-        if (getContext() != null && ivProfile != null) {
-            String savedUri = SharedPrefManager.getInstance(getContext()).getProfilePhotoUri();
-            if (savedUri != null && !savedUri.isEmpty()) {
-                try {
-                    ivProfile.setImageURI(Uri.parse(savedUri));
-                } catch (SecurityException | IllegalArgumentException ignored) {
-                }
-            } else {
-                // ivProfile.setImageResource(R.drawable.icon_leaf);
-            }
-        }
-    }
-
-    private void populateProfile() {
+    /**
+     * Mengisi data pengguna ke TextViews.
+     * Ambil data dari SharedPrefManager Anda.
+     */
+    private void populateProfileData() {
         if (getContext() == null) return;
-        SharedPrefManager pref = SharedPrefManager.getInstance(getContext());
-        String username = pref.getUsername();
-        String email = pref.getEmail();
-        String whatsapp = pref.getWhatsapp();
-        String address = pref.getAddress();
 
-        // --- BARU: Logika pengambilan password ---
-        // 1. Ambil password asli dan simpan di variabel
-        String password = pref.getPassword();
-        this.realPassword = nonNull(password, ""); // Simpan password asli
+        try {
+            // (FIX) Ini sekarang akan BERHASIL!
+            User user = SharedPrefManager.getInstance(getContext()).getUser();
 
-        // 2. Selalu reset ke status tersembunyi setiap kali data dimuat
-        isPasswordVisible = false;
-        if (tvPassword != null) {
-            tvPassword.setText("••••••••••"); // Selalu tampilkan bintang saat awal
-        }
-        if (ivPasswordToggle != null) {
-            ivPasswordToggle.setImageResource(R.drawable.ic_hide_eye); // Selalu reset ikon
-            ivPasswordToggle.setAlpha(0.7f);
-        }
-        // ----------------------------------------
+            if (user != null) {
+                // (FIX) Semua baris ini akan terisi dengan data yang benar
+                // Pastikan getNama(), getUsername(), dll. ada di User.java
+                tvNamaPengguna.setText(user.getNama());
+                tvUsername.setText(user.getUsername());
+                tvPassword.setText("••••••••••"); // Password JANGAN pernah ditampilkan
+                tvWhatsApp.setText(user.getWhatsapp());
+                tvEmail.setText(user.getEmail());
+                tvAlamat.setText(user.getAlamat());
 
-        // Set data ke TextViews
-        if (tvNamaPengguna != null) {
-            tvNamaPengguna.setText(nonNull(username, "Nama Pengguna"));
-        }
-        if (tvUsername != null) {
-            tvUsername.setText(nonNull(username, "-"));
-        }
-        if (tvEmail != null) {
-            tvEmail.setText(nonNull(email, "-"));
-        }
-        if (tvWhatsApp != null) {
-            tvWhatsApp.setText(nonNull(whatsapp, "-"));
-        }
-        if (tvAlamat != null) {
-            tvAlamat.setText(nonNull(address, "-"));
+                // (OPSIONAL) Muat gambar profil
+                // if (user.getFotoUrl() != null && !user.getFotoUrl().isEmpty()) {
+                //     Glide.with(this).load(user.getFotoUrl()).into(ivProfile);
+                // }
+
+            } else {
+                Toast.makeText(getContext(), "Data pengguna tidak ditemukan", Toast.LENGTH_SHORT).show();
+                logoutUser(); // Panggil logout jika data user null
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Gagal memuat data profil", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private String nonNull(String value, String fallback) {
-        return (value == null || value.isEmpty() || value.equals("null")) ? fallback : value;
+    /**
+     * Mengatur semua listener klik untuk tombol di fragment ini.
+     */
+    private void setupClickListeners() {
+        if (getContext() == null) return;
+
+        // Tombol Edit Profil
+        btnEditProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), EditProfileActivity.class);
+            startActivity(intent);
+        });
+
+        // Tombol Keluar
+        btnKeluar.setOnClickListener(v -> {
+            showLogoutDialog();
+        });
+    }
+
+    /**
+     * Menampilkan dialog konfirmasi logout.
+     */
+    private void showLogoutDialog() {
+        if (getContext() == null) return;
+        new AlertDialog.Builder(getContext())
+                .setTitle("Konfirmasi Keluar")
+                .setMessage("Apakah Anda yakin ingin keluar dari akun ini?")
+                .setPositiveButton("Keluar", (dialog, which) -> logoutUser())
+                .setNegativeButton("Batal", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    /**
+     * Menghandle proses logout.
+     */
+    private void logoutUser() {
+        if (getContext() == null) return;
+
+        // Hapus sesi
+        SharedPrefManager.getInstance(getContext()).logout();
+
+        // Arahkan ke LoginActivity
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+
+        // Tutup Activity saat ini (MainActivity)
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
     }
 }

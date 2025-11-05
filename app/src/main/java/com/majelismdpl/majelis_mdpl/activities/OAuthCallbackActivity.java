@@ -9,6 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.models.LoginResponse;
+import com.majelismdpl.majelis_mdpl.models.User;
 
 public class OAuthCallbackActivity extends AppCompatActivity {
 
@@ -36,7 +38,15 @@ public class OAuthCallbackActivity extends AppCompatActivity {
                 Log.d(TAG, "OAuth login successful for user: " + username);
 
                 // Simpan data login
-                SharedPrefManager.getInstance(this).saveLoginData(username, role);
+                // Buat objek minimal untuk menyimpan sesi memakai API baru
+                LoginResponse lr = new LoginResponse();
+                // set via refleksi setter publik
+                lr.setSuccess(true);
+                lr.setRole(role);
+                User u = new User();
+                u.setUsername(username);
+                lr.setUser(u);
+                SharedPrefManager.getInstance(this).saveLoginResponse(lr);
 
                 // Show success message
                 Toast.makeText(this,

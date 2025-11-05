@@ -1,44 +1,39 @@
 package com.majelismdpl.majelis_mdpl.api;
 
-import com.majelismdpl.majelis_mdpl.utils.ApiConfig;
-
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.OkHttpClient;
+import java.util.concurrent.TimeUnit;
 
 public class ApiClient {
-    private static final String BASE_URL = ApiConfig.getBaseUrl();
+
+    // TENTUKAN BASE_URL ANDA DI SINI
+    // (Ini adalah IP dari screenshot Anda sebelumnya)
+    private static final String BASE_URL = "http://192.168.1.30/majelismdpl.com/";
+
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient() {
+    public static ApiService getApiService() {
         if (retrofit == null) {
-            // Setup logging interceptor
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(ApiConfig.getLogLevel());
 
-            // Setup OkHttp client
-            OkHttpClient client = new OkHttpClient.Builder()
-                    .addInterceptor(interceptor)
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .build();
 
-            // Setup Retrofit
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .client(client)
+                    .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit;
+        return retrofit.create(ApiService.class);
     }
 
-    // Method untuk reset client (useful ketika switch environment)
-    public static void resetClient() {
-        retrofit = null;
+    // --- PERBAIKAN: INI ADALAH METODE YANG HILANG ---
+    // (Tambahkan fungsi ini agar Constants.java bisa mengambil BASE_URL)
+    public static String getBaseUrl() {
+        return BASE_URL;
     }
 }

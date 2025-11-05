@@ -1,52 +1,58 @@
 package com.majelismdpl.majelis_mdpl.models;
 
+// (BARU) Import model User
+import com.majelismdpl.majelis_mdpl.models.User;
+// (BARU) Import SerializedName
+import com.google.gson.annotations.SerializedName;
+
 public class LoginResponse {
+
+    @SerializedName("success")
     private boolean success;
+
+    @SerializedName("message")
     private String message;
+
+    @SerializedName("role")
     private String role;
 
-    // Default constructor (required for Gson)
+    // (BARU) Tambahkan field data 'user'.
+    // Pastikan nama "user" sama dengan key di JSON respons PHP Anda
+    @SerializedName("user")
+    private User user;
+
+    // Constructor (biarkan apa adanya)
     public LoginResponse() {}
 
-    // Constructor with parameters
-    public LoginResponse(boolean success, String message, String role) {
-        this.success = success;
-        this.message = message;
-        this.role = role;
-    }
-
-    // Getters
+    // Getters (biarkan apa adanya)
     public boolean isSuccess() {
         return success;
     }
-
     public String getMessage() {
         return message;
     }
-
     public String getRole() {
         return role;
     }
 
-    // Setters
+    // (BARU) Tambahkan getter untuk User
+    public User getUser() {
+        return user;
+    }
+
+    // Setters (biarkan apa adanya)
     public void setSuccess(boolean success) {
         this.success = success;
     }
-
     public void setMessage(String message) {
         this.message = message;
     }
-
     public void setRole(String role) {
         this.role = role;
     }
 
-    @Override
-    public String toString() {
-        return "LoginResponse{" +
-                "success=" + success +
-                ", message='" + message + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    // (BARU) Tambahkan setter untuk User
+    public void setUser(User user) {
+        this.user = user;
     }
 }
