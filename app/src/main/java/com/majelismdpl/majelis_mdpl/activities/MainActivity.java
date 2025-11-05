@@ -1,21 +1,17 @@
 package com.majelismdpl.majelis_mdpl.activities;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+// IMPORT BARU
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.fragments.HistoryFragment;
 import com.majelismdpl.majelis_mdpl.fragments.HomeFragment;
@@ -25,163 +21,89 @@ import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
-    private LinearLayout navHome, navHistory, navProfile;
-    private ImageView iconHome, iconHistory, iconProfile;
-    private TextView labelHome, labelHistory, labelProfile;
-    private int selectedNavItem = R.id.nav_home;
-    private boolean isUserSwipe = true;
+    // (BARU) Ganti semua LinearLayout/ImageView/TextView dengan satu view ini
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Cek session login menggunakan SharedPrefManager (konsisten dengan LoginActivity)
+        // Cek session login (Ini tetap sama)
         if (!SharedPrefManager.getInstance(this).isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
-            return; // PENTING: return agar kode di bawah tidak dieksekusi
+            return;
         }
 
         setContentView(R.layout.activity_main);
 
-        // Initialize ViewPager2
+        // Inisialisasi View
         viewPager = findViewById(R.id.view_pager);
+        // (BARU) Temukan BottomNavigationView
+        bottomNavigationView = findViewById(R.id.bottom_navigation_view); // ID dari XML baru
+
+        // Setup ViewPager (Adapter tetap sama)
         setupViewPager();
 
-        // Initialize navigation items
-        initializeNavigation();
-
-        // Set default page
-        if (savedInstanceState == null) {
-            viewPager.setCurrentItem(0, false);
-            setSelectedNav(R.id.nav_home);
-        }
+        // (BARU) Setup sinkronisasi otomatis
+        setupNavigationSync();
     }
 
     private void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
-        // Listener untuk sinkronisasi swipe dengan navbar
+        // (DISEDERHANAKAN) Hubungkan ViewPager -> BottomNav
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                if (isUserSwipe) {
-                    updateNavFromViewPager(position);
+                switch (position) {
+                    case 0:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+                        break;
+                    case 1:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_history);
+                        break;
+                    case 2:
+                        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
+                        break;
                 }
             }
         });
     }
 
-    private void updateNavFromViewPager(int position) {
-        switch (position) {
-            case 0:
-                setSelectedNav(R.id.nav_home);
-                break;
-            case 1:
-                setSelectedNav(R.id.nav_history);
-                break;
-            case 2:
-                setSelectedNav(R.id.nav_profile);
-                break;
-        }
+    // (BARU) Metode untuk sinkronisasi BottomNav -> ViewPager
+    private void setupNavigationSync() {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                viewPager.setCurrentItem(0, true);
+                return true;
+            } else if (itemId == R.id.nav_history) {
+                viewPager.setCurrentItem(1, true);
+                return true;
+            } else if (itemId == R.id.nav_profile) {
+                viewPager.setCurrentItem(2, true);
+                return true;
+            }
+            return false;
+        });
     }
 
-    private void initializeNavigation() {
-        // Find all navigation items
-        navHome = findViewById(R.id.nav_home);
-        navHistory = findViewById(R.id.nav_history);
-        navProfile = findViewById(R.id.nav_profile);
+    // HAPUS SEMUA METODE LAMA DI BAWAH INI:
+    // - initializeNavigation() <-- ERROR ANDA DI SINI
+    // - updateNavFromViewPager()
+    // - onNavItemClicked()
+    // - setSelectedNav()
+    // - resetNavItem()
+    // - setNavItemSelected()
+    // - animateMenuItem()
 
-        // Find all icons
-        iconHome = findViewById(R.id.icon_home);
-        iconHistory = findViewById(R.id.icon_history);
-        iconProfile = findViewById(R.id.icon_profile);
 
-        // Find all labels
-        labelHome = findViewById(R.id.label_home);
-        labelHistory = findViewById(R.id.label_history);
-        labelProfile = findViewById(R.id.label_profile);
-
-        // Set click listeners
-        navHome.setOnClickListener(v -> onNavItemClicked(R.id.nav_home));
-        navHistory.setOnClickListener(v -> onNavItemClicked(R.id.nav_history));
-        navProfile.setOnClickListener(v -> onNavItemClicked(R.id.nav_profile));
-    }
-
-    private void onNavItemClicked(int navId) {
-        int position = 0;
-
-        if (navId == R.id.nav_home) {
-            position = 0;
-        } else if (navId == R.id.nav_history) {
-            position = 1;
-        } else if (navId == R.id.nav_profile) {
-            position = 2;
-        }
-
-        isUserSwipe = false;
-        viewPager.setCurrentItem(position, true);
-        setSelectedNav(navId);
-        isUserSwipe = true;
-    }
-
-    private void setSelectedNav(int navId) {
-        selectedNavItem = navId;
-
-        // Reset all items to unselected state
-        resetNavItem(navHome, iconHome, labelHome);
-        resetNavItem(navHistory, iconHistory, labelHistory);
-        resetNavItem(navProfile, iconProfile, labelProfile);
-
-        // Set selected item
-        if (navId == R.id.nav_home) {
-            setNavItemSelected(navHome, iconHome, labelHome);
-        } else if (navId == R.id.nav_history) {
-            setNavItemSelected(navHistory, iconHistory, labelHistory);
-        } else if (navId == R.id.nav_profile) {
-            setNavItemSelected(navProfile, iconProfile, labelProfile);
-        }
-    }
-
-    private void resetNavItem(LinearLayout navItem, ImageView icon, TextView label) {
-        // Reset background ke transparent
-        navItem.setBackgroundResource(R.drawable.nav_item_background);
-        icon.setColorFilter(ContextCompat.getColor(this, R.color.navUnselected));
-        label.setVisibility(View.GONE);
-        label.setTextColor(ContextCompat.getColor(this, R.color.navUnselected));
-    }
-
-    private void setNavItemSelected(LinearLayout navItem, ImageView icon, TextView label) {
-        // Get primary color from resources
-        int primaryColor = ContextCompat.getColor(this, R.color.navSelected);
-
-        // Set background coklat untuk item yang dipilih
-        navItem.setBackgroundResource(R.drawable.nav_item_selected_bg);
-
-        icon.setColorFilter(primaryColor);
-        label.setVisibility(View.VISIBLE);
-        label.setTextColor(primaryColor);
-
-        // Animate icon
-        animateMenuItem(icon);
-    }
-
-    // Fungsi animasi scale pada ikon yang dipilih
-    private void animateMenuItem(@NonNull ImageView iconView) {
-        // Membuat animasi zoom in, lalu zoom out
-        ObjectAnimator scaleX = ObjectAnimator.ofFloat(iconView, View.SCALE_X, 1f, 1.2f, 1f);
-        ObjectAnimator scaleY = ObjectAnimator.ofFloat(iconView, View.SCALE_Y, 1f, 1.2f, 1f);
-        scaleX.setDuration(250);
-        scaleY.setDuration(250);
-        scaleX.start();
-        scaleY.start();
-    }
-
-    // ViewPager Adapter
+    // ViewPager Adapter (Ini tetap sama)
     private class ViewPagerAdapter extends FragmentStateAdapter {
         public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
             super(fragmentActivity);
@@ -198,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 case 2:
                     return new ProfileFragment();
                 default:
-                    return new HomeFragment(); // Fallback
+                    return new HomeFragment();
             }
         }
 
