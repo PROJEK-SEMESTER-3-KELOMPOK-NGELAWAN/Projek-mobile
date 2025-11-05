@@ -1,9 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,10 +13,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
+        <!-- Meeting Point Activity (Benar) -->
+        <activity
+            android:name=".activities.MeetingPoint"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".activities.MainActivity" />
+
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true"
-            android:label="Majelis MDPL"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,29 +30,12 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".activities.WelcomeActivity"
-            android:exported="false"
-            android:label="Majelis MDPL"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.LoginActivity"
-            android:exported="false"
-            android:label="Login"
-            android:screenOrientation="portrait" />
+        <activity android:name=".activities.WelcomeActivity" />
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.EditProfileActivity" />
 
-        <activity
-            android:name=".activities.MainActivity"
-            android:exported="false"
-            android:label="Majelis MDPL - Dashboard"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".activities.EditProfileActivity"
-            android:exported="false"
-            android:label="Edit Profil"
-            android:screenOrientation="portrait" />
-
+        <!-- OAuth Activity -->
         <activity
             android:name=".activities.PesertaActivity"
             android:exported="false"
@@ -64,26 +49,13 @@
             android:name=".activities.OAuthCallbackActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoDisplay">
-
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="majelismdpl"
-                    android:host="oauth" />
+                <data android:host="oauth" android:scheme="majelismdpl" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="intent" />
-            </intent-filter>
-
         </activity>
 
     </application>
