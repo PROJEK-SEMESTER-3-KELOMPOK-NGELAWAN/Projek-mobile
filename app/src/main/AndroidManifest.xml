@@ -52,6 +52,15 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".activities.PesertaActivity"
+            android:exported="false"
+            android:label="Peserta Trip" />
+
+        <activity
+            android:name=".activities.DokumentasiActivity"
+            android:exported="false"
+            android:label="Dokumentasi" />
+        <activity
             android:name=".activities.OAuthCallbackActivity"
             android:exported="true"
             android:launchMode="singleTop"

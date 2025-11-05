@@ -19,16 +19,15 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.fragments.HistoryFragment;
 import com.majelismdpl.majelis_mdpl.fragments.HomeFragment;
-import com.majelismdpl.majelis_mdpl.fragments.InfoFragment;
 import com.majelismdpl.majelis_mdpl.fragments.ProfileFragment;
 import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
-    private LinearLayout navHome, navHistory, navProfile, navInfo;
-    private ImageView iconHome, iconHistory, iconProfile, iconInfo;
-    private TextView labelHome, labelHistory, labelProfile, labelInfo;
+    private LinearLayout navHome, navHistory, navProfile;
+    private ImageView iconHome, iconHistory, iconProfile;
+    private TextView labelHome, labelHistory, labelProfile;
     private int selectedNavItem = R.id.nav_home;
     private boolean isUserSwipe = true;
 
@@ -46,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-        
+
         // Initialize ViewPager2
         viewPager = findViewById(R.id.view_pager);
         setupViewPager();
-        
+
         // Initialize navigation items
         initializeNavigation();
 
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
-        
+
         // Listener untuk sinkronisasi swipe dengan navbar
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -88,9 +87,6 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 setSelectedNav(R.id.nav_profile);
                 break;
-            case 3:
-                setSelectedNav(R.id.nav_info);
-                break;
         }
     }
 
@@ -99,25 +95,21 @@ public class MainActivity extends AppCompatActivity {
         navHome = findViewById(R.id.nav_home);
         navHistory = findViewById(R.id.nav_history);
         navProfile = findViewById(R.id.nav_profile);
-        navInfo = findViewById(R.id.nav_info);
 
         // Find all icons
         iconHome = findViewById(R.id.icon_home);
         iconHistory = findViewById(R.id.icon_history);
         iconProfile = findViewById(R.id.icon_profile);
-        iconInfo = findViewById(R.id.icon_info);
 
         // Find all labels
         labelHome = findViewById(R.id.label_home);
         labelHistory = findViewById(R.id.label_history);
         labelProfile = findViewById(R.id.label_profile);
-        labelInfo = findViewById(R.id.label_info);
 
         // Set click listeners
         navHome.setOnClickListener(v -> onNavItemClicked(R.id.nav_home));
         navHistory.setOnClickListener(v -> onNavItemClicked(R.id.nav_history));
         navProfile.setOnClickListener(v -> onNavItemClicked(R.id.nav_profile));
-        navInfo.setOnClickListener(v -> onNavItemClicked(R.id.nav_info));
     }
 
     private void onNavItemClicked(int navId) {
@@ -129,8 +121,6 @@ public class MainActivity extends AppCompatActivity {
             position = 1;
         } else if (navId == R.id.nav_profile) {
             position = 2;
-        } else if (navId == R.id.nav_info) {
-            position = 3;
         }
 
         isUserSwipe = false;
@@ -141,12 +131,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setSelectedNav(int navId) {
         selectedNavItem = navId;
-        
+
         // Reset all items to unselected state
         resetNavItem(navHome, iconHome, labelHome);
         resetNavItem(navHistory, iconHistory, labelHistory);
         resetNavItem(navProfile, iconProfile, labelProfile);
-        resetNavItem(navInfo, iconInfo, labelInfo);
 
         // Set selected item
         if (navId == R.id.nav_home) {
@@ -155,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
             setNavItemSelected(navHistory, iconHistory, labelHistory);
         } else if (navId == R.id.nav_profile) {
             setNavItemSelected(navProfile, iconProfile, labelProfile);
-        } else if (navId == R.id.nav_info) {
-            setNavItemSelected(navInfo, iconInfo, labelInfo);
         }
     }
 
@@ -171,14 +158,14 @@ public class MainActivity extends AppCompatActivity {
     private void setNavItemSelected(LinearLayout navItem, ImageView icon, TextView label) {
         // Get primary color from resources
         int primaryColor = ContextCompat.getColor(this, R.color.navSelected);
-        
+
         // Set background coklat untuk item yang dipilih
         navItem.setBackgroundResource(R.drawable.nav_item_selected_bg);
-        
+
         icon.setColorFilter(primaryColor);
         label.setVisibility(View.VISIBLE);
         label.setTextColor(primaryColor);
-        
+
         // Animate icon
         animateMenuItem(icon);
     }
@@ -210,16 +197,14 @@ public class MainActivity extends AppCompatActivity {
                     return new HistoryFragment();
                 case 2:
                     return new ProfileFragment();
-                case 3:
-                    return new InfoFragment();
                 default:
-                    return new HomeFragment();
+                    return new HomeFragment(); // Fallback
             }
         }
 
         @Override
         public int getItemCount() {
-            return 4; // Jumlah fragment
+            return 3; // Jumlah fragment sekarang 3
         }
     }
 }
