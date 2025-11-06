@@ -1,59 +1,55 @@
+// File: models/Trip.java
 package com.majelismdpl.majelis_mdpl.models;
 
-public class Trip {
-    String namaGunung;
-    String tanggal;
-    int peserta;    // <-- Tipe datanya 'int'
-    String status;
-    double rating;  // <-- Tipe datanya 'double'
-    String imageUrl;
+import java.util.Objects;
 
-    // Constructor
-    public Trip(String namaGunung, String tanggal, int peserta, String status, double rating, String imageUrl) {
-        this.namaGunung = namaGunung;
-        this.tanggal = tanggal;
-        this.peserta = peserta;
+public class Trip {
+    private String id; // <-- 1. TAMBAHKAN FIELD ID
+    private String mountainName;
+    private String date;
+    private int participants;
+    private String status;
+    private double rating;
+    private String imageUrl;
+
+    // (Constructor kosong jika perlu)
+    public Trip() {}
+
+    // 2. PERBARUI CONSTRUCTOR untuk menerima ID
+    public Trip(String id, String mountainName, String date, int participants, String status, double rating, String imageUrl) {
+        this.id = id;
+        this.mountainName = mountainName;
+        this.date = date;
+        this.participants = participants;
         this.status = status;
         this.rating = rating;
         this.imageUrl = imageUrl;
     }
 
-    // --- GETTERS (Ini yang penting untuk adapter & filter) ---
-
-    public String getNamaGunung() {
-        return namaGunung;
+    // 3. TAMBAHKAN GETTER UNTUK ID
+    public String getId() {
+        return id;
     }
 
-    public String getTanggal() {
-        return tanggal;
+    // (Getters Anda yang lain)
+    public String getMountainName() { return mountainName; }
+    public String getDate() { return date; }
+    public int getParticipants() { return participants; }
+    public String getStatus() { return status; }
+    public double getRating() { return rating; }
+    public String getImageUrl() { return imageUrl; }
+
+    // (Equals & HashCode jika ada, pastikan 'id' disertakan)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Trip trip = (Trip) o;
+        return Objects.equals(id, trip.id);
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    // ==========================================
-    // TAMBAHKAN DUA METODE DI BAWAH INI
-    // ==========================================
-
-    /**
-     * Getter untuk jumlah peserta.
-     * @return Tipe data int
-     */
-    public int getPeserta() {
-        return peserta;
-    }
-
-    /**
-     * Getter untuk rating.
-     * @return Tipe data double
-     */
-    public double getRating() {
-        return rating;
-    }
-
-    // (Opsional) Getter untuk URL gambar
-    public String getImageUrl() {
-        return imageUrl;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -162,7 +162,6 @@
                 android:useDefaultMargins="true">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/menu_titik_kumpul"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_columnWeight="1"
@@ -207,49 +206,46 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/menu_peserta_trip"
-                    android:layout_width="0dp"
+                    android:id="@+id/menuPesertaTrip"  android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_columnWeight="1"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="3dp"
-                    app:cardUseCompatPadding="true">
+                    app:cardUseCompatPadding="true"
+                    android:clickable="true"           android:focusable="true"           android:foreground="?android:attr/selectableItemBackground"> <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:background="@color/white">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:background="@color/white">
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_icon_circle"
+                        android:padding="10dp"
+                        app:tint="@color/brown_dark"
+                        android:src="@drawable/ic_people" />
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_icon_circle"
-                            android:padding="10dp"
-                            app:tint="@color/brown_dark"
-                            android:src="@drawable/ic_people" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Peserta Trip"
+                        android:textColor="@android:color/black"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:text="Peserta Trip"
-                            android:textColor="@android:color/black"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="15 Orang"
-                            android:textColor="@color/tripGray"
-                            android:textSize="12sp" />
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="15 Orang"
+                        android:textColor="@color/tripGray"
+                        android:textSize="12sp" />
+                </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/menu_grup_whatsapp"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_columnWeight="1"
@@ -291,7 +287,6 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/menu_dokumentasi"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_columnWeight="1"
@@ -349,6 +344,8 @@
                 app:cornerRadius="28dp"
                 app:backgroundTint="@color/tripRed"
                 app:elevation="3dp" />
+            = -->
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

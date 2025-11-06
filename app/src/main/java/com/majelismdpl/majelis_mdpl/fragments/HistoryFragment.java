@@ -1,33 +1,28 @@
 package com.majelismdpl.majelis_mdpl.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;  // <-- IMPORT INI
-import android.text.TextWatcher; // <-- IMPORT INI
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText; // <-- IMPORT INI
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.majelismdpl.majelis_mdpl.activities.DetailTripActivity;
 import com.majelismdpl.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.databinding.FragmentHistoryBinding;
 import com.majelismdpl.majelis_mdpl.models.Trip;
 import com.majelismdpl.majelis_mdpl.models.TripHistoryAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnItemClickListener {
 
-    // --- Variabel dipindahkan ke level Class ---
-    private RecyclerView recyclerView;
-    private EditText etSearch; // <-- Tambahkan ini
-    private TripHistoryAdapter tripHistoryAdapter; // <-- Ganti nama & pindahkan
-    private List<Trip> fullHistoryList = new ArrayList<>(); // <-- Ini adalah list master
+    private FragmentHistoryBinding binding;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -36,86 +31,75 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        binding = FragmentHistoryBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Inisialisasi semua View
-        recyclerView = view.findViewById(R.id.rv_history);
-        etSearch = view.findViewById(R.id.etSearch); // <-- Inisialisasi EditText
+        binding.rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 2. Panggil data dummy Anda
-        loadDummyData(); // <-- Kita buat fungsi baru agar rapi
+        // Buat data dummy
+        List<Trip> tripData = createDummyData();
 
-        // 3. Setup RecyclerView dan Adapter
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        tripHistoryAdapter = new TripHistoryAdapter(fullHistoryList); // <-- Gunakan variabel class
-        recyclerView.setAdapter(tripHistoryAdapter);
+        // Buat instance dari adapter Anda
+        TripHistoryAdapter adapter = new TripHistoryAdapter(tripData);
 
-        // 4. Tambahkan Listener ke Search Bar
-        etSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Tidak perlu
-            }
+        // Set listener ke adapter
+        adapter.setOnItemClickListener(this);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Tidak perlu
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Panggil fungsi filter setiap kali user mengetik
-                filter(s.toString());
-            }
-        });
+        // Set adapter ke RecyclerView
+        binding.rvHistory.setAdapter(adapter);
     }
 
-    /**
-     * Fungsi baru untuk memfilter list
-     * @param query Teks yang diketik user di search bar
-     */
-    private void filter(String query) {
-        List<Trip> filteredList = new ArrayList<>();
+    // (PENTING) Override method onItemClick dari interface
+    @Override
+    public void onItemClick(Trip trip) {
+        // Metode ini akan dipanggil oleh Adapter saat item diklik
+        Intent intent = new Intent(getActivity(), DetailTripActivity.class);
 
-        // Loop dari list MASTER (fullHistoryList)
-        for (Trip item : fullHistoryList) {
+        // --- INI PERBAIKAN UTAMANYA ---
+        // Kirim ID Trip agar bisa diteruskan ke PesertaTripActivity
+        intent.putExtra("TRIP_ID", trip.getId()); // <-- 1. TAMBAHKAN BARIS INI
 
-            // Cek apakah nama gunung mengandung teks yang diketik
-            // (Asumsi Anda punya method .getNamaGunung() di model Trip.java)
-            if (item.getNamaGunung().toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(item);
-            }
-        }
+        // Kirim sisa data seperti sebelumnya
+        intent.putExtra("TRIP_TITLE", trip.getMountainName());
+        intent.putExtra("TRIP_DATE", trip.getDate());
+        intent.putExtra("TRIP_PARTICIPANT_COUNT", trip.getParticipants());
+        intent.putExtra("TRIP_STATUS", trip.getStatus());
+        intent.putExtra("TRIP_RATING", trip.getRating());
+        intent.putExtra("TRIP_IMAGE_URL", trip.getImageUrl());
 
-        // Update adapter dengan list yang sudah terfilter
-        if (tripHistoryAdapter != null) {
-            tripHistoryAdapter.filterList(filteredList);
-        }
+        // Mulai Activity baru
+        startActivity(intent);
     }
 
-    /**
-     * Fungsi baru untuk mengisi data (isinya sama seperti kode Anda sebelumnya)
-     */
-    private void loadDummyData() {
-        fullHistoryList.clear(); // Bersihkan dulu jika ada
-        fullHistoryList.add(new Trip("Gunung Rinjani", "15-18 Sep 2025", 10, "Selesai", 4.9, "url_rinjani"));
-        fullHistoryList.add(new Trip("Gunung Semeru", "25-28 Agu 2025", 8, "Selesai", 4.8, "url_semeru"));
-        fullHistoryList.add(new Trip("Gunung Bromo", "5 Jul 2025", 25, "Selesai", 4.7, "url_bromo"));
-        fullHistoryList.add(new Trip("Gunung Gede", "12-13 Jun 2025", 30, "Selesai", 4.6, "url_gede"));
-        fullHistoryList.add(new Trip("Gunung Kerinci", "1-4 Mei 2025", 12, "Selesai", 4.9, "url_kerinci"));
-        fullHistoryList.add(new Trip("Gunung Papandayan", "20 Apr 2025", 22, "Selesai", 4.5, "url_papandayan"));
-        fullHistoryList.add(new Trip("Gunung Ijen", "10 Mar 2025", 18, "Selesai", 4.8, "url_ijen"));
-        fullHistoryList.add(new Trip("Gunung Ciremai", "15-16 Feb 2025", 16, "Selesai", 4.7, "url_ciremai"));
-        fullHistoryList.add(new Trip("Gunung Salak", "5-6 Jan 2025", 20, "Selesai", 4.4, "url_salak"));
-        fullHistoryList.add(new Trip("Gunung Merbabu", "22-24 Des 2024", 14, "Selesai", 4.7, "url_merbabu"));
-        fullHistoryList.add(new Trip("Gunung Pangrango", "10-11 Nov 2024", 28, "Selesai", 4.6, "url_pangrango"));
-        fullHistoryList.add(new Trip("Gunung Tambora", "1-5 Okt 2024", 7, "Selesai", 4.9, "url_tambora"));
-        fullHistoryList.add(new Trip("Puncak Jaya", "1-10 Sep 2024", 5, "Selesai", 5.0, "url_puncakjaya"));
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    // (Helper function agar onViewCreated lebih rapi)
+    private List<Trip> createDummyData() {
+        List<Trip> tripData = new ArrayList<>();
+
+        // --- 2. PERBAIKI CONSTRUCTOR (Tambahkan ID unik di parameter pertama) ---
+        tripData.add(new Trip("T1", "Gunung Rinjani", "15-18 Sep 2025", 10, "Selesai", 4.9, "url_rinjani"));
+        tripData.add(new Trip("T2", "Gunung Semeru", "25-28 Agu 2025", 8, "Selesai", 4.8, "url_semeru"));
+        tripData.add(new Trip("T3", "Gunung Bromo", "5 Jul 2025", 25, "Selesai", 4.7, "url_bromo"));
+        tripData.add(new Trip("T4", "Gunung Gede", "12-13 Jun 2025", 30, "Selesai", 4.6, "url_gede"));
+        tripData.add(new Trip("T5", "Gunung Kerinci", "1-4 Mei 2025", 12, "Selesai", 4.9, "url_kerinci"));
+        tripData.add(new Trip("T6", "Gunung Papandayan", "20 Apr 2025", 22, "Selesai", 4.5, "url_papandayan"));
+        tripData.add(new Trip("T7", "Gunung Ijen", "10 Mar 2025", 18, "Selesai", 4.8, "url_ijen"));
+        tripData.add(new Trip("T8", "Gunung Ciremai", "15-16 Feb 2025", 16, "Selesai", 4.7, "url_ciremai"));
+        tripData.add(new Trip("T9", "Gunung Salak", "5-6 Jan 2025", 20, "Selesai", 4.4, "url_salak"));
+        tripData.add(new Trip("T10", "Gunung Merbabu", "22-24 Des 2024", 14, "Selesai", 4.7, "url_merbabu"));
+        tripData.add(new Trip("T11", "Gunung Pangrango", "10-11 Nov 2024", 28, "Selesai", 4.6, "url_pangrango"));
+        tripData.add(new Trip("T12", "Gunung Tambora", "1-5 Okt 2024", 7, "Selesai", 4.9, "url_tambora"));
+        tripData.add(new Trip("T13", "Puncak Jaya", "1-10 Sep 2024", 5, "Selesai", 5.0, "url_puncakjaya"));
+        return tripData;
     }
 }

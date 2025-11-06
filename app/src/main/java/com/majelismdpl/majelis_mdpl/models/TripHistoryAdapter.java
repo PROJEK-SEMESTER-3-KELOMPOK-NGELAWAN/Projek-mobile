@@ -1,24 +1,40 @@
 package com.majelismdpl.majelis_mdpl.models;
 
+import android.content.Context; // <-- IMPORT DITAMBAHKAN
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView; // Pastikan TextView di-import
-// Import ImageView jika Anda ingin memuat gambar
-// import android.widget.ImageView;
-// import com.google.android.material.imageview.ShapeableImageView;
+// (TextView dan ImageView tidak perlu di-import lagi)
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+// <-- IMPORT PENTING DITAMBAHKAN
+import com.bumptech.glide.Glide;
 import com.majelismdpl.majelis_mdpl.R;
-// Import library untuk gambar, contoh: Glide
-// import com.bumptech.glide.Glide;
+import com.majelismdpl.majelis_mdpl.databinding.ItemTripHistoryBinding; // <-- IMPORT VIEW BINDING
+
 import java.util.List;
-import java.util.Locale; // Import untuk format string
+import java.util.Locale;
 
 public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.TripViewHolder> {
 
     private List<Trip> tripList;
+
+    // --- 1. LOGIKA LISTENER DITAMBAHKAN ---
+    private OnItemClickListener listener;
+
+    // Interface yang akan "didengar" oleh HistoryFragment
+    public interface OnItemClickListener {
+        void onItemClick(Trip trip);
+    }
+
+    // Metode untuk HistoryFragment mendaftarkan dirinya sebagai listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+    // --- BATAS TAMBAHAN ---
+
 
     public TripHistoryAdapter(List<Trip> tripList) {
         this.tripList = tripList;
@@ -27,42 +43,43 @@ public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.
     @NonNull
     @Override
     public TripViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_trip_history, parent, false);
-        return new TripViewHolder(view);
+        // --- 2. PERBAIKAN: MENGGUNAKAN VIEW BINDING ---
+        // Mengganti 'View view = ...'
+        ItemTripHistoryBinding binding = ItemTripHistoryBinding.inflate(
+                LayoutInflater.from(parent.getContext()),
+                parent,
+                false
+        );
+        return new TripViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TripViewHolder holder, int position) {
-        // Ambil data di posisi ini
-        Trip trip = tripList.get(position);
+        Trip currentTrip = tripList.get(position);
+        Context context = holder.itemView.getContext(); // Ambil context untuk Glide
 
-        // === Mulai Set Data ke View ===
+        // --- 3. PERBAIKAN: MENGGUNAKAN 'holder.binding' ---
+        holder.binding.tvMountainName.setText(currentTrip.getMountainName());
+        holder.binding.tvTripDate.setText(currentTrip.getDate());
+        holder.binding.tvParticipantCount.setText(String.format(Locale.getDefault(), "%d peserta", currentTrip.getParticipants()));
+        holder.binding.tvStatus.setText(currentTrip.getStatus());
+        holder.binding.tvRating.setText(String.valueOf(currentTrip.getRating()));
 
-        // 1. Set Nama Gunung
-        holder.tvMountainName.setText(trip.getNamaGunung());
+        // --- 4. PERBAIKAN: IMPLEMENTASI GLIDE (BUKAN KOMENTAR) ---
+        // (Asumsi model Anda punya method getImageUrl())
+        Glide.with(context)
+                .load(currentTrip.getImageUrl())
+                .placeholder(R.drawable.ic_gunung_ijen) // Gambar default saat loading
+                .error(R.drawable.ic_gunung_ijen)       // Gambar jika URL error
+                .into(holder.binding.ivMountainIcon);
 
-        // 2. Set Tanggal
-        holder.tvTripDate.setText(trip.getTanggal());
-
-        // 3. Set Status
-        holder.tvStatus.setText(trip.getStatus());
-
-        // 4. Set Jumlah Peserta (format string agar lebih baik)
-        String participantText = String.format(Locale.getDefault(), "%d Peserta", trip.getPeserta());
-        holder.tvParticipantCount.setText(participantText);
-
-        // 5. Set Rating (ubah double/angka ke String)
-        holder.tvRating.setText(String.valueOf(trip.getRating()));
-
-        // 6. Set Gambar (Opsional - Perlu library tambahan seperti Glide)
-        // Jika Anda ingin memuat gambar dari 'url_rinjani', 'url_semeru', dll.
-        // Hapus komentar di bawah ini dan tambahkan Glide ke build.gradle Anda
-        /*
-        Glide.with(holder.itemView.getContext())
-             .load(trip.getImageUrl()) // Asumsi getImageUrl() mengembalikan URL/resource
-             .placeholder(R.color.colorIconBackground) // Gambar sementara
-             .into(holder.ivMountainIcon);
-        */
+        // --- 5. LOGIKA LISTENER DITAMBAHKAN ---
+        // Menetapkan listener ke seluruh item view
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(currentTrip);
+            }
+        });
     }
 
     @Override
@@ -70,33 +87,15 @@ public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.
         return tripList.size();
     }
 
-    // Fungsi filter (sudah benar)
-    public void filterList(List<Trip> filteredList) {
-        this.tripList = filteredList;
-        notifyDataSetChanged();
-    }
-
-    // === ViewHolder (Sudah Disesuaikan dengan ID XML) ===
+    // --- 6. PERBAIKAN: VIEW HOLDER MENGGUNAKAN VIEW BINDING ---
     public static class TripViewHolder extends RecyclerView.ViewHolder {
+        // Hanya butuh satu variabel binding
+        ItemTripHistoryBinding binding;
 
-        // Deklarasikan semua View dari XML
-        // ShapeableImageView ivMountainIcon;
-        TextView tvMountainName;
-        TextView tvTripDate;
-        TextView tvParticipantCount;
-        TextView tvStatus;
-        TextView tvRating;
-
-        public TripViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            // Hubungkan View dengan ID di file XML
-            // ivMountainIcon = itemView.findViewById(R.id.iv_mountain_icon);
-            tvMountainName = itemView.findViewById(R.id.tv_mountain_name);
-            tvTripDate = itemView.findViewById(R.id.tv_trip_date);
-            tvParticipantCount = itemView.findViewById(R.id.tv_participant_count);
-            tvStatus = itemView.findViewById(R.id.tv_status);
-            tvRating = itemView.findViewById(R.id.tv_rating);
+        public TripViewHolder(ItemTripHistoryBinding binding) { // Parameter diubah
+            super(binding.getRoot());
+            this.binding = binding; // Simpan binding
+            // Tidak perlu findViewById lagi
         }
     }
 }
