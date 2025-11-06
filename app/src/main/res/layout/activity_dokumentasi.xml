@@ -18,7 +18,6 @@
             android:id="@+id/toolbar_dokumentasi"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back" app:navigationIconTint="?attr/colorOnSurface"
             app:title="Dokumentasi"
             app:titleTextColor="?attr/colorOnSurface"
             app:titleCentered="true" />
