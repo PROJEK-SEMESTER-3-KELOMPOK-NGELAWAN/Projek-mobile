@@ -53,7 +53,7 @@ dependencies {
 
     // Fragment Support (Untuk Bottom Navigation)
     implementation("androidx.fragment:fragment:1.6.2")
-    
+
     // ViewPager2 untuk swipe gesture
     implementation("androidx.viewpager2:viewpager2:1.0.0")
 
@@ -64,6 +64,10 @@ dependencies {
 
     // Google Play Services untuk Login
     implementation("com.google.android.gms:play-services-auth:21.3.0")
+
+    // (SAYA TAMBAHKAN) Untuk fitur SOS Lokasi
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     // Credentials untuk Login
@@ -84,5 +88,3 @@ dependencies {
     // GOOGLE OAUTH
     implementation("androidx.browser:browser:1.7.0")
 }
-
-
