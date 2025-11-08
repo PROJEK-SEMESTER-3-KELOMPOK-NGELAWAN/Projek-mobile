@@ -1,7 +1,6 @@
 package com.majelismdpl.majelis_mdpl.fragments;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri; // (BARU) Impor untuk URI
 import android.os.Bundle;
@@ -25,7 +24,7 @@ import com.google.android.material.button.MaterialButton;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.activities.EditProfileActivity;
 import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
-import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.utils.SessionManager;
 import com.majelismdpl.majelis_mdpl.models.User;
 
 public class ProfileFragment extends Fragment {
@@ -93,11 +92,11 @@ public class ProfileFragment extends Fragment {
 
         try {
             // Ambil data user
-            User user = SharedPrefManager.getInstance(getContext()).getUser();
+            User user = SessionManager.getInstance(getContext()).getUser();
 
             if (user != null) {
                 // Set semua data Teks (Sudah benar)
-                tvNamaPengguna.setText(user.getNama());
+                tvNamaPengguna.setText(user.getUsername());
                 tvUsername.setText(user.getUsername());
                 tvPassword.setText("••••••••••");
                 tvWhatsApp.setText(user.getWhatsapp());
@@ -106,7 +105,7 @@ public class ProfileFragment extends Fragment {
 
                 // --- (LOGIKA BARU DIMULAI DI SINI) ---
                 // Muat gambar profil yang disimpan
-                String fotoUriString = SharedPrefManager.getInstance(getContext()).getProfilePhotoUri();
+                String fotoUriString = SessionManager.getInstance(getContext()).getProfilePhotoUri();
                 if (fotoUriString != null && !fotoUriString.isEmpty()) {
                     try {
                         // Ubah string URI kembali menjadi URI dan set ke ImageView
@@ -170,7 +169,7 @@ public class ProfileFragment extends Fragment {
 
     private void logoutUser() {
         if (getContext() == null) return;
-        SharedPrefManager.getInstance(getContext()).logout();
+        SessionManager.getInstance(getContext()).logout();
         Intent intent = new Intent(getContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

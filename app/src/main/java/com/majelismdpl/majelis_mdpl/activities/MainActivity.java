@@ -16,7 +16,7 @@ import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.fragments.HistoryFragment;
 import com.majelismdpl.majelis_mdpl.fragments.HomeFragment;
 import com.majelismdpl.majelis_mdpl.fragments.ProfileFragment;
-import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.utils.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Cek session login (Ini tetap sama)
-        if (!SharedPrefManager.getInstance(this).isLoggedIn()) {
+        if (!SessionManager.getInstance(this).isLoggedIn()) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

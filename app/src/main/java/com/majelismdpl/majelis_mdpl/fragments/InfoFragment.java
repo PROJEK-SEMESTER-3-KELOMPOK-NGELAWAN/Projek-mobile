@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
-import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.utils.SessionManager;
 
 public class InfoFragment extends Fragment {
 
@@ -36,7 +36,7 @@ public class InfoFragment extends Fragment {
                 }
 
                 // Logout menggunakan SharedPrefManager yang sudah ada
-                SharedPrefManager.getInstance(requireActivity()).logout();
+                SessionManager.getInstance(requireActivity()).logout();
 
                 // Bersihkan fragment stack
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();

@@ -1,10 +1,13 @@
 package com.majelismdpl.majelis_mdpl.models;
 
-// (BARU) Import model User
-import com.majelismdpl.majelis_mdpl.models.User;
-// (BARU) Import SerializedName
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * ============================================
+ * LoginResponse Model
+ * Fungsi: Data response dari login-api.php
+ * ============================================
+ */
 public class LoginResponse {
 
     @SerializedName("success")
@@ -16,42 +19,63 @@ public class LoginResponse {
     @SerializedName("role")
     private String role;
 
-    // (BARU) Tambahkan field data 'user'.
-    // Pastikan nama "user" sama dengan key di JSON respons PHP Anda
+    @SerializedName("username")
+    private String username;
+
+    @SerializedName("redirect_url")
+    private String redirectUrl;
+
     @SerializedName("user")
     private User user;
 
-    // Constructor (biarkan apa adanya)
-    public LoginResponse() {}
+    // Constructor
+    public LoginResponse() {
+    }
 
-    // Getters (biarkan apa adanya)
+    // Getters
     public boolean isSuccess() {
         return success;
     }
+
     public String getMessage() {
         return message;
     }
+
     public String getRole() {
         return role;
     }
 
-    // (BARU) Tambahkan getter untuk User
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
     public User getUser() {
+        // Jika user null, buat dari username & role
+        if (user == null && username != null) {
+            user = new User();
+            user.setUsername(username);
+            user.setRole(role);
+        }
         return user;
     }
 
-    // Setters (biarkan apa adanya)
+    // Setters
     public void setSuccess(boolean success) {
         this.success = success;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
+
     public void setRole(String role) {
         this.role = role;
     }
 
-    // (BARU) Tambahkan setter untuk User
     public void setUser(User user) {
         this.user = user;
     }

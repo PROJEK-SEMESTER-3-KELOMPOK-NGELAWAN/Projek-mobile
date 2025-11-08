@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.utils.SessionManager;
 import com.majelismdpl.majelis_mdpl.models.LoginResponse;
 import com.majelismdpl.majelis_mdpl.models.User;
 
@@ -46,7 +46,7 @@ public class OAuthCallbackActivity extends AppCompatActivity {
                 User u = new User();
                 u.setUsername(username);
                 lr.setUser(u);
-                SharedPrefManager.getInstance(this).saveLoginResponse(lr);
+                SessionManager.getInstance(this).saveLoginResponse(lr);
 
                 // Show success message
                 Toast.makeText(this,

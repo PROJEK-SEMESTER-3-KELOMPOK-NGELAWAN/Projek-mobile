@@ -2,13 +2,17 @@ package com.majelismdpl.majelis_mdpl.models;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * ============================================
+ * User Model
+ * Fungsi: Struktur data user
+ * Match dengan tabel database web & SQLite
+ * ============================================
+ */
 public class User {
 
     @SerializedName("id")
     private int id;
-
-    @SerializedName("nama")
-    private String nama;
 
     @SerializedName("username")
     private String username;
@@ -16,10 +20,7 @@ public class User {
     @SerializedName("email")
     private String email;
 
-    // --- PERBAIKAN 1 ---
-    // Diubah dari 'no_hp' ke 'whatsapp' agar konsisten dengan EditProfileActivity
-    // Pastikan @SerializedName("...") cocok dengan JSON key dari API Anda
-    @SerializedName("whatsapp") // <-- Pastikan ini nama key di JSON Anda (atau "no_hp")
+    @SerializedName("whatsapp")
     private String whatsapp;
 
     @SerializedName("alamat")
@@ -28,24 +29,19 @@ public class User {
     @SerializedName("foto_url")
     private String foto_url;
 
-    // --- PERBAIKAN 2 ---
-    // Menambahkan field 'password' yang dibutuhkan EditProfileActivity
     @SerializedName("password")
     private String password;
 
+    @SerializedName("role")
+    private String role;
 
-    // Constructor kosong (diperlukan untuk Gson)
+    // Constructor
     public User() {
     }
 
-    // --- GETTERS (Untuk Membaca Data) ---
-
+    // Getters
     public int getId() {
         return id;
-    }
-
-    public String getNama() {
-        return nama;
     }
 
     public String getUsername() {
@@ -64,20 +60,22 @@ public class User {
         return foto_url;
     }
 
-    // --- PERBAIKAN 1 (lanjutan) ---
-    public String getWhatsapp() { // <-- Diubah dari getNoHp()
+    public String getWhatsapp() {
         return whatsapp;
     }
 
-    // --- PERBAIKAN 2 (lanjutan) ---
-    public String getPassword() { // <-- Method baru
+    public String getPassword() {
         return password;
     }
 
+    public String getRole() {
+        return role;
+    }
 
-    // --- PERBAIKAN 3: MENAMBAHKAN SETTERS ---
-    // (Ini adalah inti masalah dari error Anda)
-    // Dibutuhkan oleh EditProfileActivity untuk menyimpan perubahan
+    // Setters
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -87,7 +85,7 @@ public class User {
         this.email = email;
     }
 
-    public void setWhatsapp(String whatsapp) { // <-- Method baru
+    public void setWhatsapp(String whatsapp) {
         this.whatsapp = whatsapp;
     }
 
@@ -95,7 +93,25 @@ public class User {
         this.alamat = alamat;
     }
 
-    public void setPassword(String password) { // <-- Method baru
+    public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setFotoUrl(String foto_url) {
+        this.foto_url = foto_url;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

@@ -1,39 +1,78 @@
 package com.majelismdpl.majelis_mdpl.api;
 
+import com.majelismdpl.majelis_mdpl.utils.ApiConfig;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+
 import java.util.concurrent.TimeUnit;
 
+/**
+ * ============================================
+ * Retrofit API Client
+ * Auto-sync dengan ApiConfig
+ * ============================================
+ */
 public class ApiClient {
-
-    // TENTUKAN BASE_URL ANDA DI SINI
-    // (Ini adalah IP dari screenshot Anda sebelumnya)
-    private static final String BASE_URL = "http://192.168.1.30/majelismdpl.com/";
 
     private static Retrofit retrofit = null;
 
+    /**
+     * Get Retrofit instance dengan dynamic base URL
+     */
     public static ApiService getApiService() {
         if (retrofit == null) {
-
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .build();
-
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+            retrofit = buildRetrofit();
         }
         return retrofit.create(ApiService.class);
     }
 
-    // --- PERBAIKAN: INI ADALAH METODE YANG HILANG ---
-    // (Tambahkan fungsi ini agar Constants.java bisa mengambil BASE_URL)
+    /**
+     * Build Retrofit instance
+     */
+    private static Retrofit buildRetrofit() {
+        // Get base URL dari ApiConfig (dynamic)
+        String baseUrl = ApiConfig.getBaseUrl();
+
+        // ========== FIX: TAMBAHKAN "/" DI AKHIR ==========
+        if (!baseUrl.endsWith("/")) {
+            baseUrl = baseUrl + "/";
+        }
+
+        // OkHttp client dengan logging (jika development)
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS);
+
+        // Add logging interceptor untuk development
+        if (ApiConfig.isDevelopment()) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(ApiConfig.getLogLevel());
+            httpClient.addInterceptor(logging);
+        }
+
+        // Build Retrofit
+        return new Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .client(httpClient.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    /**
+     * Reset Retrofit instance (untuk refresh base URL)
+     */
+    public static void reset() {
+        retrofit = null;
+    }
+
+    /**
+     * Get base URL (dari ApiConfig)
+     */
     public static String getBaseUrl() {
-        return BASE_URL;
+        return ApiConfig.getBaseUrl();
     }
 }

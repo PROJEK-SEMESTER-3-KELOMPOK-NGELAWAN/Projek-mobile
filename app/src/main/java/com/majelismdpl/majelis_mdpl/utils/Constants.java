@@ -1,8 +1,18 @@
 package com.majelismdpl.majelis_mdpl.utils;
 
+/**
+ * ============================================
+ * Application Constants
+ * Sync dengan ApiConfig
+ * ============================================
+ */
 public class Constants {
-    // Menggunakan ApiConfig untuk consistency
-    public static final String BASE_URL = ApiConfig.getBaseUrl();
+
+    // ========== API CONFIGURATION ==========
+    // Menggunakan ApiConfig untuk dynamic URL
+    public static String getBaseUrl() {
+        return ApiConfig.getBaseUrl();
+    }
 
     // === SharedPreferences keys ===
     public static final String PREF_NAME = "LoginPrefs";
@@ -11,29 +21,43 @@ public class Constants {
     public static final String KEY_IS_LOGGED_IN = "is_logged_in";
     public static final String KEY_ROLE = "role";
 
-    // (PENTING) Kunci ini menyimpan seluruh data user (dalam format JSON)
+    // Kunci untuk data user (JSON format)
     public static final String KEY_USER_DATA = "user_data";
 
-    // (PENTING) Kunci ini menyimpan URI foto profil (sebagai String)
-    // Ini sesuai dengan yang digunakan di SharedPrefManager
+    // Kunci untuk foto profil (URI String)
     public static final String KEY_PROFILE_PHOTO_URI = "KEY_PROFILE_PHOTO_URI";
-
-    // --- Kunci-kunci lama (dihapus/diganti) ---
-    // KEY_USERNAME, KEY_EMAIL, KEY_WHATSAPP, KEY_ADDRESS, KEY_PASSWORD
-    // sekarang menjadi bagian dari objek JSON yang disimpan di KEY_USER_DATA.
-    //
-    // KEY_PROFILE_PHOTO diganti dengan KEY_PROFILE_PHOTO_URI agar lebih jelas
-    // bahwa yang disimpan adalah String URI, bukan file gambar.
-    // ---
-
 
     // === App constants ===
     public static final String PROJECT_NAME = "Majelis MDPL";
     public static final int CONNECTION_TIMEOUT = 30;
 
-    // === API endpoints ===
+    // === API endpoints (relative paths) ===
     public static final String LOGIN_ENDPOINT = "login-api.php";
     public static final String DASHBOARD_ENDPOINT = "dashboard-api.php";
     public static final String REGISTER_ENDPOINT = "registrasi-api.php";
-    public static final String GOOGLE_OAUTH_ENDPOINT = "google-oauth.php";
+    public static final String GOOGLE_OAUTH_ENDPOINT = "google-oauth-android.php";
+
+    // === Helper methods untuk full URL ===
+    public static String getLoginUrl() {
+        return getBaseUrl() + LOGIN_ENDPOINT;
+    }
+
+    public static String getDashboardUrl() {
+        return getBaseUrl() + DASHBOARD_ENDPOINT;
+    }
+
+    public static String getRegisterUrl() {
+        return getBaseUrl() + REGISTER_ENDPOINT;
+    }
+
+    public static String getGoogleOAuthUrl() {
+        return ApiConfig.getOAuthUrl();
+    }
+
+    /**
+     * Get full endpoint URL
+     */
+    public static String getEndpointUrl(String endpoint) {
+        return getBaseUrl() + endpoint;
+    }
 }

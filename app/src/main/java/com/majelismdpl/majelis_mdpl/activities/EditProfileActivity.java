@@ -19,7 +19,7 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.models.User; // --- PENTING: Import model User ---
-import com.majelismdpl.majelis_mdpl.utils.SharedPrefManager;
+import com.majelismdpl.majelis_mdpl.utils.SessionManager;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -28,7 +28,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private ShapeableImageView ivProfileEdit;
     private TextView tvGantiFoto;
     private ActivityResultLauncher<String[]> pickImageLauncher;
-    private SharedPrefManager prefManager;
+    private SessionManager prefManager;
 
     // --- LOGIKA UTAMA ---
     // Kita simpan satu objek User yang sedang diedit.
@@ -42,7 +42,7 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        prefManager = SharedPrefManager.getInstance(this);
+        prefManager = SessionManager.getInstance(this);
 
         // Registrasi Activity Result Launcher untuk Ganti Foto
         pickImageLauncher = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
@@ -185,9 +185,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 // sebelum menyimpannya atau mengirim ke server!
                 currentUser.setPassword(newPasswordInput);
             }
-
-            // 5. SIMPAN SELURUH OBJEK ke SharedPreferences
-            prefManager.saveUser(currentUser);
 
             Toast.makeText(this, "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
             setResult(Activity.RESULT_OK); // Memberi tahu ProfileFragment untuk refresh
