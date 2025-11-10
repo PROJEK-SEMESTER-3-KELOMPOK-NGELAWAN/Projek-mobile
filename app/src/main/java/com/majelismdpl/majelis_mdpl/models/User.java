@@ -44,6 +44,13 @@ public class User {
         return id;
     }
 
+    /**
+     * Alias untuk getId() - untuk kompatibilitas
+     */
+    public int getIdUser() {
+        return id;
+    }
+
     public String getUsername() {
         return username;
     }

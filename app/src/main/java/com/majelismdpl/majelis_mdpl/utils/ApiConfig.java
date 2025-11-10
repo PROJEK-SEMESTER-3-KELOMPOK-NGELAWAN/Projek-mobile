@@ -20,44 +20,23 @@ import java.util.concurrent.TimeUnit;
  */
 public class ApiConfig {
 
-    // ╔════════════════════════════════════════╗
-    // ║  🟢 UBAH DI SINI SAAT NGROK BERUBAH    ║
-    // ╚════════════════════════════════════════╝
-
-    // Environment: "LOCAL", "NGROK", "PRODUCTION"
     private static final String ENVIRONMENT = "NGROK";
-
-    // URL Ngrok (ubah saat restart ngrok)
-    private static final String NGROK_URL = "https://7bc0fc991943.ngrok-free.app";
-
-    // Local IP (ubah jika berbeda)
+    private static final String NGROK_URL = "https://6f185edfed04.ngrok-free.app"; // UBAH INI SETIAP URL NGROK BERBEDA
     private static final String LOCAL_IP = "192.168.1.7";
     private static final String LOCAL_PROJECT = "majelismdpl.com";
-
-    // Production domain
     private static final String PROD_DOMAIN = "majelismdpl.com";
 
-    // ════════════════════════════════════════
-
-
-    // Auto-generated URLs
     private static final String LOCAL_BASE = "http://" + LOCAL_IP + "/" + LOCAL_PROJECT + "/backend/";
     private static final String PROD_BASE = "https://" + PROD_DOMAIN + "/backend/";
     private static final String BOOTSTRAP_URL = NGROK_URL + "/backend/mobile/mobile-config-api.php";
 
-    // Runtime variables
     private static String currentApiUrl = LOCAL_BASE;
     private static boolean isInitialized = false;
 
-    // Constants
     private static final String PREFS_NAME = "ApiConfigPrefs";
     private static final String OAUTH_ENDPOINT = "google-oauth-android.php";
     public static final String PROJECT_NAME = "Majelis MDPL";
 
-
-    /**
-     * Initialize - Call di Application class
-     */
     public static void initialize(Context context) {
         loadFromCache(context);
 
@@ -77,9 +56,6 @@ public class ApiConfig {
         }
     }
 
-    /**
-     * Set static config
-     */
     private static void setStaticConfig() {
         switch (ENVIRONMENT) {
             case "LOCAL":
@@ -94,9 +70,6 @@ public class ApiConfig {
         }
     }
 
-    /**
-     * Fetch config dari server
-     */
     private static void fetchConfig(Context context) throws Exception {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -117,17 +90,11 @@ public class ApiConfig {
         }
     }
 
-    /**
-     * Load dari cache
-     */
     private static void loadFromCache(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         currentApiUrl = prefs.getString("api_url", LOCAL_BASE);
     }
 
-    /**
-     * Save ke cache
-     */
     private static void saveToCache(Context context, String apiUrl) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
@@ -136,72 +103,54 @@ public class ApiConfig {
                 .apply();
     }
 
-
-    // ════════════════════════════════════════
-    // PUBLIC METHODS
-    // ════════════════════════════════════════
-
     /**
-     * Get base URL untuk API calls
+     * Ambil base URL (untuk API)
      */
     public static String getBaseUrl() {
         return currentApiUrl;
     }
 
     /**
-     * Get OAuth URL
+     * UNTUK HOME FRAGMENT JIKA TIDAK ADA TRIP YANG AKTIF
      */
+    public static String getNgrokWebUrl() {
+        // Pastikan ngrok URL berakhiran tanpa slash
+        String base = NGROK_URL.endsWith("/") ? NGROK_URL.substring(0, NGROK_URL.length() - 1) : NGROK_URL;
+        // Kembalikan URL lengkap halaman web yang diinginkan
+        return base + "/index.php#paketTrips";
+    }
+
+
     public static String getOAuthUrl() {
         return currentApiUrl + OAUTH_ENDPOINT;
     }
 
-    /**
-     * Get OAuth callback URL
-     */
     public static String getOAuthCallbackUrl() {
         return currentApiUrl + OAUTH_ENDPOINT;
     }
 
-    /**
-     * Get logging level
-     */
     public static HttpLoggingInterceptor.Level getLogLevel() {
         return "PRODUCTION".equals(ENVIRONMENT)
                 ? HttpLoggingInterceptor.Level.NONE
                 : HttpLoggingInterceptor.Level.BODY;
     }
 
-    /**
-     * Is development?
-     */
     public static boolean isDevelopment() {
         return !"PRODUCTION".equals(ENVIRONMENT);
     }
 
-    /**
-     * Is using ngrok?
-     */
     public static boolean isUsingNgrok() {
         return "NGROK".equals(ENVIRONMENT);
     }
 
-    /**
-     * Is initialized?
-     */
     public static boolean isInitialized() {
         return isInitialized;
     }
 
-    /**
-     * Get environment name
-     */
     public static String getEnvironment() {
         return ENVIRONMENT;
     }
 
-    /**
-     * Refresh config dari server
-     */
     public static void refresh(Context context) {
         if (!"LOCAL".equals(ENVIRONMENT)) {
             new Thread(() -> {

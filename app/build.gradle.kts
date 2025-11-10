@@ -53,7 +53,7 @@ dependencies {
 
     // Fragment Support (Untuk Bottom Navigation)
     implementation("androidx.fragment:fragment:1.6.2")
-    
+
     // ViewPager2 untuk swipe gesture
     implementation("androidx.viewpager2:viewpager2:1.0.0")
 
@@ -76,6 +76,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
+    // Volley untuk HTTP requests (TAMBAHAN BARU)
+    implementation("com.android.volley:volley:1.2.1")
+
     // UI Libraries
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
@@ -87,8 +90,13 @@ dependencies {
 
     // GOOGLE OAUTH
     implementation("androidx.browser:browser:1.7.0")
+
+    // Glide untuk loading image (SUDAH ADA)
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    implementation("androidx.viewpager2:viewpager2:1.1.0")  // untuk Refresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
 
 }
-
-

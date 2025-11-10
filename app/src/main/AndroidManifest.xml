@@ -91,7 +91,7 @@
             tools:ignore="Instantiatable" />
 
         <activity
-            android:name=".activities.MeetingPoint"
+            android:name=".activities.MeetingPointActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainActivity" />

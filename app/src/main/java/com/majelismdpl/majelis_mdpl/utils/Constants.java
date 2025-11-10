@@ -36,6 +36,7 @@ public class Constants {
     public static final String DASHBOARD_ENDPOINT = "dashboard-api.php";
     public static final String REGISTER_ENDPOINT = "registrasi-api.php";
     public static final String GOOGLE_OAUTH_ENDPOINT = "google-oauth-android.php";
+    public static final String GET_USER_TRIP_ENDPOINT = "backend/mobile/get-user-trip.php";
 
     // === Helper methods untuk full URL ===
     public static String getLoginUrl() {
@@ -53,6 +54,22 @@ public class Constants {
     public static String getGoogleOAuthUrl() {
         return ApiConfig.getOAuthUrl();
     }
+
+    //    UNTUK MENADAPTKAN URL mobile/get-user-trip.php
+    public static String getUserTripUrl() {
+        String baseUrl = ApiConfig.getBaseUrl();
+        if (!baseUrl.endsWith("/")) baseUrl += "/";
+        return baseUrl + "mobile/get-user-trip.php";
+    }
+
+    //    UNTUK MENADAPTKAN URL mobile/get-meeting-point.php
+    public static String getMeetingPointUrl() {
+        String baseUrl = getBaseUrl();
+        if (!baseUrl.endsWith("/")) baseUrl += "/";
+        return baseUrl + "mobile/get-meeting-point.php";
+    }
+
+
 
     /**
      * Get full endpoint URL

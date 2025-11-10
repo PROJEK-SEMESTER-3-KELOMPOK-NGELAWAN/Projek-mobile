@@ -1,11 +1,13 @@
 package com.majelismdpl.majelis_mdpl.api;
 
+import com.majelismdpl.majelis_mdpl.models.GetUserTripResponse;
 import com.majelismdpl.majelis_mdpl.models.LoginResponse;
 import com.majelismdpl.majelis_mdpl.models.GoogleAuthResponse;
 import com.majelismdpl.majelis_mdpl.models.Destination;
 import com.majelismdpl.majelis_mdpl.models.Peserta;
 import com.majelismdpl.majelis_mdpl.models.Trip;
 import com.majelismdpl.majelis_mdpl.utils.Constants;
+import com.majelismdpl.majelis_mdpl.models.MeetingPointResponse;
 
 import java.util.List;
 
@@ -119,4 +121,21 @@ public interface ApiService {
      */
     @GET("destination-api.php")
     Call<List<Destination>> getDestinations();
+
+    // ========== GET USER TRIP (NEW ENDPOINT, PAKAI POST) ==========
+    @FormUrlEncoded
+    @POST("mobile/get-user-trip.php") // Pastikan ini benar
+    Call<GetUserTripResponse> getUserTrip(
+            @Field("id_user") int idUser
+    );
+
+    /**
+     * Get Meeting Point User (PASTIKAN URL SAMA DENGAN BACKEND PHP)
+     */
+    @FormUrlEncoded
+    @POST("mobile/get-meeting-point.php")
+    Call<MeetingPointResponse> getUserMeetingPoint(
+            @Field("id_user") int userId
+    );
+
 }
