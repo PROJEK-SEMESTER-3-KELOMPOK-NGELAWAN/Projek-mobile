@@ -3,6 +3,7 @@ package com.majelismdpl.majelis_mdpl.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText passwordInput;
     private MaterialButton loginButton;
     private MaterialButton googleButton;
+    private TextView registerLinkText2; // TAMBAHAN: TextView untuk link Register
 
     private UserManager userManager;
     private SessionManager sessionManager;
@@ -62,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
         googleButton = findViewById(R.id.googleSignInButton);
+        registerLinkText2 = findViewById(R.id.registerLinkText2); // TAMBAHAN
 
         // Login button click
         loginButton.setOnClickListener(v -> handleLogin());
@@ -72,6 +75,12 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(this, "Google Sign-In belum diimplementasikan", Toast.LENGTH_SHORT).show()
             );
         }
+
+        // ========== TAMBAHAN: Register link click listener ==========
+        if (registerLinkText2 != null) {
+            registerLinkText2.setOnClickListener(v -> navigateToRegister());
+        }
+        // =============================================================
     }
 
     private void handleLogin() {
@@ -188,4 +197,16 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    // ========== TAMBAHAN: Method untuk navigate ke RegisterActivity ==========
+    /**
+     * Navigate ke RegisterActivity
+     */
+    private void navigateToRegister() {
+        Log.d(TAG, "Navigating to RegisterActivity...");
+        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        startActivity(intent);
+        // Jangan finish() agar user bisa kembali ke login dengan tombol back
+    }
+    // =========================================================================
 }

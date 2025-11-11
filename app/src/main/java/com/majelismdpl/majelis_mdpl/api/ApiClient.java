@@ -21,12 +21,20 @@ public class ApiClient {
 
     /**
      * Get Retrofit instance dengan dynamic base URL
+     * Method ini yang dipanggil di RegisterActivity
      */
-    public static ApiService getApiService() {
+    public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = buildRetrofit();
         }
-        return retrofit.create(ApiService.class);
+        return retrofit;
+    }
+
+    /**
+     * Get ApiService instance (shortcut method)
+     */
+    public static ApiService getApiService() {
+        return getClient().create(ApiService.class);
     }
 
     /**

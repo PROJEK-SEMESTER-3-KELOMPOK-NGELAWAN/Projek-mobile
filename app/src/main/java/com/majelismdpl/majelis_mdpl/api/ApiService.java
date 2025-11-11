@@ -6,6 +6,7 @@ import com.majelismdpl.majelis_mdpl.models.GoogleAuthResponse;
 import com.majelismdpl.majelis_mdpl.models.Destination;
 import com.majelismdpl.majelis_mdpl.models.Peserta;
 import com.majelismdpl.majelis_mdpl.models.Trip;
+import com.majelismdpl.majelis_mdpl.models.RegisterResponse;
 import com.majelismdpl.majelis_mdpl.utils.Constants;
 import com.majelismdpl.majelis_mdpl.models.MeetingPointResponse;
 
@@ -38,7 +39,7 @@ public interface ApiService {
     );
 
     /**
-     * Register endpoint
+     * Register endpoint (OLD - Tidak dipakai lagi jika pakai OTP)
      */
     @FormUrlEncoded
     @POST(Constants.REGISTER_ENDPOINT)
@@ -49,6 +50,44 @@ public interface ApiService {
             @Field("whatsapp") String whatsapp,
             @Field("alamat") String alamat
     );
+
+    // ========== REGISTER WITH OTP (NEW) ==========
+
+    /**
+     * Register Request OTP - Step 1
+     * Kirim data registrasi dan request OTP via email
+     */
+    @FormUrlEncoded
+    @POST("mobile/register-request-otp.php")
+    Call<RegisterResponse> registerRequestOtp(
+            @Field("username") String username,
+            @Field("password") String password,
+            @Field("email") String email,
+            @Field("no_wa") String noWa,
+            @Field("alamat") String alamat
+    );
+
+    /**
+     * Verify OTP - Step 2
+     * Verifikasi OTP dan simpan user ke database
+     */
+    @FormUrlEncoded
+    @POST("mobile/verify-otp.php")
+    Call<RegisterResponse> verifyOtp(
+            @Field("otp") String otp
+    );
+
+    /**
+     * Resend OTP
+     * Kirim ulang OTP ke email user
+     */
+    @FormUrlEncoded
+    @POST("mobile/resend-otp.php")
+    Call<RegisterResponse> resendOtp(
+            @Field("email") String email
+    );
+
+    // ========== END REGISTER WITH OTP ==========
 
     /**
      * Google OAuth endpoint
@@ -124,7 +163,7 @@ public interface ApiService {
 
     // ========== GET USER TRIP (NEW ENDPOINT, PAKAI POST) ==========
     @FormUrlEncoded
-    @POST("mobile/get-user-trip.php") // Pastikan ini benar
+    @POST("mobile/get-user-trip.php")
     Call<GetUserTripResponse> getUserTrip(
             @Field("id_user") int idUser
     );
