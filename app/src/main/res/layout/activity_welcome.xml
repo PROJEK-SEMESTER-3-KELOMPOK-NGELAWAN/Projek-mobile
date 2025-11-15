@@ -7,10 +7,6 @@
     android:background="@drawable/gambar"
     tools:context=".activities.WelcomeActivity">
 
-    <!-- [DIHAPUS] Guideline tidak lagi diperlukan -->
-
-    <!-- [PERUBAHAN] Menempel ke atas -->
-
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="180dp"
@@ -33,42 +29,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoImage" />
 
-    <!-- [PERUBAHAN] Seluruh blok ini sekarang ditambatkan dari BAWAH ke ATAS -->
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/googleSignInButton"
-        style="@style/Widget.Material3.Button.IconButton.Filled"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginBottom="48dp"
-        android:backgroundTint="@android:color/white"
-        android:elevation="4dp"
-        app:cornerRadius="28dp"
-        app:icon="@drawable/ic_google"
-        app:iconPadding="0dp"
-        app:iconSize="28dp"
-        app:iconTint="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="SpeakableTextPresentCheck" />
-
-    <TextView
-        android:id="@+id/orDividerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:shadowColor="#000000"
-        android:shadowDx="1"
-        android:shadowDy="1"
-        android:shadowRadius="2"
-        android:text="Atau masuk dengan"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/googleSignInButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signInButton"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -76,22 +36,22 @@
         android:layout_height="60dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="48dp"
         android:text="MASUK"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:backgroundTint="@android:color/transparent"
         app:cornerRadius="30dp"
         app:iconGravity="end"
         app:iconPadding="16dp"
         app:iconTint="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@+id/orDividerText"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@android:color/white"
-        app:strokeWidth="2dp"
-        app:backgroundTint="@android:color/transparent" />
+        app:strokeWidth="2dp" />
 
     <TextView
         android:id="@+id/welcomeSubtitle"
@@ -134,4 +94,3 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

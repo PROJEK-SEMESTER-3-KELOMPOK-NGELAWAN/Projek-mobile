@@ -42,9 +42,6 @@ public class WelcomeActivity extends AppCompatActivity {
                     // Buat Intent untuk memulai LoginActivity
                     Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                     startActivity(intent);
-
-                    // Terapkan animasi transisi (dari history)
-                    // (Pastikan slide_in_right & slide_in_out ada di res/anim)
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_out);
 
                 } catch (ActivityNotFoundException e) {
@@ -56,20 +53,6 @@ public class WelcomeActivity extends AppCompatActivity {
             });
         }
 
-        // --- Logika Tombol Google (dari history) ---
-        View googleIcon = findViewById(R.id.googleSignInButton);
-        if (googleIcon != null) {
-            googleIcon.setOnClickListener(v -> {
-                // Panggil Google OAuth
-                try {
-                    // (Ganti baris placeholder ini dengan logika Google Auth Anda yang sebenarnya)
-                    // com.majelismdpl.majelis_mdpl.auth.GoogleAuthManager.startGoogleSignup(WelcomeActivity.this);
-                    Toast.makeText(WelcomeActivity.this, "Tombol Google Sign-In ditekan", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(WelcomeActivity.this, "Google Sign-In tidak tersedia", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
     }
 
     /**
@@ -101,11 +84,6 @@ public class WelcomeActivity extends AppCompatActivity {
         TextView welcomeBackText = findViewById(R.id.welcomeBackText);
         TextView welcomeSubtitle = findViewById(R.id.welcomeSubtitle);
         MaterialButton signInButton = findViewById(R.id.signInButton);
-        TextView orDividerText = findViewById(R.id.orDividerText);
-        View googleSignInButton = findViewById(R.id.googleSignInButton);
-
-        // 5. Buat animasi "slide up" dengan jeda (startOffset)
-        // (R.anim.slide_up_fade_in adalah file yang kita buat di res/anim)
 
         Animation slideUp1 = AnimationUtils.loadAnimation(this, R.anim.slide_up_fade_in);
         slideUp1.setStartOffset(400); // Mulai setelah 400ms
@@ -119,10 +97,6 @@ public class WelcomeActivity extends AppCompatActivity {
         slideUp3.setStartOffset(600); // Mulai setelah 600ms
         signInButton.startAnimation(slideUp3);
 
-        Animation slideUp4 = AnimationUtils.loadAnimation(this, R.anim.slide_up_fade_in);
-        slideUp4.setStartOffset(700); // Mulai setelah 700ms
-        orDividerText.startAnimation(slideUp4);
-        googleSignInButton.startAnimation(slideUp4); // Mulai bersamaan dgn divider
+
     }
 }
-

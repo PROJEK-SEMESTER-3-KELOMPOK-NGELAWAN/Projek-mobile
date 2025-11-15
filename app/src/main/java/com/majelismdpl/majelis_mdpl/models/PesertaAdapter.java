@@ -1,9 +1,13 @@
-package com.majelismdpl.majelis_mdpl.models; // <- DIUBAH ke 'models'
+package com.majelismdpl.majelis_mdpl.models;
 
+import android.content.ActivityNotFoundException; // <- IMPORT DITAMBAHKAN
 import android.content.Context;
+import android.content.Intent; // <- IMPORT DITAMBAHKAN
 import android.graphics.PorterDuff;
+import android.net.Uri; // <- IMPORT DITAMBAHKAN
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast; // <- IMPORT DITAMBAHKAN
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -13,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.databinding.ItemPesertaTripBinding;
-// 'Peserta' sekarang berada di package yang sama, import ini secara teknis tidak apa-apa
 
 
 public class PesertaAdapter extends ListAdapter<Peserta, PesertaAdapter.PesertaViewHolder> {
@@ -49,68 +52,104 @@ public class PesertaAdapter extends ListAdapter<Peserta, PesertaAdapter.PesertaV
         private final ItemPesertaTripBinding binding;
         private final Context context;
 
+        // --- CONSTRUCTOR DIUBAH ---
         public PesertaViewHolder(@NonNull ItemPesertaTripBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
             this.context = itemView.getContext();
 
-            // Hapus import Glide jika Anda tidak lagi menggunakannya
-            // import com.bumptech.glide.Glide;
-            // Pastikan import R sudah ada: import com.majelismdpl.majelis_mdpl.R;
+            // --- PERMINTAAN 1: WARNA HIJAU KONSISTEN ---
+            // (Saya asumsikan R.color.status_hadir adalah warna hijau Anda)
+            int colorHijau = ContextCompat.getColor(context, R.color.status_hadir);
+            binding.imgStatusIcon.setColorFilter(colorHijau, PorterDuff.Mode.SRC_IN);
+
+            // --- PERMINTAAN 2: BUKA CHAT WHATSAPP SAAT DIKLIK ---
+            binding.imgStatusIcon.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) {
+                    return; // Posisi tidak valid
+                }
+
+                Peserta peserta = getItem(position);
+                // Pastikan model Peserta Anda punya method getNomorWa()
+                String nomorWa = peserta.getNomorWa();
+
+                if (nomorWa == null || nomorWa.isEmpty()) {
+                    Toast.makeText(context, "Nomor WA tidak tersedia", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Format nomor: ganti "08..." jadi "628...", hapus "+"
+                String formattedNomor = nomorWa.trim().replace("+", "");
+                if (formattedNomor.startsWith("0")) {
+                    formattedNomor = "62" + formattedNomor.substring(1);
+                }
+
+                try {
+                    // Buat Intent untuk membuka chat WA
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("https://wa.me/" + formattedNomor));
+                    intent.setPackage("com.whatsapp"); // Langsung targetkan WhatsApp
+                    context.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    // Jika WhatsApp tidak terinstal
+                    Toast.makeText(context, "WhatsApp tidak terinstal.", Toast.LENGTH_SHORT).show();
+                    // Fallback: Coba buka di browser
+                    try {
+                        Intent intentFallback = new Intent(Intent.ACTION_VIEW);
+                        intentFallback.setData(Uri.parse("https://wa.me/" + formattedNomor));
+                        context.startActivity(intentFallback);
+                    } catch (ActivityNotFoundException e2) {
+                        Toast.makeText(context, "Tidak ada aplikasi untuk membuka link ini.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
 
-        // --- GANTI SELURUH ISI METODE BIND ANDA DENGAN INI ---
+        // --- METODE BIND DIUBAH (dihapus setColorFilter) ---
         public void bind(Peserta peserta) {
 
             // 1. Set Nama
             binding.tvNamaPeserta.setText(peserta.getNama());
 
-            // 2. Set Avatar (INI PERBAIKAN UTAMANYA untuk drawable)
-            String drawableName = peserta.getAvatarUrl(); // Ini akan berisi "dimasdwi", "daffa", dll.
+            // 2. Set Avatar (Logika ini tetap sama)
+            String drawableName = peserta.getAvatarUrl();
             if (drawableName != null && !drawableName.isEmpty()) {
-                // Dapatkan resource ID dari nama drawable
                 int drawableId = context.getResources().getIdentifier(
                         drawableName, "drawable", context.getPackageName());
 
-                if (drawableId != 0) { // Jika drawable ditemukan
+                if (drawableId != 0) {
                     binding.imgAvatar.setImageResource(drawableId);
                 } else {
-                    // Fallback jika nama drawable tidak ditemukan
-                    binding.imgAvatar.setImageResource(R.drawable.dimasdwi); // Ganti dengan placeholder Anda
+                    binding.imgAvatar.setImageResource(R.drawable.dimasdwi); // Fallback
                 }
             } else {
-                // Fallback jika avatarUrl kosong
-                binding.imgAvatar.setImageResource(R.drawable.dimas_gontor); // Ganti dengan placeholder Anda
+                binding.imgAvatar.setImageResource(R.drawable.dimas_gontor); // Fallback
             }
 
-            // 3. Set Logika Status (Kode ini seharusnya sudah benar dari sebelumnya)
+            // 3. Set Logika Status (TANPA MENGUBAH WARNA ICON)
             String status = peserta.getStatus();
 
             if (status != null && status.equalsIgnoreCase("HADIR")) {
                 binding.tvStatusPeserta.setText("Hadir");
-                binding.imgStatusIcon.setImageResource(R.drawable.ic_check_circle);
-                int colorHadir = ContextCompat.getColor(context, R.color.status_hadir);
-                binding.imgStatusIcon.setColorFilter(colorHadir, PorterDuff.Mode.SRC_IN);
+                binding.imgStatusIcon.setImageResource(R.drawable.ic_whatsapp);
+                // [DIHAPUS] baris setColorFilter
 
             } else if (status != null && status.equalsIgnoreCase("IZIN")) {
                 binding.tvStatusPeserta.setText("Izin");
-                // (Ganti dengan icon izin jika ada)
-                binding.imgStatusIcon.setImageResource(R.drawable.ic_check_circle); // Placeholder
-                int colorIzin = ContextCompat.getColor(context, R.color.status_izin);
-                binding.imgStatusIcon.setColorFilter(colorIzin, PorterDuff.Mode.SRC_IN);
+                binding.imgStatusIcon.setImageResource(R.drawable.ic_whatsapp); // Placeholder
+                // [DIHAPUS] baris setColorFilter
 
             } else {
                 binding.tvStatusPeserta.setText(status != null ? status : "Belum Konfirmasi");
-                // (Ganti dengan icon default jika ada)
-                binding.imgStatusIcon.setImageResource(R.drawable.ic_check_circle); // Placeholder
-                int colorDefault = ContextCompat.getColor(context, R.color.text_light);
-                binding.imgStatusIcon.setColorFilter(colorDefault, PorterDuff.Mode.SRC_IN);
+                binding.imgStatusIcon.setImageResource(R.drawable.ic_whatsapp); // Placeholder
+                // [DIHAPUS] baris setColorFilter
             }
         }
     }
 
     /**
-     * DiffUtil (Diperbarui untuk model baru)
+     * DiffUtil (Tidak ada perubahan)
      */
     static class PesertaDiffCallback extends DiffUtil.ItemCallback<Peserta> {
         @Override
@@ -120,7 +159,6 @@ public class PesertaAdapter extends ListAdapter<Peserta, PesertaAdapter.PesertaV
 
         @Override
         public boolean areContentsTheSame(@NonNull Peserta oldItem, @NonNull Peserta newItem) {
-            // Gunakan .equals() dari model Peserta.java
             return oldItem.equals(newItem);
         }
     }

@@ -17,7 +17,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <!-- Splash Activity (Launcher) -->
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true"
@@ -28,45 +27,33 @@
             </intent-filter>
         </activity>
 
-        <!-- Welcome Activity -->
         <activity
             android:name=".activities.WelcomeActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
-        <!-- Login Activity -->
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- Register Activity -->
-        <activity
-            android:name=".activities.RegisterActivity"
-            android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" /> <activity
+        android:name=".activities.RegisterActivity"
+        android:exported="false"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="adjustPan" /> <activity
+        android:name=".activities.VerificationActivity"
+        android:exported="false"
+        android:screenOrientation="portrait"
+        android:windowSoftInputMode="adjustPan" /> <activity
+        android:name=".activities.MainActivity"
+        android:exported="false"
+        android:screenOrientation="portrait" />
 
-        <!-- Verification Activity (OTP) -->
-        <activity
-            android:name=".activities.VerificationActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Main Activity (Dashboard) -->
-        <activity
-            android:name=".activities.MainActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- Edit Profile Activity -->
         <activity
             android:name=".activities.EditProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
-        <!-- OAuth Callback Activity -->
         <activity
             android:name=".activities.OAuthCallbackActivity"
             android:exported="true"
@@ -92,32 +79,27 @@
 
         </activity>
 
-        <!-- Detail Trip Activity -->
         <activity
             android:name=".activities.DetailTripActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
-        <!-- Peserta Trip Activity -->
         <activity
             android:name=".activities.PesertaTripActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             tools:ignore="Instantiatable" />
 
-        <!-- Meeting Point Activity -->
         <activity
             android:name=".activities.MeetingPointActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainActivity" />
 
-        <!-- Peserta Activity -->
         <activity
             android:name=".activities.PesertaActivity"
             android:exported="false" />
 
-        <!-- Dokumentasi Activity -->
         <activity
             android:name=".activities.DokumentasiActivity"
             android:exported="false" />
@@ -128,7 +110,7 @@
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="https" />
+            <data android:scheme="httpss" />
         </intent>
 
         <intent>

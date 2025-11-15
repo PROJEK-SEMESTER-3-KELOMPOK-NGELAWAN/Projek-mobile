@@ -61,17 +61,18 @@ public class PesertaTripActivity extends AppCompatActivity {
         binding.recyclerViewPeserta.setAdapter(pesertaAdapter);
     }
 
+    // --- PERBAIKAN ADA DI DALAM FUNGSI INI ---
     private void loadDataPeserta(String id) {
         // TODO: Ganti simulasi ini dengan panggilan API / Firebase
         List<Peserta> dummyData = new ArrayList<>();
 
-        // PERBAIKAN: Berikan nama drawable sebagai argumen ke-5 (avatarUrl)
-        dummyData.add(new Peserta("1", "Dimas Dwi", "dimasdwi@mail.com", "HADIR", "dimasdwi")); // <-- Nama drawable
-        dummyData.add(new Peserta("2", "Daffa Mentai", "boss@mail.com", "IZIN", "daffa"));    // <-- Nama drawable
-        dummyData.add(new Peserta("3", "Achmad Rahmadani", "daffa@mail.com", "HADIR", "boss"));       // <-- Nama drawable
-        dummyData.add(new Peserta("4", "Dimas Febry", "dimasfebry@mail.com", "HADIR", "dimas_gontor")); // <-- Nama drawable
-        dummyData.add(new Peserta("5", "Zaidan Alhafidz", "zaidan@mail.com", "Belum Konfirmasi", "zaid")); // <-- Nama drawable
-        dummyData.add(new Peserta("6", "Rintan", "Rintan@mail.com", "HADIR", "rintan")); // <-- Nama drawable tambahan
+        // PERBAIKAN: Berikan argumen ke-6 (nomorWa)
+        dummyData.add(new Peserta("1", "Dimas Dwi", "dimasdwi@mail.com", "HADIR", "dimasdwi", "081234560001")); // <-- TAMBAHKAN NOMOR WA
+        dummyData.add(new Peserta("2", "Daffa Mentai", "boss@mail.com", "IZIN", "daffa", "081234560002"));    // <-- TAMBAHKAN NOMOR WA
+        dummyData.add(new Peserta("3", "Achmad Rahmadani", "daffa@mail.com", "HADIR", "boss", "081234560003"));       // <-- TAMBAHKAN NOMOR WA
+        dummyData.add(new Peserta("4", "Dimas Febry", "dimasfebry@mail.com", "HADIR", "dimas_gontor", "081234560004")); // <-- TAMBAHKAN NOMOR WA
+        dummyData.add(new Peserta("5", "Zaidan Alhafidz", "zaidan@mail.com", "Belum Konfirmasi", "zaid", "081234560005")); // <-- TAMBAHKAN NOMOR WA
+        dummyData.add(new Peserta("6", "Rintan", "Rintan@mail.com", "HADIR", "rintan", "081234560006")); // <-- TAMBAHKAN NOMOR WA
 
         // ... (sisanya sama)
 
