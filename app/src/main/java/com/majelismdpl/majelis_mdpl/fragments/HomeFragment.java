@@ -150,8 +150,26 @@ public class HomeFragment extends Fragment {
         binding.menuTitikKumpul.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), MeetingPointActivity.class)));
 
-        binding.menuPesertaTrip.setOnClickListener(v ->
-                startActivity(new Intent(getActivity(), PesertaTripActivity.class)));
+        binding.menuPesertaTrip.setOnClickListener(v -> {
+            // 1. Cek dulu apakah ada trip di daftar
+            if (tripList == null || tripList.isEmpty()) {
+                Toast.makeText(getContext(), "Belum ada trip yang aktif", Toast.LENGTH_SHORT).show();
+                return; // Hentikan jika tidak ada trip
+            }
+
+            // 2. Ambil trip yang sedang aktif (misalnya, yang pertama di daftar)
+            Trip activeTrip = tripList.get(0);
+            String tripId = String.valueOf(activeTrip.getIdTrip());
+
+            // 3. Buat Intent
+            Intent intent = new Intent(getActivity(), PesertaTripActivity.class);
+
+            // 4. Masukkan ID trip ke dalam Intent
+            intent.putExtra("TRIP_ID", tripId);
+
+            // 5. Jalankan Activity dengan Intent yang sudah berisi data
+            startActivity(intent);
+        });
     }
 
     private void centerFirstItemIfPossible() {
