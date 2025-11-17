@@ -82,7 +82,7 @@ public class TripSelectionActivity extends AppCompatActivity implements TripSele
     }
 
     private void loadUserTrips() {
-        Log.d(TAG, "Loading trips for user ID: " + userId);
+        Log.d(TAG, "Loading ACTIVE trips for user ID: " + userId);
 
         Call<UserTripsResponse> call = apiService.getUserTrips(userId);
         call.enqueue(new Callback<UserTripsResponse>() {
@@ -93,42 +93,35 @@ public class TripSelectionActivity extends AppCompatActivity implements TripSele
                 if (response.isSuccessful() && response.body() != null) {
                     UserTripsResponse tripsResponse = response.body();
 
-                    // Log base URL untuk debugging
                     Log.d(TAG, "Base URL from API: " + tripsResponse.getBaseUrl());
 
                     if (tripsResponse.isSuccess()) {
                         List<UserTripsResponse.TripItem> trips = tripsResponse.getData();
-
-                        if (trips != null && !trips.isEmpty()) {
-                            Log.d(TAG, "Trips loaded: " + trips.size());
-
-                            // Log detail setiap trip untuk debugging
+                        List<UserTripsResponse.TripItem> availableTrips = new java.util.ArrayList<>();
+                        if (trips != null) {
                             for (UserTripsResponse.TripItem trip : trips) {
-                                Log.d(TAG, "Trip: " + trip.getNamaGunung());
-                                Log.d(TAG, "  - gambar_file: " + trip.getGambarFile());
-                                Log.d(TAG, "  - gambar_url: " + trip.getGambarUrl());
+                                if ("available".equalsIgnoreCase(trip.getStatus())) {
+                                    availableTrips.add(trip);
+                                    Log.d(TAG, "Trip: " + trip.getNamaGunung() + " (Status: " + trip.getStatus() + ")");
+                                } else {
+                                    Log.w(TAG, "Trip ignored (not available): " + trip.getNamaGunung() + " (Status: " + trip.getStatus() + ")");
+                                }
                             }
-
-                            // Jika hanya 1 trip, langsung buka PesertaTripActivity
-                            if (trips.size() == 1) {
-                                openPesertaTrip(trips.get(0).getIdTrip());
-                            } else {
-                                // Jika lebih dari 1, tampilkan list
-                                adapter.submitList(trips);
-                                binding.recyclerViewTrips.setVisibility(View.VISIBLE);
-                                binding.layoutEmptyState.setVisibility(View.GONE);
-                            }
+                        }
+                        if (!availableTrips.isEmpty()) {
+                            // TIDAK ADA AUTO-REDIRECT; List SELALU tampil meskipun hanya 1 trip
+                            adapter.submitList(availableTrips);
+                            binding.recyclerViewTrips.setVisibility(View.VISIBLE);
+                            binding.layoutEmptyState.setVisibility(View.GONE);
                         } else {
                             showEmptyState();
                         }
                     } else {
-                        Log.e(TAG, "API returned error: " + tripsResponse.getMessage());
                         showEmptyState();
                         Toast.makeText(TripSelectionActivity.this,
                                 tripsResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.e(TAG, "Response not successful: " + response.code());
                     showEmptyState();
                     Toast.makeText(TripSelectionActivity.this,
                             "Gagal memuat data trip", Toast.LENGTH_SHORT).show();
@@ -138,7 +131,6 @@ public class TripSelectionActivity extends AppCompatActivity implements TripSele
             @Override
             public void onFailure(Call<UserTripsResponse> call, Throwable t) {
                 showLoading(false);
-                Log.e(TAG, "API call failed", t);
                 showEmptyState();
                 Toast.makeText(TripSelectionActivity.this,
                         "Koneksi gagal: " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -153,8 +145,11 @@ public class TripSelectionActivity extends AppCompatActivity implements TripSele
 
     @Override
     public void onTripClick(UserTripsResponse.TripItem trip) {
-        // Buka PesertaTripActivity dengan id_trip yang dipilih
-        openPesertaTrip(trip.getIdTrip());
+        if ("available".equalsIgnoreCase(trip.getStatus())) {
+            openPesertaTrip(trip.getIdTrip());
+        } else {
+            Toast.makeText(this, "Trip ini sudah tidak aktif", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void openPesertaTrip(int tripId) {
@@ -172,9 +167,7 @@ public class TripSelectionActivity extends AppCompatActivity implements TripSele
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh data saat kembali dari PesertaTripActivity
-        if (adapter != null && adapter.getItemCount() > 0) {
-            // Data sudah ada, tidak perlu reload
-        }
+        // Jika ingin reload data setelah kembali, aktifkan baris di bawah:
+        // loadUserTrips();
     }
 }

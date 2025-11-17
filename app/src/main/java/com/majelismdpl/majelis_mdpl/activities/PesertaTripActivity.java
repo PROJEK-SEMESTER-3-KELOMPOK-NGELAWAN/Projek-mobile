@@ -16,7 +16,6 @@ import com.majelismdpl.majelis_mdpl.models.Peserta;
 import com.majelismdpl.majelis_mdpl.models.PesertaAdapter;
 import com.majelismdpl.majelis_mdpl.models.TripParticipantsResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -106,17 +105,30 @@ public class PesertaTripActivity extends AppCompatActivity {
                             // Update toolbar title dengan jumlah peserta
                             binding.toolbar.setTitle("Daftar Peserta (" + participants.size() + ")");
                         } else {
-                            showEmptyState();
+                            showEmptyState("Belum ada peserta untuk trip ini");
                         }
                     } else {
                         Log.e(TAG, "API returned error: " + tripResponse.getMessage());
-                        showEmptyState();
-                        Toast.makeText(PesertaTripActivity.this,
-                                tripResponse.getMessage(), Toast.LENGTH_SHORT).show();
+
+                        // Cek apakah error karena trip sudah tidak aktif
+                        if (tripResponse.getMessage().contains("tidak aktif") ||
+                                tripResponse.getMessage().contains("done")) {
+                            showEmptyState("Trip ini sudah tidak aktif");
+                            Toast.makeText(PesertaTripActivity.this,
+                                    "Trip ini sudah tidak aktif, tidak bisa melihat peserta",
+                                    Toast.LENGTH_LONG).show();
+
+                            // Tutup activity setelah 2 detik
+                            binding.getRoot().postDelayed(() -> finish(), 2000);
+                        } else {
+                            showEmptyState("Gagal memuat data peserta");
+                            Toast.makeText(PesertaTripActivity.this,
+                                    tripResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     Log.e(TAG, "Response not successful: " + response.code());
-                    showEmptyState();
+                    showEmptyState("Gagal memuat data peserta");
                     Toast.makeText(PesertaTripActivity.this,
                             "Gagal memuat data peserta", Toast.LENGTH_SHORT).show();
                 }
@@ -126,17 +138,17 @@ public class PesertaTripActivity extends AppCompatActivity {
             public void onFailure(Call<TripParticipantsResponse> call, Throwable t) {
                 showLoading(false);
                 Log.e(TAG, "API call failed", t);
-                showEmptyState();
+                showEmptyState("Koneksi gagal");
                 Toast.makeText(PesertaTripActivity.this,
                         "Koneksi gagal: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void showEmptyState() {
+    private void showEmptyState(String message) {
         binding.recyclerViewPeserta.setVisibility(View.GONE);
         binding.tvEmptyState.setVisibility(View.VISIBLE);
-        binding.tvEmptyState.setText("Belum ada peserta untuk trip ini");
+        binding.tvEmptyState.setText(message);
     }
 
     @Override
