@@ -7,30 +7,31 @@ import com.majelismdpl.majelis_mdpl.models.Destination;
 import com.majelismdpl.majelis_mdpl.models.Peserta;
 import com.majelismdpl.majelis_mdpl.models.Trip;
 import com.majelismdpl.majelis_mdpl.models.RegisterResponse;
+import com.majelismdpl.majelis_mdpl.models.ProfileResponse;
+import com.majelismdpl.majelis_mdpl.models.EditProfileRequest;
 import com.majelismdpl.majelis_mdpl.utils.Constants;
 import com.majelismdpl.majelis_mdpl.models.MeetingPointResponse;
+import com.majelismdpl.majelis_mdpl.models.TripParticipantsResponse;
+import com.majelismdpl.majelis_mdpl.models.UserTripsResponse;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import com.google.gson.annotations.SerializedName;
 
-/**
- * ============================================
- * Retrofit API Service Interface
- * Endpoint definitions menggunakan Constants
- * ============================================
- */
 public interface ApiService {
 
     // ========== AUTHENTICATION ==========
 
-    /**
-     * Login endpoint
-     */
     @FormUrlEncoded
     @POST(Constants.LOGIN_ENDPOINT)
     Call<LoginResponse> login(
@@ -38,9 +39,6 @@ public interface ApiService {
             @Field("password") String password
     );
 
-    /**
-     * Register endpoint (OLD - Tidak dipakai lagi jika pakai OTP)
-     */
     @FormUrlEncoded
     @POST(Constants.REGISTER_ENDPOINT)
     Call<LoginResponse> register(
@@ -51,12 +49,8 @@ public interface ApiService {
             @Field("alamat") String alamat
     );
 
-    // ========== REGISTER WITH OTP (NEW) ==========
+    // ========== REGISTER WITH OTP ==========
 
-    /**
-     * Register Request OTP - Step 1
-     * Kirim data registrasi dan request OTP via email
-     */
     @FormUrlEncoded
     @POST("mobile/register-request-otp.php")
     Call<RegisterResponse> registerRequestOtp(
@@ -67,68 +61,85 @@ public interface ApiService {
             @Field("alamat") String alamat
     );
 
-    /**
-     * Verify OTP - Step 2
-     * Verifikasi OTP dan simpan user ke database
-     */
     @FormUrlEncoded
     @POST("mobile/verify-otp.php")
-    Call<RegisterResponse> verifyOtp(
-            @Field("otp") String otp
-    );
+    Call<RegisterResponse> verifyOtp(@Field("otp") String otp);
 
-    /**
-     * Resend OTP
-     * Kirim ulang OTP ke email user
-     */
     @FormUrlEncoded
     @POST("mobile/resend-otp.php")
-    Call<RegisterResponse> resendOtp(
-            @Field("email") String email
-    );
+    Call<RegisterResponse> resendOtp(@Field("email") String email);
 
-    // ========== END REGISTER WITH OTP ==========
+    // ========== GOOGLE OAUTH ==========
 
-    /**
-     * Google OAuth endpoint
-     */
     @FormUrlEncoded
     @POST(Constants.GOOGLE_OAUTH_ENDPOINT)
-    Call<GoogleAuthResponse> googleAuth(
-            @Field("id_token") String idToken
-    );
+    Call<GoogleAuthResponse> googleAuth(@Field("id_token") String idToken);
 
+    // ========== PROFILE ==========
+
+    /**
+     * Get User Profile (POST dengan JSON body)
+     */
+    @POST(Constants.GET_PROFILE_ENDPOINT)
+    Call<ProfileResponse> getProfile(@Body ProfileRequest request);
+
+    /**
+     * Edit Profile (JSON tanpa foto)
+     */
+    @POST(Constants.EDIT_PROFILE_ENDPOINT)
+    Call<RegisterResponse> editProfile(@Body EditProfileRequest request);
+
+    /**
+     * Edit Profile dengan Upload Foto (Multipart)
+     */
+    @Multipart
+    @POST(Constants.EDIT_PROFILE_ENDPOINT)
+    Call<RegisterResponse> editProfileWithPhoto(
+            @Part("id_user") RequestBody idUser,
+            @Part("username") RequestBody username,
+            @Part("email") RequestBody email,
+            @Part("whatsapp") RequestBody whatsapp,
+            @Part("alamat") RequestBody alamat,
+            @Part("password") RequestBody password,
+            @Part MultipartBody.Part fotoProfil
+    );
 
     // ========== DASHBOARD ==========
 
-    /**
-     * Dashboard endpoint
-     */
     @GET(Constants.DASHBOARD_ENDPOINT)
     Call<LoginResponse> getDashboard();
 
+    // ========== TRIPS ==========
 
-    // ========== TRIPS (FUTURE ENDPOINTS) ==========
-
-    /**
-     * Get all trips
-     */
     @GET("trip-api.php")
     Call<List<Trip>> getTrips();
 
-    /**
-     * Get trip detail
-     */
     @FormUrlEncoded
     @POST("trip-api.php")
     Call<Trip> getTripDetail(@Field("id_trip") int tripId);
 
-
-    // ========== BOOKINGS (FUTURE ENDPOINTS) ==========
+    @FormUrlEncoded
+    @POST("mobile/get-user-trip.php")
+    Call<GetUserTripResponse> getUserTrip(@Field("id_user") int idUser);
 
     /**
-     * Create booking
+     * Get User Trips (BARU - untuk pemilihan trip)
      */
+    @FormUrlEncoded
+    @POST(Constants.GET_USER_TRIPS_ENDPOINT)
+    Call<UserTripsResponse> getUserTrips(@Field("id_user") int idUser);
+
+    // ========== TRIP PARTICIPANTS ==========
+
+    /**
+     * Get Trip Participants by Trip ID
+     */
+    @FormUrlEncoded
+    @POST(Constants.GET_TRIP_PARTICIPANTS_ENDPOINT)
+    Call<TripParticipantsResponse> getTripParticipants(@Field("id_trip") String tripId);
+
+    // ========== BOOKINGS ==========
+
     @FormUrlEncoded
     @POST("booking-api.php")
     Call<LoginResponse> createBooking(
@@ -136,45 +147,42 @@ public interface ApiService {
             @Field("jumlah_peserta") int jumlahPeserta
     );
 
-    /**
-     * Get user bookings
-     */
     @GET("booking-api.php")
     Call<List<Peserta>> getUserBookings();
 
+    // ========== PAYMENTS ==========
 
-    // ========== PAYMENTS (FUTURE ENDPOINTS) ==========
-
-    /**
-     * Get payment status
-     */
     @FormUrlEncoded
     @POST("payment-api.php")
     Call<LoginResponse> getPaymentStatus(@Field("booking_id") int bookingId);
 
+    // ========== DESTINATIONS ==========
 
-    // ========== DESTINATIONS (FUTURE ENDPOINTS) ==========
-
-    /**
-     * Get all destinations
-     */
     @GET("destination-api.php")
     Call<List<Destination>> getDestinations();
 
-    // ========== GET USER TRIP (NEW ENDPOINT, PAKAI POST) ==========
-    @FormUrlEncoded
-    @POST("mobile/get-user-trip.php")
-    Call<GetUserTripResponse> getUserTrip(
-            @Field("id_user") int idUser
-    );
+    // ========== MEETING POINT ==========
 
-    /**
-     * Get Meeting Point User (PASTIKAN URL SAMA DENGAN BACKEND PHP)
-     */
     @FormUrlEncoded
-    @POST("mobile/get-meeting-point.php")
-    Call<MeetingPointResponse> getUserMeetingPoint(
-            @Field("id_user") int userId
-    );
+    @POST(Constants.GET_MEETING_POINT_ENDPOINT)
+    Call<MeetingPointResponse> getUserMeetingPoint(@Field("id_user") int userId);
 
+    // ========== PROFILE REQUEST MODEL ==========
+
+    class ProfileRequest {
+        @SerializedName("id_user")
+        private int idUser;
+
+        public ProfileRequest(int idUser) {
+            this.idUser = idUser;
+        }
+
+        public int getIdUser() {
+            return idUser;
+        }
+
+        public void setIdUser(int idUser) {
+            this.idUser = idUser;
+        }
+    }
 }

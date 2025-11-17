@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.net.Uri;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -25,7 +27,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.majelismdpl.majelis_mdpl.activities.PesertaTripActivity;
+import com.majelismdpl.majelis_mdpl.activities.TripSelectionActivity;
 import com.majelismdpl.majelis_mdpl.activities.MeetingPointActivity;
 import com.majelismdpl.majelis_mdpl.databinding.FragmentHomeBinding;
 import com.majelismdpl.majelis_mdpl.databinding.ItemTripBinding;
@@ -42,9 +44,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.content.Intent;
-import android.net.Uri;
 
 public class HomeFragment extends Fragment {
 
@@ -63,7 +62,6 @@ public class HomeFragment extends Fragment {
     // Tambahan: komponen empty state
     private LinearLayout layoutEmptyState;
     private MaterialButton btnCariTripBaru;
-    private MaterialButton btnLihatRiwayat;
 
     public HomeFragment() {}
 
@@ -143,31 +141,21 @@ public class HomeFragment extends Fragment {
             startActivity(browserIntent);
         });
 
-
         loadUserData();
         loadTripData();
 
+        // Menu Titik Kumpul
         binding.menuTitikKumpul.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), MeetingPointActivity.class)));
 
+        // Menu Peserta Trip - DIUPDATE: Sekarang buka TripSelectionActivity
         binding.menuPesertaTrip.setOnClickListener(v -> {
-            // 1. Cek dulu apakah ada trip di daftar
-            if (tripList == null || tripList.isEmpty()) {
-                Toast.makeText(getContext(), "Belum ada trip yang aktif", Toast.LENGTH_SHORT).show();
-                return; // Hentikan jika tidak ada trip
-            }
-
-            // 2. Ambil trip yang sedang aktif (misalnya, yang pertama di daftar)
-            Trip activeTrip = tripList.get(0);
-            String tripId = String.valueOf(activeTrip.getIdTrip());
-
-            // 3. Buat Intent
-            Intent intent = new Intent(getActivity(), PesertaTripActivity.class);
-
-            // 4. Masukkan ID trip ke dalam Intent
-            intent.putExtra("TRIP_ID", tripId);
-
-            // 5. Jalankan Activity dengan Intent yang sudah berisi data
+            // Langsung buka TripSelectionActivity
+            // TripSelectionActivity akan menghandle:
+            // - Jika user punya 1 trip -> langsung ke PesertaTripActivity
+            // - Jika user punya 2+ trip -> tampilkan list untuk dipilih
+            // - Jika user tidak punya trip -> tampilkan empty state
+            Intent intent = new Intent(getActivity(), TripSelectionActivity.class);
             startActivity(intent);
         });
     }

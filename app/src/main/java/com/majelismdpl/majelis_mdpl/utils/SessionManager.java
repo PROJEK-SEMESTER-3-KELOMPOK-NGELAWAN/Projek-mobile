@@ -37,10 +37,7 @@ public class SessionManager {
      */
     public void saveLoginResponse(LoginResponse loginResponse) {
         if (loginResponse.isSuccess() && loginResponse.getUser() != null) {
-            // Simpan user ke SQLite
             userManager.saveLoggedInUser(loginResponse.getUser());
-
-            // Simpan role & status login ke SharedPreferences
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean(Constants.KEY_IS_LOGGED_IN, true);
             editor.putString(Constants.KEY_ROLE, loginResponse.getRole());
@@ -73,10 +70,7 @@ public class SessionManager {
      * Logout user (hapus dari SQLite + SharedPref)
      */
     public void logout() {
-        // Hapus dari SQLite
         userManager.logoutUser();
-
-        // Hapus dari SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.putBoolean(Constants.KEY_IS_LOGGED_IN, false);

@@ -2,17 +2,10 @@ package com.majelismdpl.majelis_mdpl.models;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * ============================================
- * User Model
- * Fungsi: Struktur data user
- * Match dengan tabel database web & SQLite
- * ============================================
- */
 public class User {
 
-    @SerializedName("id")
-    private int id;
+    @SerializedName("id_user")
+    private int idUser;
 
     @SerializedName("username")
     private String username;
@@ -35,87 +28,34 @@ public class User {
     @SerializedName("role")
     private String role;
 
-    // Constructor
-    public User() {
-    }
+    public User() {}
 
     // Getters
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Alias untuk getId() - untuk kompatibilitas
-     */
-    public int getIdUser() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getAlamat() {
-        return alamat;
-    }
-
-    public String getFotoUrl() {
-        return foto_url;
-    }
-
-    public String getWhatsapp() {
-        return whatsapp;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRole() {
-        return role;
-    }
+    public int getId() { return idUser; } // Untuk kompatibilitas legacy
+    public int getIdUser() { return idUser; }
+    public String getUsername() { return username; }
+    public String getEmail() { return email; }
+    public String getAlamat() { return alamat; }
+    public String getFotoUrl() { return foto_url; }
+    public String getWhatsapp() { return whatsapp; }
+    public String getPassword() { return password; }
+    public String getRole() { return role; }
 
     // Setters
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setWhatsapp(String whatsapp) {
-        this.whatsapp = whatsapp;
-    }
-
-    public void setAlamat(String alamat) {
-        this.alamat = alamat;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setFotoUrl(String foto_url) {
-        this.foto_url = foto_url;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public void setId(int idUser) { this.idUser = idUser; } // Untuk kompatibilitas legacy
+    public void setIdUser(int idUser) { this.idUser = idUser; }
+    public void setUsername(String username) { this.username = username; }
+    public void setEmail(String email) { this.email = email; }
+    public void setWhatsapp(String whatsapp) { this.whatsapp = whatsapp; }
+    public void setAlamat(String alamat) { this.alamat = alamat; }
+    public void setPassword(String password) { this.password = password; }
+    public void setFotoUrl(String foto_url) { this.foto_url = foto_url; }
+    public void setRole(String role) { this.role = role; }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "idUser=" + idUser +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +

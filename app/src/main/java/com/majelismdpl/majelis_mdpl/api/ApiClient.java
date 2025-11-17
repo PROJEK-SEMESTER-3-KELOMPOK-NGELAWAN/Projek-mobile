@@ -31,6 +31,13 @@ public class ApiClient {
     }
 
     /**
+     * TAMBAHAN: Alias untuk getClient() (untuk konsistensi penamaan)
+     */
+    public static Retrofit getInstance() {
+        return getClient();
+    }
+
+    /**
      * Get ApiService instance (shortcut method)
      */
     public static ApiService getApiService() {
