@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class ApiConfig {
 
     private static final String ENVIRONMENT = "NGROK";
-    private static final String NGROK_URL = "https://dba0d1055a80.ngrok-free.app"; // UBAH INI SETIAP URL NGROK BERBEDA
+    private static final String NGROK_URL = "https://95efb84f6406.ngrok-free.app"; // UBAH INI SETIAP URL NGROK BERBEDA
     private static final String LOCAL_IP = "192.168.1.7";
     private static final String LOCAL_PROJECT = "majelismdpl.com";
     private static final String PROD_DOMAIN = "majelismdpl.com";

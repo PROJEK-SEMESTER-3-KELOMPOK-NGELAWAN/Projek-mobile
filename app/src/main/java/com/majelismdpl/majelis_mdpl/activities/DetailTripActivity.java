@@ -6,14 +6,21 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.databinding.ActivityDetailTripBinding;
+import com.majelismdpl.majelis_mdpl.models.PreviewPesertaAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DetailTripActivity extends AppCompatActivity {
 
     private ActivityDetailTripBinding binding;
-    private String currentTripId; // <-- PERBAIKAN 1: Variabel untuk menyimpan ID Trip
+    private String currentTripId;
+    private PreviewPesertaAdapter previewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,110 +28,100 @@ public class DetailTripActivity extends AppCompatActivity {
         binding = ActivityDetailTripBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Panggil fungsi-fungsi setup
         setupToolbar();
         setupClickListeners();
-
-        // Panggil fungsi untuk memuat data
+        setupPreviewPesertaRecycler();
         loadTripDataFromIntent();
     }
 
-    /**
-     * Mengatur Toolbar, terutama tombol kembali.
-     */
     private void setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Menutup activity ini
-            }
-        });
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
     }
 
-    /**
-     * Mengatur semua listener untuk elemen yang bisa diklik.
-     */
     private void setupClickListeners() {
-        // Listener untuk "Booking Trip Serupa"
-        binding.btnBooking.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(DetailTripActivity.this, "Membuka halaman booking...", Toast.LENGTH_SHORT).show();
-            }
-        });
+        binding.btnBooking.setOnClickListener(v ->
+                Toast.makeText(DetailTripActivity.this, "Membuka halaman booking...", Toast.LENGTH_SHORT).show()
+        );
 
-        // Listener untuk "Lihat semua" (peserta)
-        binding.tvLihatSemua.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // --- PERBAIKAN 3: Logika yang diperbarui ---
-
-                // Cek dulu apakah ID trip-nya ada (diterima dari layar sebelumnya)
-                if (currentTripId != null && !currentTripId.isEmpty()) {
-                    Intent intent = new Intent(DetailTripActivity.this, PesertaTripActivity.class);
-                    // Ini adalah perbaikan utamanya: Kirim ID Trip ke PesertaTripActivity
-                    intent.putExtra("TRIP_ID", currentTripId);
-                    startActivity(intent);
-                } else {
-                    // Tampilkan error jika karena suatu alasan ID-nya tidak ada
-                    Toast.makeText(DetailTripActivity.this, "Error: Gagal memuat data peserta, ID Trip tidak ditemukan.", Toast.LENGTH_SHORT).show();
+        binding.tvLihatSemua.setOnClickListener(v -> {
+            if (currentTripId != null && !currentTripId.isEmpty()) {
+                Intent intent = new Intent(DetailTripActivity.this, PesertaActivity.class);
+                try {
+                    intent.putExtra("TRIP_ID", Integer.parseInt(currentTripId));
+                } catch (NumberFormatException e) {
+                    intent.putExtra("TRIP_ID", -1);
                 }
+                startActivity(intent);
+            } else {
+                Toast.makeText(DetailTripActivity.this, "Gagal memuat peserta, ID Trip tidak ditemukan.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    /**
-     * Mengambil data yang dikirim dari HistoryFragment dan menampilkannya.
-     */
+    private void setupPreviewPesertaRecycler() {
+        previewAdapter = new PreviewPesertaAdapter();
+        binding.rvPreviewPeserta.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        );
+        binding.rvPreviewPeserta.setAdapter(previewAdapter);
+
+        // Ganti kode ini agar dapat data dari API/Model trip
+        List<String> pesertaThumbs = new ArrayList<>();
+        pesertaThumbs.add("https://randomuser.me/api/portraits/men/1.jpg");
+        pesertaThumbs.add("https://randomuser.me/api/portraits/women/2.jpg");
+        pesertaThumbs.add("https://randomuser.me/api/portraits/men/3.jpg");
+        pesertaThumbs.add("https://randomuser.me/api/portraits/women/4.jpg");
+        pesertaThumbs.add("https://randomuser.me/api/portraits/men/5.jpg");
+        previewAdapter.submitList(pesertaThumbs);
+
+        // Nanti: ketika sudah ada API peserta, isi pesertaThumbs dari List<Peserta> atau List<PesertaHistory>:
+        // for (PesertaHistory peserta : listPeserta) pesertaThumbs.add(peserta.getFotoProfil());
+        // previewAdapter.submitList(pesertaThumbs);
+    }
+
     private void loadTripDataFromIntent() {
-        // 1. Ambil Intent yang memulai activity ini
         Intent intent = getIntent();
 
-        // 2. Ambil data dari Intent menggunakan KEY yang sama persis
+        currentTripId = String.valueOf(intent.getIntExtra("TRIP_ID", -1));
         String tripTitle = intent.getStringExtra("TRIP_TITLE");
         String tripDate = intent.getStringExtra("TRIP_DATE");
-        String imageUrl = intent.getStringExtra("TRIP_IMAGE_URL");
-        double tripRating = intent.getDoubleExtra("TRIP_RATING", 0.0);
+        String tripDuration = intent.getStringExtra("TRIP_DURATION");
+        String tripImageUrl = intent.getStringExtra("TRIP_IMAGE_URL");
+        String tripJenis = intent.getStringExtra("TRIP_JENIS");
 
-        // --- PERBAIKAN 2: Ambil ID Trip dan simpan ---
-        currentTripId = intent.getStringExtra("TRIP_ID");
-
-        // 3. Set data yang diterima ke Views
-
-        // Set Judul
-        if (tripTitle != null) {
+        if (tripTitle != null && !tripTitle.isEmpty()) {
             binding.tvTripTitle.setText(tripTitle);
-            binding.toolbar.setTitle(tripTitle); // Ganti judul toolbar juga
+            binding.toolbar.setTitle(tripTitle);
         } else {
             binding.tvTripTitle.setText("Detail Trip");
         }
 
-        // Set Tanggal
-        if (tripDate != null) {
-            binding.tvTripDate.setText(tripDate);
+        binding.tvTripDate.setText(tripDate != null ? tripDate : "-");
+
+        if (tripDuration != null && !tripDuration.isEmpty()) {
+            binding.tvTripDuration.setText(tripDuration);
+            binding.tvTripDuration.setVisibility(View.VISIBLE);
         } else {
-            binding.tvTripDate.setText("Tanggal tidak tersedia");
+            binding.tvTripDuration.setVisibility(View.GONE);
         }
 
-        // Set Rating
-        binding.ratingBar.setRating((float) tripRating);
+        if (tripJenis != null && !tripJenis.isEmpty()) {
+            binding.tvTripElevation.setText(tripJenis);
+            binding.tvTripElevation.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvTripElevation.setText("-");
+            binding.tvTripElevation.setVisibility(View.VISIBLE);
+        }
 
-        // Set Gambar Header
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            // (Logika Glide/Gambar Anda...)
-
-            if (tripTitle != null && tripTitle.toLowerCase().contains("ijen")) {
-                binding.imgHeader.setImageResource(R.drawable.ic_gunung_ijen);
-            } else {
-                binding.imgHeader.setImageResource(R.drawable.ic_gunung_ijen);
-            }
+        if (tripImageUrl != null && !tripImageUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(tripImageUrl)
+                    .placeholder(R.drawable.ic_gunung_ijen)
+                    .error(R.drawable.ic_gunung_ijen)
+                    .centerCrop()
+                    .into(binding.imgHeader);
         } else {
             binding.imgHeader.setImageResource(R.drawable.ic_gunung_ijen);
         }
-
-        // 4. DATA YANG TIDAK DIKIRIM DARI HISTORY
-        binding.tvTripDuration.setText("Detail Durasi (dari API)");
-        binding.tvTripElevation.setText("Detail Elevasi (dari API)");
-        binding.tvReviewText.setText("Ulasan lengkap akan dimuat di sini...");
     }
 }

@@ -28,30 +28,40 @@
             app:title="@string/history_title"
             app:titleTextColor="?attr/colorOnSurface"
             app:contentInsetStart="16dp"
-            app:titleCentered="true"  /> <LinearLayout
-        android:id="@+id/search_bar_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
+            app:titleCentered="true"  />
 
-        <EditText
-            android:id="@+id/etSearch"
+        <LinearLayout
+            android:id="@+id/search_bar_container"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/search_bar_background"
-            android:hint="Cari riwayat..."
-            android:inputType="text"
-            android:maxLines="1"
+            android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="12dp"
-            android:textSize="16sp" />
-    </LinearLayout>
+            android:paddingBottom="16dp">
 
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/search_bar_background"
+                android:hint="Cari riwayat..."
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="12dp"
+                android:textSize="16sp" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+        android:indeterminate="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_history"

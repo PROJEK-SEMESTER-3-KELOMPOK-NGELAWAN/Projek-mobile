@@ -9,6 +9,8 @@ import com.majelismdpl.majelis_mdpl.models.Trip;
 import com.majelismdpl.majelis_mdpl.models.RegisterResponse;
 import com.majelismdpl.majelis_mdpl.models.ProfileResponse;
 import com.majelismdpl.majelis_mdpl.models.EditProfileRequest;
+import com.majelismdpl.majelis_mdpl.models.TripHistoryResponse;
+import com.majelismdpl.majelis_mdpl.models.TripParticipantsHistoryResponse;
 import com.majelismdpl.majelis_mdpl.utils.Constants;
 import com.majelismdpl.majelis_mdpl.models.MeetingPointResponse;
 import com.majelismdpl.majelis_mdpl.models.TripParticipantsResponse;
@@ -166,6 +168,19 @@ public interface ApiService {
     @FormUrlEncoded
     @POST(Constants.GET_MEETING_POINT_ENDPOINT)
     Call<MeetingPointResponse> getUserMeetingPoint(@Field("id_user") int userId);
+
+
+    // ========== TRIP HISTORY DENGAN STATUS (untuk HistoryFragment) ==========
+    @FormUrlEncoded
+    @POST("mobile/get-user-trip-history.php")
+    Call<TripHistoryResponse> getUserTripHistory(@Field("id_user") int idUser);
+
+    @FormUrlEncoded
+    @POST("mobile/get-trip-participants-history.php")
+    Call<TripParticipantsHistoryResponse> getTripParticipantsHistory(@Field("id_trip") int idTrip);
+
+
+
 
     // ========== PROFILE REQUEST MODEL ==========
 

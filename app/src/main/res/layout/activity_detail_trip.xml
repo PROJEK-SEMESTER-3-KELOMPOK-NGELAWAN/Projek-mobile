@@ -167,75 +167,60 @@
                     android:layout_marginTop="20dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp">
-                    <RelativeLayout
+                    <com.google.android.material.card.MaterialCardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp">
-                        <TextView
-                            android:id="@+id/tv_peserta_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Peserta Trip"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/tv_lihat_semua"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:text="Lihat semua"
-                            android:textColor="@color/trip_orange_dark" />
+                        android:layout_marginTop="20dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/tv_peserta_title"
-                            android:layout_marginTop="12dp"
-                            android:orientation="horizontal">
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:src="@drawable/dimasdwi"
-                                app:civ_border_color="@android:color/white"
-                                app:civ_border_width="2dp" />
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="-12dp"
-                                android:src="@drawable/daffa"
-                                app:civ_border_color="@android:color/white"
-                                app:civ_border_width="2dp" />
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="-12dp"
-                                android:src="@drawable/boss"
-                                app:civ_border_color="@android:color/white"
-                                app:civ_border_width="2dp" />
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="-12dp"
-                                android:src="@drawable/dimas_gontor"
-                                app:civ_border_color="@android:color/white"
-                                app:civ_border_width="2dp" />
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="-12dp"
-                                android:src="@drawable/zaid"
-                                app:civ_border_color="@android:color/white"
-                                app:civ_border_width="2dp" />
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginStart="-12dp"
-                                android:src="@drawable/rintan"
-                                app:civ_border_color="@android:color/white"
-                                app:civ_border_width="2dp" />
+                            android:padding="16dp"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/tv_peserta_title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Peserta Trip"
+                                    android:textColor="@android:color/black"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tv_lihat_semua"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Lihat semua"
+                                    android:textColor="@color/trip_orange_dark"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true" />
+                            </RelativeLayout>
+
+                            <!-- Horizontal RecyclerView for Avatar Preview -->
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_preview_peserta"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:layout_marginTop="12dp"
+                                android:overScrollMode="never"
+                                android:paddingEnd="8dp"
+                                android:paddingStart="8dp"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/item_avatar_peserta"
+                                tools:itemCount="6"
+                                android:clipToPadding="false"
+                                android:orientation="horizontal"/>
+
                         </LinearLayout>
-                    </RelativeLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -245,42 +230,7 @@
                     android:layout_marginBottom="16dp"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
 
-                        <TextView
-                            android:id="@+id/tv_review_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Ulasan Trip Kamu"
-                            android:textColor="@android:color/black"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <RatingBar
-                            android:id="@+id/rating_bar"
-                            style="@style/CustomRatingBarStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:numStars="5"
-                            android:rating="4"
-                            android:stepSize="1"
-                            android:isIndicator="true" />
-
-                        <TextView
-                            android:id="@+id/tv_review_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:lineSpacingExtra="4dp"
-                            android:text="Perjalanan yang sangat luar biasa! Pemandangannya sungguh menakjubkan dan pemandu wisatanya sangat profesional dan ramah. Semuanya terorganisir dengan baik. Sangat direkomendasikan untuk para pendaki, baik pemula maupun yang sudah berpengalaman!"
-                            android:textColor="@color/text_light"
-                            android:textSize="14sp" />
-                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
