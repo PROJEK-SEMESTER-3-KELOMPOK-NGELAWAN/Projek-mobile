@@ -29,6 +29,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.majelismdpl.majelis_mdpl.activities.TripSelectionActivity;
 import com.majelismdpl.majelis_mdpl.activities.MeetingPointActivity;
+
+// Tambahkan import Activity yang baru di sini
+import com.majelismdpl.majelis_mdpl.activities.WhatsappGroupActivity;
+import com.majelismdpl.majelis_mdpl.activities.DokumentasiActivity;
+
 import com.majelismdpl.majelis_mdpl.databinding.FragmentHomeBinding;
 import com.majelismdpl.majelis_mdpl.databinding.ItemTripBinding;
 import com.majelismdpl.majelis_mdpl.R;
@@ -148,14 +153,28 @@ public class HomeFragment extends Fragment {
         binding.menuTitikKumpul.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), MeetingPointActivity.class)));
 
-        // Menu Peserta Trip - DIUPDATE: Sekarang buka TripSelectionActivity
+        // Menu Peserta Trip
         binding.menuPesertaTrip.setOnClickListener(v -> {
             // Langsung buka TripSelectionActivity
-            // TripSelectionActivity akan menghandle:
-            // - Jika user punya 1 trip -> langsung ke PesertaTripActivity
-            // - Jika user punya 2+ trip -> tampilkan list untuk dipilih
-            // - Jika user tidak punya trip -> tampilkan empty state
             Intent intent = new Intent(getActivity(), TripSelectionActivity.class);
+            startActivity(intent);
+        });
+
+        // =======================================================
+        // TAMBAHAN: Menu Grup WhatsApp
+        // =======================================================
+        // Diasumsikan ID view di fragment_home.xml adalah menuGrupWhatsapp
+        binding.menuGrupWhatsapp.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), WhatsappGroupActivity.class);
+            startActivity(intent);
+        });
+
+        // =======================================================
+        // TAMBAHAN: Menu Dokumentasi
+        // =======================================================
+        // Diasumsikan ID view di fragment_home.xml adalah menuDokumentasi
+        binding.menuDokumentasi.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), DokumentasiActivity.class);
             startActivity(intent);
         });
     }

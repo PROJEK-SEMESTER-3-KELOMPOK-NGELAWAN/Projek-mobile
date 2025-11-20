@@ -18,6 +18,7 @@
             android:id="@+id/toolbar_peserta"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="24dp"
             app:navigationIconTint="?attr/colorOnSurface"
             app:title="Peserta Trip"
             app:titleTextColor="?attr/colorOnSurface"
