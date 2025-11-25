@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/trip_gray_bg"
+    android:background="@color/cream_bg"
     tools:context="com.majelismdpl.majelis_mdpl.activities.PesertaTripActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,33 +20,35 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="24dp"
-            app:navigationIcon="@drawable/ic_arrow_back_black"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/black"
+            android:textStyle="bold"
             app:title="Daftar Peserta"
             app:titleCentered="true"
-            app:titleTextColor="@android:color/black" />
+            app:titleTextColor="@color/black"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Progress Bar -->
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:indeterminateTint="@color/brown_dark"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Empty State TextView -->
     <TextView
         android:id="@+id/tv_empty_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Belum ada peserta"
         android:textSize="16sp"
-        android:textColor="@android:color/darker_gray"
+        android:textStyle="bold"
+        android:textColor="@color/brown_dark"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -60,6 +62,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/white"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

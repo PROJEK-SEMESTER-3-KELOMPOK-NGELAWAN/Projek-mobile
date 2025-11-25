@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:background="@color/surface"
         app:elevation="8dp"
-        app:itemIconTint="@color/nav_item_selector"
-        app:itemTextColor="@color/nav_item_selector"
+        app:itemIconTint="@color/brown_dark"
+        app:itemTextColor="@color/black"
         app:labelVisibilityMode="selected"
 
         app:layout_constraintBottom_toBottomOf="parent"

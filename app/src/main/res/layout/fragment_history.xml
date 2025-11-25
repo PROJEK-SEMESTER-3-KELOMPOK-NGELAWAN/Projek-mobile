@@ -5,31 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cream_bg"
     tools:context="fragments.HistoryFragment">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@color/cream_bg"
-        android:contentDescription="@null" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/cream_bg"
+        android:background="@android:color/white"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="24dp"
-            app:title="@string/history_title"
-            app:titleTextColor="?attr/colorOnSurface"
             app:contentInsetStart="16dp"
-            app:titleCentered="true"  />
+            app:title="@string/history_title"
+            app:titleCentered="true"
+            app:titleTextColor="@color/black"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
         <LinearLayout
             android:id="@+id/search_bar_container"
@@ -44,34 +38,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:background="@drawable/search_bar_background"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="12dp"
+                android:drawableTint="@color/brown_dark"
                 android:hint="Cari riwayat..."
                 android:inputType="text"
                 android:maxLines="1"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="12dp"
-                android:textSize="16sp" />
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="16sp"
+                tools:targetApi="m" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:visibility="gone"
-        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        android:indeterminateTint="@color/brown_dark"
+        android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_history"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="0dp"
         android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:padding="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_trip_history" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

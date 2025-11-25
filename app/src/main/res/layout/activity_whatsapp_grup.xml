@@ -86,7 +86,7 @@
                 android:id="@+id/btn_gabung_whatsapp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/brown_dark"
+                android:backgroundTint="@color/brown_text"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
                 android:text="Gabung Sekarang ke Grup Trip"

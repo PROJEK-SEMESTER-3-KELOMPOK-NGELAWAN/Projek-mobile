@@ -5,24 +5,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/cream_bg"
     tools:context=".activities.PesertaActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface"
-        app:elevation="4dp">
+        android:background="@android:color/white"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_peserta"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="24dp"
-            app:navigationIconTint="?attr/colorOnSurface"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/black"
             app:title="Peserta Trip"
-            app:titleTextColor="?attr/colorOnSurface"
-            app:titleCentered="true" />
+            app:titleCentered="true"
+            app:titleTextColor="@color/black" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -37,21 +37,22 @@
             android:id="@+id/tv_peserta_trip_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="Halaman untuk menampilkan daftar peserta."
-            android:textSize="16sp"
             android:textAlignment="center"
-            android:layout_marginTop="20dp"/>
+            android:textColor="@color/brown_dark"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvEmptyState"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Peserta tidak tersedia"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:textColor="@color/text_light"
+            android:text="Peserta tidak tersedia"
+            android:textColor="@color/brown_dark"
             android:textSize="15sp"
-            android:visibility="gone"
-            android:layout_marginTop="8dp"/>
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_peserta"
