@@ -49,4 +49,8 @@
     <color name="status_hadir">#4CAF50</color>
     <color name="status_izin">#FFC107</color>
     <color name="status_alpa">#F44336</color>
+    <color name="dark_brown">#78593E</color>
+    <color name="dark_brown_icon">#78593E</color>
+    <color name="gray_outline">#CCCCCC</color>
+    <color name="otp_line">#CCCCCC</color>
 </resources>

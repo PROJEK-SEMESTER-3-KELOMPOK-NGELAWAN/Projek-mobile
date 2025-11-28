@@ -25,6 +25,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.api.ApiClient;
 import com.majelismdpl.majelis_mdpl.api.ApiService;
+import com.majelismdpl.majelis_mdpl.activities.ResetPasswordActivity; // ASUMSI: Ganti dengan path yang benar
 import com.majelismdpl.majelis_mdpl.models.EditProfileRequest;
 import com.majelismdpl.majelis_mdpl.models.RegisterResponse;
 import com.majelismdpl.majelis_mdpl.models.User;
@@ -45,8 +46,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfileActivity";
 
-    private TextInputEditText etUsername, etEmail, etWhatsapp, etAlamat, etPassword;
-    private MaterialButton btnSimpan, btnBatal;
+    // Hapus etPassword dari deklarasi
+    private TextInputEditText etUsername, etEmail, etWhatsapp, etAlamat;
+    private MaterialButton btnSimpan, btnBatal, btnChangePassword; // Tombol baru
     private ShapeableImageView ivProfileEdit;
     private TextView tvGantiFoto;
     private ActivityResultLauncher<String[]> pickImageLauncher;
@@ -59,6 +61,12 @@ public class EditProfileActivity extends AppCompatActivity {
     // LOADER
     private FrameLayout loadingOverlay;
     private ProgressBar progressBar;
+
+    // --- Konstanta untuk Mode Alur Password Change ---
+    // Pastikan konstanta ini ada di ChangePasswordActivity atau Utility Class
+    public static final String EXTRA_PASSWORD_CHANGE_MODE = "password_change_mode";
+    public static final int MODE_PROFILE_CHANGE = 2;
+    // -----------------------------------------------------------
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,9 +108,11 @@ public class EditProfileActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etWhatsapp = findViewById(R.id.etWhatsapp);
         etAlamat = findViewById(R.id.etAlamat);
-        etPassword = findViewById(R.id.etPassword);
+
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
+        btnChangePassword = findViewById(R.id.btnChangePassword); // Inisialisasi tombol baru
+
         ivProfileEdit = findViewById(R.id.ivProfileEdit);
         tvGantiFoto = findViewById(R.id.tvGantiFoto);
 
@@ -115,12 +125,33 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
         });
 
+        // --- Listener Tombol Ubah Kata Sandi Baru ---
+        if (btnChangePassword != null) {
+            btnChangePassword.setOnClickListener(v -> navigateToPasswordChangeFlow());
+        }
+        // --------------------------------------------
+
         View.OnClickListener gantiFotoListener = v -> {
             pickImageLauncher.launch(new String[]{"image/*"});
         };
         ivProfileEdit.setOnClickListener(gantiFotoListener);
         tvGantiFoto.setOnClickListener(gantiFotoListener);
     }
+
+    // --- Metode Baru untuk memulai alur reset password ---
+    private void navigateToPasswordChangeFlow() {
+        // Mengarahkan ke langkah pertama alur reset password (Verifikasi OTP)
+        Intent intent = new Intent(EditProfileActivity.this, ResetPasswordActivity.class);
+
+        // Kirim mode agar alur tahu ini berasal dari Edit Profil
+        intent.putExtra(EXTRA_PASSWORD_CHANGE_MODE, MODE_PROFILE_CHANGE);
+
+        // Opsional: Kirim email user yang sedang login jika dibutuhkan oleh OtpVerificationActivity
+        // intent.putExtra("USER_EMAIL", currentUser.getEmail());
+
+        startActivity(intent);
+    }
+    // -----------------------------------------------------
 
     private void loadAndPopulateUserData() {
         currentUser = prefManager.getUser();
@@ -161,7 +192,6 @@ public class EditProfileActivity extends AppCompatActivity {
         String newEmail = textOf(etEmail);
         String newWhatsapp = textOf(etWhatsapp);
         String newAddress = textOf(etAlamat);
-        String newPasswordInput = textOf(etPassword);
 
         if (TextUtils.isEmpty(newUsername)) {
             Toast.makeText(this, "Username tidak boleh kosong", Toast.LENGTH_SHORT).show();
@@ -172,13 +202,15 @@ public class EditProfileActivity extends AppCompatActivity {
         boolean isEmailChanged = !newEmail.equals(currentUser.getEmail());
         boolean isWhatsappChanged = !newWhatsapp.equals(currentUser.getWhatsapp());
         boolean isAlamatChanged = !newAddress.equals(currentUser.getAlamat());
-        boolean isPasswordChanged = !newPasswordInput.isEmpty();
+        boolean isFotoBerubah = this.isFotoBerubah; // Ambil status perubahan foto
+
+        // Password diubah di alur terpisah, jadi ini selalu false
+        boolean isPasswordChanged = false;
 
         boolean isDataBerubah = isUsernameChanged ||
                 isEmailChanged ||
                 isWhatsappChanged ||
                 isAlamatChanged ||
-                isPasswordChanged ||
                 isFotoBerubah;
 
         if (isDataBerubah) {
@@ -187,19 +219,17 @@ public class EditProfileActivity extends AppCompatActivity {
             currentUser.setWhatsapp(newWhatsapp);
             currentUser.setAlamat(newAddress);
 
-            if (isPasswordChanged) {
-                currentUser.setPassword(newPasswordInput);
-            }
-
             prefManager.updateUser(currentUser);
 
-            // LOADER --> Mulai loading!
             showLoading(true);
 
+            // Kirim string kosong untuk field password, karena password tidak diubah di sini.
+            String emptyPassword = "";
+
             if (isFotoBerubah && selectedImageUri != null) {
-                uploadProfileWithPhoto(newUsername, newEmail, newWhatsapp, newAddress, newPasswordInput);
+                uploadProfileWithPhoto(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
             } else {
-                updateProfileToServer(newUsername, newEmail, newWhatsapp, newAddress, newPasswordInput);
+                updateProfileToServer(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
             }
 
         } else {
@@ -263,7 +293,6 @@ public class EditProfileActivity extends AppCompatActivity {
                                     "Profil dan foto berhasil diperbarui",
                                     Toast.LENGTH_SHORT).show();
 
-                            // Otomatis refresh: Finish dan kembali (ProfileFragment akan panggil fetchProfileFromServer)
                             setResult(Activity.RESULT_OK);
                             finish();
                         } else {
@@ -330,7 +359,6 @@ public class EditProfileActivity extends AppCompatActivity {
                                 "Profil berhasil diperbarui",
                                 Toast.LENGTH_SHORT).show();
 
-                        // Otomatis refresh: Finish dan kembali (ProfileFragment akan panggil fetchProfileFromServer)
                         setResult(Activity.RESULT_OK);
                         finish();
                     } else {
@@ -373,7 +401,9 @@ public class EditProfileActivity extends AppCompatActivity {
             }
 
             outputStream.close();
-            inputStream.close();
+            if (inputStream != null) {
+                inputStream.close();
+            }
 
             return file;
         } catch (Exception e) {

@@ -6,9 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
+    android:layout_marginTop="25dp"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?attr/selectableItemBackground"
+    android:foreground="@color/cream_bg"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
@@ -91,7 +92,7 @@
                     android:layout_width="18dp"
                     android:layout_height="18dp"
                     android:src="@drawable/ic_calendar"
-                    android:tint="#757575"
+                    app:tint="#757575"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -125,7 +126,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_duration"
-                        android:tint="#757575"
+                        app:tint="#757575"
                         tools:ignore="ContentDescription" />
 
                     <TextView
@@ -151,7 +152,7 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_person"
-                        android:tint="#4CAF50"
+                        app:tint="#4CAF50"
                         tools:ignore="ContentDescription" />
 
                     <TextView

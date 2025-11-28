@@ -30,7 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText passwordInput;
     private MaterialButton loginButton;
     private MaterialButton googleButton;
-    private TextView registerLinkText2; // TAMBAHAN: TextView untuk link Register
+    private TextView registerLinkText2;
+
+    private MaterialButton forgotPasswordButton; // Tombol Lupa Katasandi
 
     private UserManager userManager;
     private SessionManager sessionManager;
@@ -39,18 +41,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize ApiConfig
         ApiConfig.initialize(getApplicationContext());
-
-        // Log API Config
         Log.d(TAG, "API Config - Base URL: " + ApiConfig.getBaseUrl());
         Log.d(TAG, "API Config - Environment: " + ApiConfig.getEnvironment());
 
-        // Initialize managers
         userManager = new UserManager(this);
         sessionManager = SessionManager.getInstance(this);
 
-        // Check if already logged in
         if (sessionManager.isLoggedIn()) {
             Log.d(TAG, "User already logged in, navigating to Main");
             navigateToMain();
@@ -64,7 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
         googleButton = findViewById(R.id.googleSignInButton);
-        registerLinkText2 = findViewById(R.id.registerLinkText2); // TAMBAHAN
+        registerLinkText2 = findViewById(R.id.registerLinkText2);
+        forgotPasswordButton = findViewById(R.id.forgotPasswordLink); // Inisialisasi
 
         // Login button click
         loginButton.setOnClickListener(v -> handleLogin());
@@ -76,11 +74,15 @@ public class LoginActivity extends AppCompatActivity {
             );
         }
 
-        // ========== TAMBAHAN: Register link click listener ==========
+        // Register link click listener
         if (registerLinkText2 != null) {
             registerLinkText2.setOnClickListener(v -> navigateToRegister());
         }
-        // =============================================================
+
+        // LISTENER PERBAIKAN: Tombol Lupa Katasandi
+        if (forgotPasswordButton != null) {
+            forgotPasswordButton.setOnClickListener(v -> navigateToResetPassword());
+        }
     }
 
     private void handleLogin() {
@@ -198,15 +200,16 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    // ========== TAMBAHAN: Method untuk navigate ke RegisterActivity ==========
-    /**
-     * Navigate ke RegisterActivity
-     */
     private void navigateToRegister() {
         Log.d(TAG, "Navigating to RegisterActivity...");
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
-        // Jangan finish() agar user bisa kembali ke login dengan tombol back
     }
-    // =========================================================================
+
+    private void navigateToResetPassword() {
+        // PERBAIKAN: Memastikan Intent ditujukan ke ResetPasswordActivity
+        Log.d(TAG, "Navigating to ResetPasswordActivity...");
+        Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+        startActivity(intent);
+    }
 }

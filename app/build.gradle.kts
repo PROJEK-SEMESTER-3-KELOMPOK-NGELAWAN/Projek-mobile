@@ -97,6 +97,11 @@ dependencies {
 
     implementation("androidx.viewpager2:viewpager2:1.1.0")  // untuk Refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    // Pastikan Anda memiliki versi Material Components terbaru (Minimal 1.4.0)
+// Versi 1.11.0, 1.12.0, atau yang lebih baru sangat disarankan.
+    implementation("com.google.android.material:material:1.11.0")
+// Pastikan juga appcompat Anda tidak terlalu usang
+    implementation("androidx.appcompat:appcompat:1.6.1")
 
 
 }
