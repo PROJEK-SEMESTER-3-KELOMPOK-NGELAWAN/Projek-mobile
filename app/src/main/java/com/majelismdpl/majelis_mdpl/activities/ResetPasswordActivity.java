@@ -1,5 +1,6 @@
 package com.majelismdpl.majelis_mdpl.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -13,16 +14,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat; // Diperlukan untuk penanganan warna modern
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.majelismdpl.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.api.ApiClient;
+import com.majelismdpl.majelis_mdpl.api.ApiService;
+import com.majelismdpl.majelis_mdpl.models.LoginResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
@@ -40,12 +48,17 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer;
     private static final long RESEND_TIMEOUT = 60000; // 60 detik
     private List<EditText> otpEditTexts;
+    private String userEmail;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_reset_password);
+
+        // Inisialisasi API Service
+        apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
 
         // Handle Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.back_button), (v, insets) -> {
@@ -68,7 +81,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        // Mendapatkan referensi View dari layout (activity_reset_password)
+        // Mendapatkan referensi View dari layout
         backButton = findViewById(R.id.back_button);
         emailInputLayout = findViewById(R.id.email_input_layout);
         emailEditText = findViewById(R.id.email_edit_text);
@@ -108,7 +121,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             }
         });
 
-        // Listener Timer Kirim Ulang (Menggunakan lambda)
+        // Listener Timer Kirim Ulang
         resendCodeTimer.setOnClickListener(v -> {
             if (resendCodeTimer.isClickable()) {
                 resendCode();
@@ -129,12 +142,39 @@ public class ResetPasswordActivity extends AppCompatActivity {
         }
 
         emailInputLayout.setError(null);
-
-        // TODO: Ganti dengan panggilan API pengiriman kode yang sebenarnya
+        verifyButton.setEnabled(false);
         Toast.makeText(this, "Mengirim kode ke " + email + "...", Toast.LENGTH_SHORT).show();
 
-        // Simulasi sukses API
-        onCodeSentSuccess();
+        // Panggil API untuk kirim OTP reset password
+        Call<LoginResponse> call = apiService.sendResetPasswordOTP(email);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                verifyButton.setEnabled(true);
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        userEmail = email;
+                        Toast.makeText(ResetPasswordActivity.this,
+                                apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        onCodeSentSuccess();
+                    } else {
+                        Toast.makeText(ResetPasswordActivity.this,
+                                apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ResetPasswordActivity.this,
+                            "Gagal mengirim kode verifikasi", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                verifyButton.setEnabled(true);
+                Toast.makeText(ResetPasswordActivity.this,
+                        "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void onCodeSentSuccess() {
@@ -146,6 +186,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         otpInputLayout.setVisibility(View.VISIBLE);
         resendCodeTimer.setVisibility(View.VISIBLE);
 
+        // Disable email input
+        emailEditText.setEnabled(false);
+
         // Mulai Timer
         startResendTimer();
 
@@ -154,11 +197,42 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private void resendCode() {
-        // TODO: Ganti dengan panggilan API kirim ulang kode
-        Toast.makeText(this, "Kode dikirim ulang...", Toast.LENGTH_SHORT).show();
+        resendCodeTimer.setClickable(false);
+        Toast.makeText(this, "Mengirim ulang kode...", Toast.LENGTH_SHORT).show();
 
-        // Setelah sukses, mulai timer lagi
-        startResendTimer();
+        // Panggil API untuk kirim ulang OTP
+        Call<LoginResponse> call = apiService.resendResetPasswordOTP(userEmail);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse apiResponse = response.body();
+                    Toast.makeText(ResetPasswordActivity.this,
+                            apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (apiResponse.isSuccess()) {
+                        startResendTimer();
+                        // Clear OTP fields
+                        for (EditText et : otpEditTexts) {
+                            et.setText("");
+                        }
+                        otpEditTexts.get(0).requestFocus();
+                    } else {
+                        resendCodeTimer.setClickable(true);
+                    }
+                } else {
+                    Toast.makeText(ResetPasswordActivity.this,
+                            "Gagal mengirim ulang kode", Toast.LENGTH_SHORT).show();
+                    resendCodeTimer.setClickable(true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Toast.makeText(ResetPasswordActivity.this,
+                        "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                resendCodeTimer.setClickable(true);
+            }
+        });
     }
 
     private void startResendTimer() {
@@ -200,14 +274,36 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Ganti dengan panggilan API verifikasi kode yang sebenarnya.
+        verifyButton.setEnabled(false);
+        Toast.makeText(this, "Memverifikasi kode...", Toast.LENGTH_SHORT).show();
 
-        // --- Simulasi Verifikasi ---
-        if (otpCode.equals("123456")) { // Ganti dengan logika verifikasi server
-            onVerificationSuccess();
-        } else {
-            Toast.makeText(this, "Kode verifikasi salah atau kadaluwarsa.", Toast.LENGTH_SHORT).show();
-        }
+        // Panggil API untuk verifikasi OTP reset password
+        Call<LoginResponse> call = apiService.verifyResetPasswordOTP(userEmail, otpCode);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                verifyButton.setEnabled(true);
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        onVerificationSuccess();
+                    } else {
+                        Toast.makeText(ResetPasswordActivity.this,
+                                apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ResetPasswordActivity.this,
+                            "Gagal memverifikasi kode", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                verifyButton.setEnabled(true);
+                Toast.makeText(ResetPasswordActivity.this,
+                        "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void onVerificationSuccess() {
@@ -215,11 +311,15 @@ public class ResetPasswordActivity extends AppCompatActivity {
             countDownTimer.cancel();
         }
 
-        // TODO: Arahkan ke SetNewPasswordActivity (Contoh: Intent)
-        Toast.makeText(this, "Verifikasi Sukses! Lanjutkan ke Set Password.", Toast.LENGTH_LONG).show();
-        // Intent intent = new Intent(this, SetNewPasswordActivity.class);
-        // startActivity(intent);
-        // finish();
+        Toast.makeText(this, "Verifikasi Sukses!", Toast.LENGTH_SHORT).show();
+
+        // Arahkan ke ChangePasswordActivity dengan mode forgot password
+        Intent intent = new Intent(this, ChangePasswordActivity.class);
+        intent.putExtra(ChangePasswordActivity.EXTRA_PASSWORD_CHANGE_MODE,
+                ChangePasswordActivity.MODE_FORGOT_PASSWORD);
+        intent.putExtra("USER_EMAIL", userEmail);
+        startActivity(intent);
+        finish();
     }
 
     // =========================================================================
@@ -235,11 +335,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
     }
 
     private boolean isValidEmail(String email) {
-        // Menggunakan utilitas standar Android untuk validasi email
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    // Logika untuk memindahkan fokus antar EditText OTP secara otomatis
     private void setupOtpAutoAdvance() {
         for (int i = 0; i < otpEditTexts.size(); i++) {
             final EditText currentEditText = otpEditTexts.get(i);
@@ -252,15 +350,12 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     if (s.length() == 1) {
-                        // Pindah fokus ke kotak berikutnya
                         if (currentIndex < otpEditTexts.size() - 1) {
                             otpEditTexts.get(currentIndex + 1).requestFocus();
                         } else {
-                            // Semua OTP terisi, sembunyikan keyboard (opsional)
                             currentEditText.clearFocus();
                         }
                     } else if (s.length() == 0 && before == 1) {
-                        // Ketika menghapus (backspace), pindah fokus ke kotak sebelumnya
                         if (currentIndex > 0) {
                             otpEditTexts.get(currentIndex - 1).requestFocus();
                         }
@@ -272,7 +367,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
             });
         }
     }
-
 
     @Override
     protected void onDestroy() {

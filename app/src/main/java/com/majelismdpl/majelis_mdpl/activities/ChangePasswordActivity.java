@@ -17,13 +17,19 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
-import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
+import com.majelismdpl.majelis_mdpl.api.ApiClient;
+import com.majelismdpl.majelis_mdpl.api.ApiService;
+import com.majelismdpl.majelis_mdpl.models.LoginResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
     // --- Konstanta untuk mode alur ---
     public static final String EXTRA_PASSWORD_CHANGE_MODE = "password_change_mode";
-    public static final int MODE_FORGOT_PASSWORD = 1; // Default jika tidak ada mode
+    public static final int MODE_FORGOT_PASSWORD = 1;
     public static final int MODE_PROFILE_CHANGE = 2;
     // ------------------------------------
 
@@ -33,8 +39,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private TextView passwordLengthHint;
     private ImageButton backButton;
 
-    // Untuk menyimpan mode yang diterima
+    // Untuk menyimpan mode dan data yang diterima
     private int currentMode;
+    private String userEmail;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +50,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
 
-        // 1. Ambil mode dari Intent
+        // Inisialisasi API Service
+        apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
+
+        // 1. Ambil mode dan email dari Intent
         currentMode = getIntent().getIntExtra(EXTRA_PASSWORD_CHANGE_MODE, MODE_FORGOT_PASSWORD);
+        userEmail = getIntent().getStringExtra("USER_EMAIL");
 
         initializeViews();
         setupListeners();
@@ -86,22 +98,52 @@ public class ChangePasswordActivity extends AppCompatActivity {
         String confirmPassword = inputConfirmPassword.getText().toString().trim();
 
         if (validateInput(newPassword, confirmPassword)) {
+            buttonSave.setEnabled(false);
 
-            // --- LOGIKA UTAMA: SIMPAN PASSWORD BARU ---
-            // Di sini Anda akan menggunakan 'currentMode' (MODE_FORGOT_PASSWORD atau MODE_PROFILE_CHANGE)
-            // untuk memanggil API yang sesuai.
-            // Namun, secara fungsional, keduanya melakukan hal yang sama: mengganti password.
-
-            Toast.makeText(this, "Kata sandi berhasil diubah!", Toast.LENGTH_LONG).show();
-
-            // Sesuai permintaan Anda, setelah disimpan, pengguna diarahkan ke Login,
-            // terlepas dari mode yang digunakan.
-            navigateToLogin();
+            if (currentMode == MODE_FORGOT_PASSWORD) {
+                // Panggil API untuk reset password dari lupa password
+                saveNewPasswordForgot(userEmail, newPassword);
+            } else if (currentMode == MODE_PROFILE_CHANGE) {
+                // Panggil API untuk ubah password dari profile
+                // Implementasi sesuai kebutuhan profile change
+                Toast.makeText(this, "Fitur ubah password dari profile", Toast.LENGTH_SHORT).show();
+                buttonSave.setEnabled(true);
+            }
         }
     }
 
+    private void saveNewPasswordForgot(String email, String newPassword) {
+        Call<LoginResponse> call = apiService.resetPassword(email, newPassword);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                buttonSave.setEnabled(true);
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        Toast.makeText(ChangePasswordActivity.this,
+                                "Kata sandi berhasil diubah!", Toast.LENGTH_LONG).show();
+                        navigateToLogin();
+                    } else {
+                        Toast.makeText(ChangePasswordActivity.this,
+                                apiResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ChangePasswordActivity.this,
+                            "Gagal mengubah kata sandi", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                buttonSave.setEnabled(true);
+                Toast.makeText(ChangePasswordActivity.this,
+                        "Kesalahan koneksi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private boolean validateInput(String newPass, String confirmPass) {
-        // Logika validasi tetap sama
         passwordLengthHint.setTextColor(Color.BLACK);
         passwordLengthHint.setText("Kata sandi harus minimal 6 karakter.");
 
@@ -129,8 +171,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void navigateToLogin() {
-        // Logika ini membersihkan back stack dan menuju ke LoginActivity,
-        // yang sudah benar sesuai permintaan Anda.
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

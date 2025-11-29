@@ -180,7 +180,6 @@ public interface ApiService {
     @POST(Constants.GET_MEETING_POINT_ENDPOINT)
     Call<MeetingPointResponse> getUserMeetingPoint(@Field("id_user") int userId);
 
-
     // ========== TRIP HISTORY DENGAN STATUS (untuk HistoryFragment) ==========
     @FormUrlEncoded
     @POST("mobile/get-user-trip-history.php")
@@ -190,8 +189,41 @@ public interface ApiService {
     @POST("mobile/get-trip-participants-history.php")
     Call<TripParticipantsHistoryResponse> getTripParticipantsHistory(@Field("id_trip") int idTrip);
 
+    // ========== RESET PASSWORD (BARU - TAMBAHAN) ==========
 
+    /**
+     * Send OTP for Reset Password
+     */
+    @FormUrlEncoded
+    @POST("mobile/reset-password/send-reset-password-otp.php")
+    Call<LoginResponse> sendResetPasswordOTP(@Field("email") String email);
 
+    /**
+     * Resend OTP for Reset Password
+     */
+    @FormUrlEncoded
+    @POST("mobile/reset-password/resend-reset-password-otp.php")
+    Call<LoginResponse> resendResetPasswordOTP(@Field("email") String email);
+
+    /**
+     * Verify OTP for Reset Password
+     */
+    @FormUrlEncoded
+    @POST("mobile/reset-password/verify-reset-password-otp.php")
+    Call<LoginResponse> verifyResetPasswordOTP(
+            @Field("email") String email,
+            @Field("otp") String otp
+    );
+
+    /**
+     * Change Password (Final Step)
+     */
+    @FormUrlEncoded
+    @POST("mobile/reset-password/change-password.php")
+    Call<LoginResponse> resetPassword(
+            @Field("email") String email,
+            @Field("new_password") String newPassword
+    );
 
     // ========== PROFILE REQUEST MODEL ==========
 
