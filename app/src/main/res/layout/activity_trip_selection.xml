@@ -22,54 +22,24 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_marginTop="25dp"
             app:navigationIcon="@drawable/ic_back"
-            app:navigationIconTint="@color/brown_dark"
+            app:navigationIconTint="@color/black"
             app:title="Pilih Trip"
             app:titleCentered="true"
-            app:titleTextColor="@color/brown_dark"
+            app:titleTextColor="@color/black"
             android:elevation="0dp" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
-    <LinearLayout
-        android:id="@+id/header_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:background="@color/cream_bg"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trip Anda"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/brown_dark" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Pilih trip untuk melihat daftar peserta"
-            android:textSize="14sp"
-            android:textColor="@color/brown_dark" />
-
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_trips"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingTop="16dp"
         android:paddingBottom="16dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:clipToPadding="false"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/header_section"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +51,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:indeterminateTint="@color/brown_dark"
-        app:layout_constraintTop_toBottomOf="@id/header_section"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -94,7 +64,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:padding="32dp"
-        app:layout_constraintTop_toBottomOf="@id/header_section"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

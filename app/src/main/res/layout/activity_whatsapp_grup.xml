@@ -89,7 +89,7 @@
                 android:backgroundTint="@color/brown_text"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:text="Gabung Sekarang ke Grup Trip"
+                android:text="Gabung Sekarang"
                 android:textSize="16sp"
                 app:cornerRadius="8dp" />
         </LinearLayout>
@@ -100,13 +100,13 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/ic_whatsapp"
-        android:tint="@color/green"
         app:layout_constraintBottom_toTopOf="@id/whatsapp_card"
         app:layout_constraintStart_toStartOf="@id/whatsapp_card"
         app:layout_constraintEnd_toEndOf="@id/whatsapp_card"
         app:layout_constraintTop_toTopOf="@id/whatsapp_card"
         android:elevation="6dp"
         android:background="@drawable/bg_icon_circle_white"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        app:tint="@color/green" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

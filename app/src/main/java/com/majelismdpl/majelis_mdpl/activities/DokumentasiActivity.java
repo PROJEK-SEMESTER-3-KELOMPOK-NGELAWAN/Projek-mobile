@@ -94,7 +94,12 @@ public class DokumentasiActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+            // 💡 PERBAIKAN: Set display title menjadi TRUE
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+            // 💡 PERBAIKAN: Set judul secara eksplisit
+            getSupportActionBar().setTitle("Dokumentasi Trip");
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
