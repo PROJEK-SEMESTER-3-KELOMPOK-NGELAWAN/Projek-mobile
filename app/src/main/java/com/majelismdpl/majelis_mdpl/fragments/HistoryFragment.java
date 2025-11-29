@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
     private List<TripHistoryItem> tripHistoryList = new ArrayList<>();
     private List<TripHistoryItem> filteredList = new ArrayList<>();
     private EditText etSearch;
+    private LinearLayout layoutEmptyState;
 
     public HistoryFragment() {}
 
@@ -57,13 +59,16 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Initialize views
+        layoutEmptyState = binding.layoutEmptyState;
+
         // Setup RecyclerView
         binding.rvHistory.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new TripHistoryAdapter(filteredList);
         adapter.setOnItemClickListener(this);
         binding.rvHistory.setAdapter(adapter);
 
-        // Setup SwipeRefreshLayout - FIXED: hanya gunakan brown_dark
+        // Setup SwipeRefreshLayout
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setColorSchemeResources(R.color.brown_dark);
 
@@ -96,6 +101,7 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
         if (tripHistoryList.isEmpty()) {
             binding.rvHistory.setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.VISIBLE);
+            layoutEmptyState.setVisibility(View.GONE);
         }
 
         SessionManager sessionManager = SessionManager.getInstance(getContext());
@@ -104,6 +110,7 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
         if (user == null) {
             Log.e(TAG, "❌ User tidak ditemukan");
             hideLoading();
+            showEmptyState();
             if (getContext() != null) {
                 Toast.makeText(getContext(), "Sesi tidak valid. Silakan login kembali.", Toast.LENGTH_SHORT).show();
             }
@@ -123,7 +130,7 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
                 if (response.isSuccessful() && response.body() != null) {
                     TripHistoryResponse historyResponse = response.body();
 
-                    if (historyResponse.isSuccess() && historyResponse.getData() != null) {
+                    if (historyResponse.isSuccess() && historyResponse.getData() != null && !historyResponse.getData().isEmpty()) {
                         List<TripHistoryItem> newData = historyResponse.getData();
 
                         Log.d(TAG, "✅ Loaded " + newData.size() + " trip history items");
@@ -137,19 +144,16 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
                         filteredList.addAll(tripHistoryList);
                         adapter.notifyDataSetChanged();
 
-                        // Show RecyclerView
-                        binding.rvHistory.setVisibility(View.VISIBLE);
+                        // Show RecyclerView, hide empty state
+                        showHistoryList();
 
-                        if (tripHistoryList.isEmpty() && getContext() != null) {
-                            Toast.makeText(getContext(), "Belum ada riwayat trip", Toast.LENGTH_SHORT).show();
-                        }
                     } else {
                         Log.w(TAG, "⚠️ Response tidak berhasil atau data kosong");
                         showEmptyState();
                     }
                 } else {
                     Log.e(TAG, "❌ Response error: " + response.code());
-                    showError("Gagal memuat data. Coba lagi.");
+                    showEmptyState();
                 }
             }
 
@@ -157,7 +161,19 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
             public void onFailure(Call<TripHistoryResponse> call, Throwable t) {
                 hideLoading();
                 Log.e(TAG, "❌ Network error: " + t.getMessage());
-                showError("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
+
+                // Jika ada data cache, tetap tampilkan
+                if (!tripHistoryList.isEmpty()) {
+                    showHistoryList();
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Gagal memperbarui data. Menampilkan data sebelumnya.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    showEmptyState();
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
     }
@@ -186,9 +202,11 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
 
         adapter.notifyDataSetChanged();
 
-        // Tampilkan toast jika tidak ada hasil
-        if (filteredList.isEmpty() && !tripHistoryList.isEmpty() && getContext() != null) {
-            Toast.makeText(getContext(), "Tidak ada hasil untuk '" + query + "'", Toast.LENGTH_SHORT).show();
+        // Tampilkan empty state jika hasil filter kosong
+        if (filteredList.isEmpty() && !tripHistoryList.isEmpty()) {
+            showEmptyStateForSearch(query);
+        } else if (!filteredList.isEmpty()) {
+            showHistoryList();
         }
     }
 
@@ -203,16 +221,34 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
         }
     }
 
-    private void showEmptyState() {
+    private void showHistoryList() {
         if (binding != null) {
             binding.rvHistory.setVisibility(View.VISIBLE);
+            binding.progressBar.setVisibility(View.GONE);
+            layoutEmptyState.setVisibility(View.GONE);
+        }
+    }
+
+    private void showEmptyState() {
+        if (binding != null) {
+            binding.rvHistory.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
+            layoutEmptyState.setVisibility(View.VISIBLE);
+
+            // Clear data
             tripHistoryList.clear();
             filteredList.clear();
             adapter.notifyDataSetChanged();
+        }
+    }
 
-            if (getContext() != null) {
-                Toast.makeText(getContext(), "Belum ada riwayat trip", Toast.LENGTH_SHORT).show();
-            }
+    private void showEmptyStateForSearch(String query) {
+        if (binding != null && getContext() != null) {
+            // Tetap tampilkan RecyclerView kosong untuk search
+            binding.rvHistory.setVisibility(View.VISIBLE);
+            layoutEmptyState.setVisibility(View.GONE);
+
+            Toast.makeText(getContext(), "Tidak ada hasil untuk '" + query + "'", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -223,7 +259,11 @@ public class HistoryFragment extends Fragment implements TripHistoryAdapter.OnIt
 
         // Tetap tampilkan RecyclerView dengan data lama (jika ada)
         if (binding != null) {
-            binding.rvHistory.setVisibility(View.VISIBLE);
+            if (tripHistoryList.isEmpty()) {
+                showEmptyState();
+            } else {
+                showHistoryList();
+            }
         }
     }
 

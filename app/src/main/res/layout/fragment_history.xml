@@ -57,14 +57,14 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- SwipeRefreshLayout wrapper for RecyclerView -->
+    <!-- Main Content Area -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- FrameLayout for RecyclerView and ProgressBar -->
+        <!-- FrameLayout for RecyclerView, ProgressBar, and Empty State -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:padding="0dp"
+                android:padding="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_trip_history" />
 
@@ -89,6 +89,51 @@
                 android:indeterminate="true"
                 android:indeterminateTint="@color/brown_dark"
                 android:visibility="gone" />
+
+            <!-- Empty State Layout -->
+            <LinearLayout
+                android:id="@+id/layoutEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="32dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/emptyStateImage"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_mountain"
+                    android:contentDescription="Tidak ada riwayat trip"
+                    app:tint="@color/brown_dark" />
+
+                <TextView
+                    android:id="@+id/emptyStateTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tidak Ada Riwayat Trip"
+                    android:textColor="@color/brown_dark"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/emptyStateSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Belum ada trip yang selesai.\nYuk ikuti trip baru dan buat kenangan indah bersama kami!"
+                    android:textColor="@color/brown_dark"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp" />
+
+            </LinearLayout>
 
         </FrameLayout>
 
