@@ -15,6 +15,7 @@ import com.majelismdpl.majelis_mdpl.utils.Constants;
 import com.majelismdpl.majelis_mdpl.models.MeetingPointResponse;
 import com.majelismdpl.majelis_mdpl.models.TripParticipantsResponse;
 import com.majelismdpl.majelis_mdpl.models.UserTripsResponse;
+import com.majelismdpl.majelis_mdpl.models.TripDokumentasiResponse;
 
 import java.util.List;
 
@@ -139,6 +140,16 @@ public interface ApiService {
     @FormUrlEncoded
     @POST(Constants.GET_TRIP_PARTICIPANTS_ENDPOINT)
     Call<TripParticipantsResponse> getTripParticipants(@Field("id_trip") String tripId);
+
+    // ========== TRIP DOKUMENTASI (UPDATE - Kirim id_user bukan id_trip) ==========
+
+    /**
+     * Get Trip Dokumentasi by User ID
+     * Hanya menampilkan dokumentasi trip yang sudah dibeli user dan berstatus DONE
+     */
+    @FormUrlEncoded
+    @POST(Constants.GET_TRIP_DOKUMENTASI_ENDPOINT)
+    Call<TripDokumentasiResponse> getTripDokumentasi(@Field("id_user") int idUser);
 
     // ========== BOOKINGS ==========
 

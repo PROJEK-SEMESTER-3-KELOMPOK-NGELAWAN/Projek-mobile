@@ -28,7 +28,8 @@ public class Constants {
     public static final String EDIT_PROFILE_ENDPOINT = "mobile/edit-profile.php";
     public static final String GET_MEETING_POINT_ENDPOINT = "mobile/get-meeting-point.php";
     public static final String GET_TRIP_PARTICIPANTS_ENDPOINT = "mobile/get-trip-participants.php";
-    public static final String GET_USER_TRIPS_ENDPOINT = "mobile/get-user-trips.php"; // BARU
+    public static final String GET_USER_TRIPS_ENDPOINT = "mobile/get-user-trips.php";
+    public static final String GET_TRIP_DOKUMENTASI_ENDPOINT = "mobile/get-trip-dokumentasi.php";
 
     // === Helper methods ===
     public static String getLoginUrl() {
@@ -75,6 +76,12 @@ public class Constants {
         String baseUrl = getBaseUrl();
         if (!baseUrl.endsWith("/")) baseUrl += "/";
         return baseUrl + "mobile/get-user-trips.php";
+    }
+
+    public static String getTripDokumentasiUrl() {
+        String baseUrl = getBaseUrl();
+        if (!baseUrl.endsWith("/")) baseUrl += "/";
+        return baseUrl + "mobile/get-trip-dokumentasi.php";
     }
 
     public static String getEndpointUrl(String endpoint) {

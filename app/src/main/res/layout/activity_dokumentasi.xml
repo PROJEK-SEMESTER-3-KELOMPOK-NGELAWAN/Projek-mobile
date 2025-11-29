@@ -6,87 +6,132 @@
     android:layout_height="match_parent"
     android:background="@color/cream_bg"
     android:id="@+id/main"
-    android:fitsSystemWindows="true"> <com.google.android.material.appbar.AppBarLayout
-    android:id="@+id/app_bar_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/white"
-    app:elevation="0dp"
-    app:layout_constraintTop_toTopOf="parent">
+    android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_dokumentasi"
+    <!-- AppBarLayout -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/brown_dark"
-        app:title="Dokumentasi Trip"
-        app:titleCentered="true"
-        app:titleTextColor="@color/brown_dark"
-        app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
-</com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- MaterialToolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_dokumentasi"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/brown_dark"
+            app:title="Dokumentasi Trip"
+            app:titleCentered="true"
+            app:titleTextColor="@color/brown_dark"
+            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Separator line -->
     <View
         android:id="@+id/separator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/light_gray"
-        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="@color/brown_dark"
+        app:layout_constraintTop_toBottomOf="@id/separator"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- RecyclerView for trip list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_dokumentasi"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/separator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false" />
+
+    <!-- Empty state card -->
     <androidx.cardview.widget.CardView
-        android:id="@+id/dokumentasi_card"
+        android:id="@+id/empty_state_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/separator"
-        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp">
 
+        <!-- LinearLayout for CardView content -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="24dp"
             android:gravity="center_horizontal">
 
+            <!-- ImageView for empty state icon -->
             <ImageView
+                android:id="@+id/iv_empty_icon"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@drawable/ic_camera_alt"
-                android:layout_marginBottom="16dp"
-                app:tint="@color/brown_dark" /> <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dokumentasi Foto Trip"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/brown_dark"
-            android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="20dp"
+                app:tint="@color/brown_dark"
+                android:contentDescription="Icon" />
 
+
+            <!-- TextView for empty state title -->
             <TextView
+                android:id="@+id/tv_empty_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Akses semua dokumentasi foto trip yang tersimpan di Google Drive."
+                android:text="Dokumentasi Tidak Tersedia"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/brown_dark"
+                android:textAlignment="center"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- TextView for empty state description -->
+            <TextView
+                android:id="@+id/tv_empty_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Anda belum memiliki trip yang selesai."
                 android:textSize="14sp"
                 android:textColor="@color/black"
                 android:textAlignment="center"
+                android:lineSpacingExtra="4dp"
                 android:layout_marginBottom="24dp"/>
 
+            <!-- MaterialButton for retry action -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_lihat_galeri"
+                android:id="@+id/btn_retry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Buka Folder Google Drive"
+                android:text="Coba Lagi"
                 android:textSize="16sp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
+                android:textStyle="bold"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:visibility="gone"
                 app:cornerRadius="8dp"
-                android:backgroundTint="@color/brown_dark"  />
+                android:backgroundTint="@color/brown_dark" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

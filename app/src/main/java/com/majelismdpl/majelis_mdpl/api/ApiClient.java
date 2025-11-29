@@ -31,7 +31,14 @@ public class ApiClient {
     }
 
     /**
-     * TAMBAHAN: Alias untuk getClient() (untuk konsistensi penamaan)
+     * ALIAS: getRetrofitInstance() - untuk konsistensi dengan code lain
+     */
+    public static Retrofit getRetrofitInstance() {
+        return getClient();
+    }
+
+    /**
+     * ALIAS: getInstance() - untuk konsistensi penamaan
      */
     public static Retrofit getInstance() {
         return getClient();

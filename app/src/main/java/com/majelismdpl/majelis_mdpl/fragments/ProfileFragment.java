@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.majelismdpl.majelis_mdpl.R;
@@ -39,12 +40,20 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
 
+    // UI Components
     private ImageView ivProfile;
-    private TextView tvNamaPengguna, tvUsername, tvPassword, tvWhatsApp, tvEmail, tvAlamat;
-    private MaterialButton btnEditProfile, btnKeluar;
-    private ActivityResultLauncher<Intent> editProfileLauncher;
+    private TextView tvNamaPengguna;
+    private TextView tvUsername;
+    private TextView tvPassword;
+    private TextView tvWhatsApp;
+    private TextView tvEmail;
+    private TextView tvAlamat;
+    private MaterialButton btnEditProfile;
+    private MaterialButton btnKeluar;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    private View loadingOverlay;
+    // Launcher
+    private ActivityResultLauncher<Intent> editProfileLauncher;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -63,7 +72,9 @@ public class ProfileFragment extends Fragment {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // Refresh data dari server
                             fetchProfileFromServer();
-                            Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
+                            if (getContext() != null) {
+                                Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });
@@ -80,7 +91,26 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Hubungkan View
+        // Initialize all views
+        initializeViews(view);
+
+        // Setup SwipeRefreshLayout
+        setupSwipeRefresh();
+
+        // Tampilkan data dari cache dulu
+        populateProfileDataFromCache();
+
+        // Kemudian fetch data terbaru dari server
+        fetchProfileFromServer();
+
+        // Setup click listeners
+        setupClickListeners();
+    }
+
+    /**
+     * Initialize all views from layout
+     */
+    private void initializeViews(View view) {
         ivProfile = view.findViewById(R.id.ivProfile);
         tvNamaPengguna = view.findViewById(R.id.tvNamaPengguna);
         tvUsername = view.findViewById(R.id.tvUsername);
@@ -90,14 +120,20 @@ public class ProfileFragment extends Fragment {
         tvAlamat = view.findViewById(R.id.tvAlamat);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
         btnKeluar = view.findViewById(R.id.btnKeluar);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+    }
 
-        // Tampilkan data dari cache dulu
-        populateProfileDataFromCache();
-
-        // Kemudian fetch data terbaru dari server
-        fetchProfileFromServer();
-
-        setupClickListeners();
+    /**
+     * Setup SwipeRefreshLayout
+     */
+    private void setupSwipeRefresh() {
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeResources(R.color.brown_dark);
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                Log.d(TAG, "🔄 Refresh triggered");
+                fetchProfileFromServer();
+            });
+        }
     }
 
     /**
@@ -110,12 +146,12 @@ public class ProfileFragment extends Fragment {
             User user = SessionManager.getInstance(getContext()).getUser();
 
             if (user != null) {
-                tvNamaPengguna.setText(user.getUsername());
-                tvUsername.setText(user.getUsername());
+                tvNamaPengguna.setText(user.getUsername() != null ? user.getUsername() : "User");
+                tvUsername.setText(user.getUsername() != null ? user.getUsername() : "-");
                 tvPassword.setText("••••••••••");
-                tvWhatsApp.setText(user.getWhatsapp());
-                tvEmail.setText(user.getEmail());
-                tvAlamat.setText(user.getAlamat());
+                tvWhatsApp.setText(user.getWhatsapp() != null ? user.getWhatsapp() : "-");
+                tvEmail.setText(user.getEmail() != null ? user.getEmail() : "-");
+                tvAlamat.setText(user.getAlamat() != null ? user.getAlamat() : "-");
 
                 // Muat foto profil dari cache
                 String fotoUriString = SessionManager.getInstance(getContext()).getProfilePhotoUri();
@@ -123,7 +159,7 @@ public class ProfileFragment extends Fragment {
                     try {
                         ivProfile.setImageURI(Uri.parse(fotoUriString));
                     } catch (SecurityException | IllegalArgumentException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "Error loading profile image: " + e.getMessage());
                         ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
                     }
                 } else {
@@ -132,40 +168,37 @@ public class ProfileFragment extends Fragment {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error populating cache data: " + e.getMessage());
         }
     }
 
     /**
      * Fetch data profil terbaru dari server
-     * Menggunakan POST method dengan JSON body (konsisten dengan get-meeting-point)
      */
     private void fetchProfileFromServer() {
         if (getContext() == null) return;
 
         User user = SessionManager.getInstance(getContext()).getUser();
-        // Ganti .getId() menjadi .getIdUser()
         if (user == null || user.getIdUser() <= 0) {
-            Toast.makeText(getContext(), "Sesi tidak valid", Toast.LENGTH_SHORT).show();
+            hideLoading();
+            if (getContext() != null) {
+                Toast.makeText(getContext(), "Sesi tidak valid", Toast.LENGTH_SHORT).show();
+            }
             logoutUser();
             return;
         }
 
         int userId = user.getIdUser();
-
-        // Show loading (optional)
-        // showLoading(true);
+        Log.d(TAG, "📥 Fetching profile for User ID: " + userId);
 
         ApiService apiService = ApiClient.getApiService();
-
-        // Buat request object menggunakan id_user (konsisten dengan backend/php)
         ApiService.ProfileRequest request = new ApiService.ProfileRequest(userId);
         Call<ProfileResponse> call = apiService.getProfile(request);
 
         call.enqueue(new Callback<ProfileResponse>() {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-                // showLoading(false);
+                hideLoading();
 
                 if (response.isSuccessful() && response.body() != null) {
                     ProfileResponse profileResponse = response.body();
@@ -179,31 +212,45 @@ public class ProfileFragment extends Fragment {
                         // Update cache
                         updateCache(userData);
 
-                        Log.d(TAG, "Profil berhasil diambil dari server");
+                        Log.d(TAG, "✅ Profil berhasil diambil dari server");
                     } else {
-                        Toast.makeText(getContext(),
-                                profileResponse.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(),
+                                    profileResponse.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
-                    Log.e(TAG, "Response error: " + response.code());
-                    Toast.makeText(getContext(),
-                            "Gagal memuat data profil dari server",
-                            Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "❌ Response error: " + response.code());
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(),
+                                "Gagal memuat data profil dari server",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
-                // showLoading(false);
-                Log.e(TAG, "Network error: " + t.getMessage(), t);
-                Toast.makeText(getContext(),
-                        "Koneksi gagal, menampilkan data cache",
-                        Toast.LENGTH_SHORT).show();
+                hideLoading();
+                Log.e(TAG, "❌ Network error: " + t.getMessage(), t);
+                if (getContext() != null) {
+                    Toast.makeText(getContext(),
+                            "Koneksi gagal, menampilkan data cache",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
 
+    /**
+     * Hide loading animation
+     */
+    private void hideLoading() {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    }
 
     /**
      * Update UI dengan data dari server
@@ -211,16 +258,27 @@ public class ProfileFragment extends Fragment {
     private void updateUI(ProfileResponse.UserData userData) {
         if (userData == null) return;
 
-        tvNamaPengguna.setText(userData.getUsername() != null ? userData.getUsername() : "");
-        tvUsername.setText(userData.getUsername() != null ? userData.getUsername() : "");
-        tvPassword.setText("••••••••••");
-        tvWhatsApp.setText(userData.getWhatsapp() != null ? userData.getWhatsapp() : "-");
-        tvEmail.setText(userData.getEmail() != null ? userData.getEmail() : "-");
-        tvAlamat.setText(userData.getAlamat() != null ? userData.getAlamat() : "-");
+        if (tvNamaPengguna != null) {
+            tvNamaPengguna.setText(userData.getUsername() != null ? userData.getUsername() : "User");
+        }
+        if (tvUsername != null) {
+            tvUsername.setText(userData.getUsername() != null ? userData.getUsername() : "-");
+        }
+        if (tvPassword != null) {
+            tvPassword.setText("••••••••••");
+        }
+        if (tvWhatsApp != null) {
+            tvWhatsApp.setText(userData.getWhatsapp() != null ? userData.getWhatsapp() : "-");
+        }
+        if (tvEmail != null) {
+            tvEmail.setText(userData.getEmail() != null ? userData.getEmail() : "-");
+        }
+        if (tvAlamat != null) {
+            tvAlamat.setText(userData.getAlamat() != null ? userData.getAlamat() : "-");
+        }
 
         // Note: Foto profil tetap menggunakan cache local karena
         // server tidak menyimpan URI local device
-        // Foto profil hanya di-update setelah user edit dari EditProfileActivity
     }
 
     /**
@@ -242,31 +300,37 @@ public class ProfileFragment extends Fragment {
                 // Simpan kembali ke cache
                 SessionManager.getInstance(getContext()).updateUser(user);
 
-                Log.d(TAG, "Cache berhasil diupdate");
+                Log.d(TAG, "✅ Cache berhasil diupdate");
             }
         } catch (Exception e) {
-            Log.e(TAG, "Gagal update cache: " + e.getMessage(), e);
+            Log.e(TAG, "❌ Gagal update cache: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Mengatur semua listener klik
+     * Setup click listeners
      */
     private void setupClickListeners() {
-        if (getContext() == null) return;
+        if (btnEditProfile != null) {
+            btnEditProfile.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), EditProfileActivity.class);
+                editProfileLauncher.launch(intent);
+            });
+        }
 
-        btnEditProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), EditProfileActivity.class);
-            editProfileLauncher.launch(intent);
-        });
-
-        btnKeluar.setOnClickListener(v -> {
-            showLogoutDialog();
-        });
+        if (btnKeluar != null) {
+            btnKeluar.setOnClickListener(v -> {
+                showLogoutDialog();
+            });
+        }
     }
 
+    /**
+     * Show logout confirmation dialog
+     */
     private void showLogoutDialog() {
         if (getContext() == null) return;
+
         new AlertDialog.Builder(getContext())
                 .setTitle("Konfirmasi Keluar")
                 .setMessage("Apakah Anda yakin ingin keluar dari akun ini?")
@@ -276,12 +340,17 @@ public class ProfileFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Logout user and redirect to login
+     */
     private void logoutUser() {
         if (getContext() == null) return;
+
         SessionManager.getInstance(getContext()).logout();
         Intent intent = new Intent(getContext(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+
         if (getActivity() != null) {
             getActivity().finish();
         }

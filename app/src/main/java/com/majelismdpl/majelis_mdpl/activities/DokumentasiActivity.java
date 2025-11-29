@@ -1,22 +1,59 @@
 package com.majelismdpl.majelis_mdpl.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import com.google.android.material.button.MaterialButton;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar; // <-- Tambahkan import ini
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.majelismdpl.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.adapters.TripDokumentasiAdapter;
+import com.majelismdpl.majelis_mdpl.api.ApiClient;
+import com.majelismdpl.majelis_mdpl.api.ApiService;
+import com.majelismdpl.majelis_mdpl.models.TripDokumentasiResponse;
+import com.majelismdpl.majelis_mdpl.utils.Constants;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DokumentasiActivity extends AppCompatActivity {
 
-    private static final String DRIVE_URL = "https://drive.google.com/drive/folders/link_folder_anda";
+    private static final String TAG = "DokumentasiActivity";
+
+    // UI Components
+    private ProgressBar progressBar;
+    private RecyclerView rvDokumentasi;
+    private CardView emptyStateCard;
+    private TextView tvEmptyTitle, tvEmptyDescription;
+    private ImageView ivEmptyIcon;
+    private MaterialButton btnRetry;
+
+    // Data
+    private int userId = 0;
+    private TripDokumentasiAdapter adapter;
+    private List<TripDokumentasiResponse.DokumentasiData> tripList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,61 +61,182 @@ public class DokumentasiActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dokumentasi);
 
-        // Menghubungkan dan Menangani Window Insets (Perhatian: ID di bawah mungkin perlu diperiksa)
-        // Jika Anda menggunakan layout terbaru, ID-nya harusnya 'main' atau layout terluar
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.dokumentasi_card), (v, insets) -> {
+        initViews();
+        setupToolbar();
+        setupWindowInsets();
+        getUserId();
+
+        if (userId > 0) {
+            loadDokumentasi();
+        }
+    }
+
+    private void initViews() {
+        progressBar = findViewById(R.id.progress_bar);
+        rvDokumentasi = findViewById(R.id.rv_dokumentasi);
+        emptyStateCard = findViewById(R.id.empty_state_card);
+        tvEmptyTitle = findViewById(R.id.tv_empty_title);
+        tvEmptyDescription = findViewById(R.id.tv_empty_description);
+        ivEmptyIcon = findViewById(R.id.iv_empty_icon);
+        btnRetry = findViewById(R.id.btn_retry);
+
+        // Setup RecyclerView
+        rvDokumentasi.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new TripDokumentasiAdapter(this, tripList, trip -> openGoogleDrive(trip.getGdriveLink()));
+        rvDokumentasi.setAdapter(adapter);
+
+        btnRetry.setOnClickListener(v -> loadDokumentasi());
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar_dokumentasi);
+        setSupportActionBar(toolbar);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
+
+    private void setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
 
-        // =======================================================
-        // TAMBAHAN: Setup Toolbar dan Tombol Kembali
-        // =======================================================
-        Toolbar toolbar = findViewById(R.id.toolbar_dokumentasi);
-        // Penting: Set Toolbar sebagai Action Bar
-        setSupportActionBar(toolbar);
+    private void getUserId() {
+        try {
+            SharedPreferences sharedPref = getSharedPreferences(Constants.PREF_NAME, MODE_PRIVATE);
+            String userDataJson = sharedPref.getString(Constants.KEY_USER_DATA, "");
 
-        if (getSupportActionBar() != null) {
-            // Aktifkan ikon navigasi (tombol back)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            // Opsional: Matikan title bawaan jika Anda menggunakan TextView custom
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            if (!userDataJson.isEmpty()) {
+                JSONObject userData = new JSONObject(userDataJson);
+                if (userData.has("id_user")) {
+                    userId = userData.getInt("id_user");
+                    Log.d(TAG, "✅ User ID: " + userId);
+                    return;
+                }
+            }
+
+            userId = sharedPref.getInt("id_user", 0);
+            if (userId > 0) {
+                Log.d(TAG, "✅ User ID from key 'id_user': " + userId);
+                return;
+            }
+
+            Log.e(TAG, "❌ User ID tidak ditemukan");
+            showEmptyState("Sesi Tidak Valid", "Silakan login kembali.", false);
+
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Error getting user ID: " + e.getMessage());
+            showEmptyState("Error", "Gagal membaca data user.", false);
+        }
+    }
+
+    private void loadDokumentasi() {
+        if (userId <= 0) {
+            showEmptyState("Sesi Tidak Valid", "Silakan login kembali.", false);
+            return;
         }
 
-        // Tambahkan listener untuk menangani klik pada tombol navigasi (ic_arrow_back)
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        showLoading(true);
+        Log.d(TAG, "🔄 Loading dokumentasi for User ID: " + userId);
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<TripDokumentasiResponse> call = apiService.getTripDokumentasi(userId);
+
+        call.enqueue(new Callback<TripDokumentasiResponse>() {
             @Override
-            public void onClick(View v) {
-                // Perintah untuk kembali ke Activity/Fragment sebelumnya
-                onBackPressed();
+            public void onResponse(Call<TripDokumentasiResponse> call, Response<TripDokumentasiResponse> response) {
+                showLoading(false);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    TripDokumentasiResponse dokumentasiResponse = response.body();
+
+                    if (dokumentasiResponse.isSuccess() && dokumentasiResponse.getData() != null && !dokumentasiResponse.getData().isEmpty()) {
+                        // ✅ Ada trip yang DONE
+                        tripList.clear();
+                        tripList.addAll(dokumentasiResponse.getData());
+                        adapter.notifyDataSetChanged();
+
+                        showTripList();
+
+                        Log.d(TAG, "✅ Loaded " + tripList.size() + " trips");
+
+                    } else {
+                        // ❌ Tidak ada trip
+                        String message = dokumentasiResponse.getMessage();
+                        String status = dokumentasiResponse.getStatus();
+
+                        if ("trip_not_done".equals(status)) {
+                            showEmptyState("Trip Belum Selesai", message, false);
+                        } else {
+                            showEmptyState("Dokumentasi Tidak Tersedia", message, false);
+                        }
+                    }
+                } else {
+                    showEmptyState("Gagal Memuat Data", "Terjadi kesalahan. Silakan coba lagi.", true);
+                }
             }
-        });
-        // =======================================================
 
-
-        // 1. Dapatkan referensi ke MaterialButton dari layout
-        MaterialButton btnLihatGaleri = findViewById(R.id.btn_lihat_galeri);
-
-        // 2. Tambahkan OnClickListener ke tombol
-        btnLihatGaleri.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                openGoogleDriveFolder();
+            public void onFailure(Call<TripDokumentasiResponse> call, Throwable t) {
+                showLoading(false);
+                Log.e(TAG, "❌ Error: " + t.getMessage());
+                showEmptyState("Koneksi Gagal", "Tidak dapat terhubung ke server.", true);
             }
         });
     }
 
-    /**
-     * Fungsi untuk membuka tautan Google Drive menggunakan Intent
-     */
-    private void openGoogleDriveFolder() {
+    private void openGoogleDrive(String gdriveLink) {
+        if (gdriveLink == null || gdriveLink.isEmpty()) {
+            Toast.makeText(this, "Link Google Drive tidak tersedia", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(DRIVE_URL));
+            intent.setData(Uri.parse(gdriveLink));
             startActivity(intent);
+            Log.d(TAG, "📂 Opening: " + gdriveLink);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "❌ Error opening Drive: " + e.getMessage());
+            Toast.makeText(this, "Gagal membuka Google Drive.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showLoading(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        rvDokumentasi.setVisibility(View.GONE);
+        emptyStateCard.setVisibility(View.GONE);
+    }
+
+    private void showTripList() {
+        progressBar.setVisibility(View.GONE);
+        rvDokumentasi.setVisibility(View.VISIBLE);
+        emptyStateCard.setVisibility(View.GONE);
+    }
+
+    private void showEmptyState(String title, String message, boolean showRetry) {
+        progressBar.setVisibility(View.GONE);
+        rvDokumentasi.setVisibility(View.GONE);
+        emptyStateCard.setVisibility(View.VISIBLE);
+
+        tvEmptyTitle.setText(title);
+        tvEmptyDescription.setText(message);
+        btnRetry.setVisibility(showRetry ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (userId > 0) {
+            Log.d(TAG, "🔄 onResume() - Reload");
+            loadDokumentasi();
         }
     }
 }
