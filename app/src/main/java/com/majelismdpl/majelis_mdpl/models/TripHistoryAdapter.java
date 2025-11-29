@@ -45,9 +45,6 @@ public class TripHistoryAdapter extends RecyclerView.Adapter<TripHistoryAdapter.
 
         holder.binding.tvMountainName.setText(currentTrip.getMountainName());
         holder.binding.tvTripDate.setText(currentTrip.getDate());
-        holder.binding.tvParticipantCount.setText(
-                String.format(Locale.getDefault(), "%d peserta", currentTrip.getParticipants())
-        );
         holder.binding.tvStatus.setText(currentTrip.getStatus());
         holder.binding.tvRating.setText(String.valueOf(currentTrip.getRating()));
 

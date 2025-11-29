@@ -142,7 +142,7 @@
                 android:minHeight="0dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="Lupa Katasandi?"
+                android:text="Lupa Kata Sandi ?"
                 android:textColor="#000000"
                 android:textSize="12sp"
                 android:textStyle="bold|normal"
