@@ -12,6 +12,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.majelismdpl.majelis_mdpl.R;
+import com.majelismdpl.majelis_mdpl.auth.GoogleAuthManager;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -48,7 +49,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setClickListeners() {
         registerButton.setOnClickListener(v -> handleRegistration());
+
+        // ============ UPDATE: Google Sign In Button ============
         googleSignInButton.setOnClickListener(v -> signInWithGoogle());
+        // =======================================================
+
         loginLinkText2.setOnClickListener(v -> goToLogin());
     }
 
@@ -119,9 +124,20 @@ public class RegisterActivity extends AppCompatActivity {
         return true;
     }
 
+    // ============ UPDATE: Implement Google Sign In ============
     private void signInWithGoogle() {
-        Toast.makeText(this, "Fitur Google Sign-In belum diimplementasi", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "🔵 Google Sign Up button clicked");
+        try {
+            // Panggil GoogleAuthManager untuk membuka Custom Tab dengan type=signup
+            GoogleAuthManager.startGoogleSignup(RegisterActivity.this);
+            Log.d(TAG, "✅ Custom Tab opened successfully for signup");
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Error opening Google OAuth: " + e.getMessage());
+            Toast.makeText(this, "Gagal membuka pendaftaran Google: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
+    // ==========================================================
 
     private void goToLogin() {
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

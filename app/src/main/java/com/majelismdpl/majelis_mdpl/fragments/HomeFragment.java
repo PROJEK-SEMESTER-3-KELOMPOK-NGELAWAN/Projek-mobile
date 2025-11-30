@@ -29,9 +29,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.majelismdpl.majelis_mdpl.activities.TripSelectionActivity;
 import com.majelismdpl.majelis_mdpl.activities.MeetingPointActivity;
-
 import com.majelismdpl.majelis_mdpl.activities.WhatsappGroupActivity;
 import com.majelismdpl.majelis_mdpl.activities.DokumentasiActivity;
+import com.majelismdpl.majelis_mdpl.activities.SOS_Activity;
 
 import com.majelismdpl.majelis_mdpl.databinding.FragmentHomeBinding;
 import com.majelismdpl.majelis_mdpl.databinding.ItemTripBinding;
@@ -61,7 +61,6 @@ public class HomeFragment extends Fragment {
 
     // Lebar card item fix (harus sama dengan item_trip.xml)
     private int itemWidthPx = 0;
-    // Flag hasCenteredFirstItem dihapus karena kita akan memaksanya setiap kali data load.
 
     // Tambahan: komponen empty state
     private LinearLayout layoutEmptyState;
@@ -120,18 +119,6 @@ public class HomeFragment extends Fragment {
         // Samakan dengan item_trip.xml layout_width
         itemWidthPx = Math.round(310 * getResources().getDisplayMetrics().density);
 
-        // Hapus addOnLayoutChangeListener yang lama, karena logic centering akan dipanggil di loadTripData()
-        /*
-        binding.rvTrips.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom,
-                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                binding.rvTrips.removeOnLayoutChangeListener(this);
-                centerFirstItemIfPossible();
-            }
-        });
-        */
-
         swipeRefreshLayout = requireView().findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             loadUserData();
@@ -151,7 +138,7 @@ public class HomeFragment extends Fragment {
         loadUserData();
         loadTripData();
 
-        // Menu Listeners tetap sama
+        // Menu Listeners
         binding.menuTitikKumpul.setOnClickListener(v ->
                 startActivity(new Intent(getActivity(), MeetingPointActivity.class)));
 
@@ -169,6 +156,13 @@ public class HomeFragment extends Fragment {
             Intent intent = new Intent(getActivity(), DokumentasiActivity.class);
             startActivity(intent);
         });
+
+        // ============ TAMBAHAN: BUTTON SOS LISTENER ============
+        binding.btnSos.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SOS_Activity.class);
+            startActivity(intent);
+        });
+        // =======================================================
     }
 
     private void centerFirstItemIfPossible() {
@@ -181,7 +175,6 @@ public class HomeFragment extends Fragment {
 
         int offset = (recyclerViewWidth - itemWidthPx) / 2;
 
-        // Menggunakan post untuk memastikan kode scrolling dieksekusi setelah layout item baru selesai.
         binding.rvTrips.post(() -> {
             lm.scrollToPositionWithOffset(0, offset);
             Log.d(TAG, "Forced centering to position 0 with offset: " + offset);
@@ -242,10 +235,7 @@ public class HomeFragment extends Fragment {
                                     layoutEmptyState.setVisibility(View.GONE);
                                     binding.rvTrips.setVisibility(View.VISIBLE);
 
-                                    // === PANGGIL FUNGSI CENTERING SETELAH DATA BARU DIMUAT ===
                                     centerFirstItemIfPossible();
-                                    // ========================================================
-
                                 } else {
                                     setDefaultTripData();
                                     layoutEmptyState.setVisibility(View.VISIBLE);

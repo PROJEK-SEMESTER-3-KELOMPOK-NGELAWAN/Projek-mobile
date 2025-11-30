@@ -14,6 +14,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.api.ApiClient;
 import com.majelismdpl.majelis_mdpl.api.ApiService;
+import com.majelismdpl.majelis_mdpl.auth.GoogleAuthManager;
 import com.majelismdpl.majelis_mdpl.database.UserManager;
 import com.majelismdpl.majelis_mdpl.models.LoginResponse;
 import com.majelismdpl.majelis_mdpl.utils.ApiConfig;
@@ -31,8 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton loginButton;
     private MaterialButton googleButton;
     private TextView registerLinkText2;
-
-    private MaterialButton forgotPasswordButton; // Tombol Lupa Katasandi
+    private MaterialButton forgotPasswordButton;
 
     private UserManager userManager;
     private SessionManager sessionManager;
@@ -62,24 +62,34 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         googleButton = findViewById(R.id.googleSignInButton);
         registerLinkText2 = findViewById(R.id.registerLinkText2);
-        forgotPasswordButton = findViewById(R.id.forgotPasswordLink); // Inisialisasi
+        forgotPasswordButton = findViewById(R.id.forgotPasswordLink);
 
         // Login button click
         loginButton.setOnClickListener(v -> handleLogin());
 
-        // Google sign in
+        // ============ GOOGLE SIGN IN BUTTON ============
         if (googleButton != null) {
-            googleButton.setOnClickListener(v ->
-                    Toast.makeText(this, "Google Sign-In belum diimplementasikan", Toast.LENGTH_SHORT).show()
-            );
+            googleButton.setOnClickListener(v -> {
+                Log.d(TAG, "🔵 Google Sign In button clicked");
+                try {
+                    // Panggil GoogleAuthManager untuk membuka Custom Tab
+                    GoogleAuthManager.startGoogleLogin(LoginActivity.this);
+                    Log.d(TAG, "✅ Custom Tab opened successfully");
+                } catch (Exception e) {
+                    Log.e(TAG, "❌ Error opening Google OAuth: " + e.getMessage());
+                    Toast.makeText(this, "Gagal membuka login Google: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+        // ==============================================
 
         // Register link click listener
         if (registerLinkText2 != null) {
             registerLinkText2.setOnClickListener(v -> navigateToRegister());
         }
 
-        // LISTENER PERBAIKAN: Tombol Lupa Katasandi
+        // Tombol Lupa Katasandi
         if (forgotPasswordButton != null) {
             forgotPasswordButton.setOnClickListener(v -> navigateToResetPassword());
         }
@@ -207,7 +217,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToResetPassword() {
-        // PERBAIKAN: Memastikan Intent ditujukan ke ResetPasswordActivity
         Log.d(TAG, "Navigating to ResetPasswordActivity...");
         Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
         startActivity(intent);
