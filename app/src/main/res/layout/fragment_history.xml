@@ -21,6 +21,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="25dp"
             app:contentInsetStart="16dp"
             app:title="@string/history_title"
             app:titleCentered="true"

@@ -10,13 +10,14 @@
     android:paddingHorizontal="12dp"
     android:paddingTop="16dp"
     android:paddingBottom="12dp"
-    tools:context=".activities.sos">
+    tools:context="com.majelismdpl.majelis_mdpl.activities.SOS_Activity">
 
+    <!-- Card Tombol Darurat -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="10dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:cardBackgroundColor="@color/white"
@@ -63,6 +64,7 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Header Pilih Bantuan -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,6 +85,7 @@
         android:textSize="14sp"
         android:layout_marginTop="4dp" />
 
+    <!-- Grid Layanan Bantuan -->
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,6 +95,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="8dp">
 
+        <!-- Card Polisi -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btnPolisi"
             android:layout_width="0dp"
@@ -113,8 +117,8 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@drawable/bg_icon_circle"
                     android:padding="8dp"
                     android:src="@drawable/ic_police_badge"
@@ -138,6 +142,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Card Ambulans -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btnAmbulans"
             android:layout_width="0dp"
@@ -159,8 +164,8 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@drawable/bg_icon_circle"
                     android:padding="8dp"
                     android:src="@drawable/ic_medical"
@@ -184,6 +189,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Card SAR / Rescue -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btnBasarnas"
             android:layout_width="0dp"
@@ -205,8 +211,8 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@drawable/bg_icon_circle"
                     android:padding="8dp"
                     android:src="@drawable/ic_search"
@@ -230,6 +236,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Card Nomor Lain -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btnManual"
             android:layout_width="0dp"
@@ -251,8 +258,8 @@
                 android:padding="12dp">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@drawable/bg_icon_circle"
                     android:padding="8dp"
                     android:src="@drawable/ic_telephone"
@@ -278,6 +285,7 @@
 
     </GridLayout>
 
+    <!-- Teks peringatan -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -288,16 +296,18 @@
         android:textColor="@color/tripGray"
         android:textSize="12sp" />
 
+    <!-- Tombol Batalkan -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancel"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="380dp"
+        android:layout_width="350dp"
         android:layout_height="56dp"
         android:layout_marginTop="1dp"
+        android:layout_marginHorizontal="18dp"
         android:text="Batalkan"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:backgroundTint="@color/tripRed"
         app:cornerRadius="26dp"

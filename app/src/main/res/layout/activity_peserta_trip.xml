@@ -20,13 +20,13 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_back"
+            android:layout_marginTop="24dp"
+            app:navigationIcon="@drawable/ic_arrow_back"
+
             app:navigationIconTint="@color/black"
-            android:textStyle="bold"
             app:title="Daftar Peserta"
             app:titleCentered="true"
-            app:titleTextColor="@color/black"
-            app:titleTextAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+            app:titleTextColor="@color/black"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
