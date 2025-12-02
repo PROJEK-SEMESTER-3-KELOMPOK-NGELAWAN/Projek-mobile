@@ -309,7 +309,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:backgroundTint="@color/white"
-        app:cornerRadius="26dp"
+        app:cornerRadius="15dp"
         app:strokeColor="@color/tripRed"
         app:strokeWidth="1.5dp" />
 
