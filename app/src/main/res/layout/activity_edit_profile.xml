@@ -1,35 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#FFFFFF"
+    android:fitsSystemWindows="true"
     tools:context=".activities.EditProfileActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="25dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:elevation="5dp"
-        android:background="@color/brown_dark">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit Profil"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/cream_light"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/brown_dark"
+            android:elevation="5dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Profil"
+                android:textColor="@color/cream_light"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivProfileEdit"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_aplikasi_majelismdpl"
+                    android:background="#E0E0E0"
+                    app:shapeAppearanceOverlay="@style/CircularImageView"
+                    android:elevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/tvGantiFoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="32dp"
+                    android:text="Ganti Foto"
+                    android:textColor="@color/brown_text"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:boxCornerRadiusTopStart="15dp"
+                    app:boxCornerRadiusTopEnd="15dp"
+                    app:boxCornerRadiusBottomStart="15dp"
+                    app:boxCornerRadiusBottomEnd="15dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="#868686"
+                    app:hintTextColor="@color/text_input_colors">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Username"
+                        android:inputType="textPersonName"
+                        android:textCursorDrawable="@drawable/cursor_black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:boxCornerRadiusTopStart="15dp"
+                    app:boxCornerRadiusTopEnd="15dp"
+                    app:boxCornerRadiusBottomStart="15dp"
+                    app:boxCornerRadiusBottomEnd="15dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="#868686"
+                    app:hintTextColor="@color/text_input_colors">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etWhatsapp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="No.WhatsApp"
+                        android:inputType="phone"
+                        android:textCursorDrawable="@drawable/cursor_black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAlamat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    app:boxCornerRadiusTopStart="15dp"
+                    app:boxCornerRadiusTopEnd="15dp"
+                    app:boxCornerRadiusBottomStart="15dp"
+                    app:boxCornerRadiusBottomEnd="15dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="#868686"
+                    app:hintTextColor="@color/text_input_colors">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAlamat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Alamat"
+                        android:inputType="textMultiLine"
+                        android:minLines="1"
+                        android:gravity="top"
+                        android:textCursorDrawable="@drawable/cursor_black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnChangePassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Ubah Kata Sandi"
+                    android:backgroundTint="@color/brown_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:cornerRadius="15dp"
+                    android:layout_marginBottom="3dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSimpan"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Simpan Perubahan"
+                    android:backgroundTint="@color/brown_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:cornerRadius="15dp"
+                    android:layout_marginBottom="3dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBatal"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Batal"
+                    android:backgroundTint="#F2F2F2"
+                    android:textSize="16dp"
+                    android:textColor="#F44336"
+                    android:textStyle="bold"
+                    app:cornerRadius="15dp"
+                    app:strokeColor="#FF8B8B"
+                    app:strokeWidth="1dp">
+                </com.google.android.material.button.MaterialButton>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/loadingOverlay"
@@ -38,8 +189,9 @@
         android:background="#AAFFFFFF"
         android:visibility="gone"
         android:elevation="4dp"
-        android:layout_weight="1"
-        android:translationZ="10dp">
+        android:translationZ="10dp"
+        android:clickable="true"
+        android:focusable="true">
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleLarge"
@@ -47,170 +199,4 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </FrameLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivProfileEdit"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:padding="4dp"
-                android:src="@drawable/ic_aplikasi_majelismdpl"
-                android:background="#E0E0E0"
-                app:shapeAppearanceOverlay="@style/CircularImageView"
-                android:elevation="2dp"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <TextView
-                android:id="@+id/tvGantiFoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="32dp"
-                android:text="Ganti Foto"
-                android:textColor="@color/brown_text"
-                android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="8dp"/>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:boxCornerRadiusTopStart="15dp"
-                app:boxCornerRadiusTopEnd="15dp"
-                app:boxCornerRadiusBottomStart="15dp"
-                app:boxCornerRadiusBottomEnd="15dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="#868686"
-                app:hintTextColor="@color/text_input_colors">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etUsername"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Username"
-                    android:inputType="textPersonName"
-                    android:textCursorDrawable="@drawable/cursor_black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:boxCornerRadiusTopStart="15dp"
-                app:boxCornerRadiusTopEnd="15dp"
-                app:boxCornerRadiusBottomStart="15dp"
-                app:boxCornerRadiusBottomEnd="15dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="#868686"
-                app:hintTextColor="@color/text_input_colors">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Email"
-                    android:inputType="textEmailAddress"
-                    android:textCursorDrawable="@drawable/cursor_black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:boxCornerRadiusTopStart="15dp"
-                app:boxCornerRadiusTopEnd="15dp"
-                app:boxCornerRadiusBottomStart="15dp"
-                app:boxCornerRadiusBottomEnd="15dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="#868686"
-                app:hintTextColor="@color/text_input_colors">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etWhatsapp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="No.WhatsApp"
-                    android:inputType="phone"
-                    android:textCursorDrawable="@drawable/cursor_black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilAlamat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                app:boxCornerRadiusTopStart="15dp"
-                app:boxCornerRadiusTopEnd="15dp"
-                app:boxCornerRadiusBottomStart="15dp"
-                app:boxCornerRadiusBottomEnd="15dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxStrokeColor="#868686"
-                app:hintTextColor="@color/text_input_colors">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etAlamat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Alamat"
-                    android:inputType="textMultiLine"
-                    android:minLines="1"
-                    android:gravity="top"
-                    android:textCursorDrawable="@drawable/cursor_black" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnChangePassword"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Ubah Kata Sandi"
-                android:backgroundTint="@color/brown_text"
-                android:textColor="#FFFFFF"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                app:cornerRadius="15dp"
-                android:layout_marginBottom="3dp"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSimpan"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Simpan Perubahan"
-                android:backgroundTint="@color/brown_text"
-                android:textColor="#FFFFFF"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                app:cornerRadius="15dp"
-                android:layout_marginBottom="3dp"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnBatal"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Batal"
-                android:backgroundTint="#F2F2F2"
-                android:textSize="16dp"
-                android:textColor="#F44336"
-                android:textStyle="bold"
-                app:cornerRadius="15dp"
-                app:strokeColor="#FF8B8B"
-                app:strokeWidth="1dp">
-            </com.google.android.material.button.MaterialButton>
-
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+</FrameLayout>

@@ -9,6 +9,7 @@ import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager; // Import yang ditambahkan
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,7 +26,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.api.ApiClient;
 import com.majelismdpl.majelis_mdpl.api.ApiService;
-import com.majelismdpl.majelis_mdpl.activities.ResetPasswordActivity; // ASUMSI: Ganti dengan path yang benar
+import com.majelismdpl.majelis_mdpl.activities.ResetPasswordActivity;
 import com.majelismdpl.majelis_mdpl.models.EditProfileRequest;
 import com.majelismdpl.majelis_mdpl.models.RegisterResponse;
 import com.majelismdpl.majelis_mdpl.models.User;
@@ -46,9 +47,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfileActivity";
 
-    // Hapus etPassword dari deklarasi
-    private TextInputEditText etUsername, etEmail, etWhatsapp, etAlamat;
-    private MaterialButton btnSimpan, btnBatal, btnChangePassword; // Tombol baru
+    // Hapus etEmail dari deklarasi
+    private TextInputEditText etUsername, etWhatsapp, etAlamat;
+    private MaterialButton btnSimpan, btnBatal, btnChangePassword;
     private ShapeableImageView ivProfileEdit;
     private TextView tvGantiFoto;
     private ActivityResultLauncher<String[]> pickImageLauncher;
@@ -63,7 +64,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     // --- Konstanta untuk Mode Alur Password Change ---
-    // Pastikan konstanta ini ada di ChangePasswordActivity atau Utility Class
     public static final String EXTRA_PASSWORD_CHANGE_MODE = "password_change_mode";
     public static final int MODE_PROFILE_CHANGE = 2;
     // -----------------------------------------------------------
@@ -71,6 +71,10 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Opsional: Untuk memastikan keyboard menyesuaikan, meskipun sudah di Manifest
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
         setContentView(R.layout.activity_edit_profile);
 
         prefManager = SessionManager.getInstance(this);
@@ -105,13 +109,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Hubungkan View
         etUsername = findViewById(R.id.etUsername);
-        etEmail = findViewById(R.id.etEmail);
+        // HAPUS: etEmail = findViewById(R.id.etEmail);
         etWhatsapp = findViewById(R.id.etWhatsapp);
         etAlamat = findViewById(R.id.etAlamat);
 
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
-        btnChangePassword = findViewById(R.id.btnChangePassword); // Inisialisasi tombol baru
+        btnChangePassword = findViewById(R.id.btnChangePassword);
 
         ivProfileEdit = findViewById(R.id.ivProfileEdit);
         tvGantiFoto = findViewById(R.id.tvGantiFoto);
@@ -125,11 +129,10 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        // --- Listener Tombol Ubah Kata Sandi Baru ---
+        // Listener Tombol Ubah Kata Sandi Baru
         if (btnChangePassword != null) {
             btnChangePassword.setOnClickListener(v -> navigateToPasswordChangeFlow());
         }
-        // --------------------------------------------
 
         View.OnClickListener gantiFotoListener = v -> {
             pickImageLauncher.launch(new String[]{"image/*"});
@@ -138,20 +141,11 @@ public class EditProfileActivity extends AppCompatActivity {
         tvGantiFoto.setOnClickListener(gantiFotoListener);
     }
 
-    // --- Metode Baru untuk memulai alur reset password ---
     private void navigateToPasswordChangeFlow() {
-        // Mengarahkan ke langkah pertama alur reset password (Verifikasi OTP)
         Intent intent = new Intent(EditProfileActivity.this, ResetPasswordActivity.class);
-
-        // Kirim mode agar alur tahu ini berasal dari Edit Profil
         intent.putExtra(EXTRA_PASSWORD_CHANGE_MODE, MODE_PROFILE_CHANGE);
-
-        // Opsional: Kirim email user yang sedang login jika dibutuhkan oleh OtpVerificationActivity
-        // intent.putExtra("USER_EMAIL", currentUser.getEmail());
-
         startActivity(intent);
     }
-    // -----------------------------------------------------
 
     private void loadAndPopulateUserData() {
         currentUser = prefManager.getUser();
@@ -163,7 +157,7 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         etUsername.setText(currentUser.getUsername());
-        etEmail.setText(currentUser.getEmail());
+        // HAPUS: etEmail.setText(currentUser.getEmail());
         etWhatsapp.setText(currentUser.getWhatsapp());
         etAlamat.setText(currentUser.getAlamat());
     }
@@ -189,7 +183,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void saveProfileIfChanged() {
         String newUsername = textOf(etUsername);
-        String newEmail = textOf(etEmail);
+        // Tentukan newEmail dari data user lama karena field input dihapus.
+        String newEmail = currentUser.getEmail();
         String newWhatsapp = textOf(etWhatsapp);
         String newAddress = textOf(etAlamat);
 
@@ -199,23 +194,20 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         boolean isUsernameChanged = !newUsername.equals(currentUser.getUsername());
-        boolean isEmailChanged = !newEmail.equals(currentUser.getEmail());
+        // HAPUS: boolean isEmailChanged = !newEmail.equals(currentUser.getEmail());
         boolean isWhatsappChanged = !newWhatsapp.equals(currentUser.getWhatsapp());
         boolean isAlamatChanged = !newAddress.equals(currentUser.getAlamat());
-        boolean isFotoBerubah = this.isFotoBerubah; // Ambil status perubahan foto
-
-        // Password diubah di alur terpisah, jadi ini selalu false
-        boolean isPasswordChanged = false;
+        boolean isFotoBerubah = this.isFotoBerubah;
 
         boolean isDataBerubah = isUsernameChanged ||
-                isEmailChanged ||
+                /* isEmailChanged || */ // Referensi dihapus
                 isWhatsappChanged ||
                 isAlamatChanged ||
                 isFotoBerubah;
 
         if (isDataBerubah) {
             currentUser.setUsername(newUsername);
-            currentUser.setEmail(newEmail);
+            currentUser.setEmail(newEmail); // Email tetap dikirim, nilainya dari data user yang ada
             currentUser.setWhatsapp(newWhatsapp);
             currentUser.setAlamat(newAddress);
 
@@ -223,12 +215,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
             showLoading(true);
 
-            // Kirim string kosong untuk field password, karena password tidak diubah di sini.
             String emptyPassword = "";
 
             if (isFotoBerubah && selectedImageUri != null) {
+                // Gunakan newEmail yang nilainya diambil dari data user lama
                 uploadProfileWithPhoto(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
             } else {
+                // Gunakan newEmail yang nilainya diambil dari data user lama
                 updateProfileToServer(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
             }
 
@@ -260,7 +253,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             RequestBody idUserBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(currentUser.getIdUser()));
             RequestBody usernameBody = RequestBody.create(MediaType.parse("text/plain"), username);
-            RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email);
+            RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email); // email masih dikirim ke API
             RequestBody whatsappBody = RequestBody.create(MediaType.parse("text/plain"), whatsapp);
             RequestBody alamatBody = RequestBody.create(MediaType.parse("text/plain"), alamat);
             RequestBody passwordBody = RequestBody.create(MediaType.parse("text/plain"), password.isEmpty() ? "" : password);
@@ -269,7 +262,7 @@ public class EditProfileActivity extends AppCompatActivity {
             Call<RegisterResponse> call = apiService.editProfileWithPhoto(
                     idUserBody,
                     usernameBody,
-                    emailBody,
+                    emailBody, // email body
                     whatsappBody,
                     alamatBody,
                     passwordBody,
@@ -336,7 +329,7 @@ public class EditProfileActivity extends AppCompatActivity {
         EditProfileRequest request = new EditProfileRequest(
                 currentUser.getIdUser(),
                 username,
-                email,
+                email, // email masih dikirim ke API
                 whatsapp,
                 alamat,
                 password.isEmpty() ? "" : password
@@ -387,6 +380,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private File getFileFromUri(Uri uri) {
+        // ... (metode ini tidak berubah)
         try {
             String fileName = getFileName(uri);
             File file = new File(getCacheDir(), fileName);
@@ -413,6 +407,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private String getFileName(Uri uri) {
+        // ... (metode ini tidak berubah)
         String result = null;
         if (uri.getScheme().equals("content")) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
