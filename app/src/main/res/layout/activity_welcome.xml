@@ -42,7 +42,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:backgroundTint="@android:color/transparent"
-        app:cornerRadius="30dp"
+        app:cornerRadius="15dp"
         app:iconGravity="end"
         app:iconPadding="16dp"
         app:iconTint="@android:color/white"
