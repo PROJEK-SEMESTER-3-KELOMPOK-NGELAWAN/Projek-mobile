@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,16 +18,15 @@ import com.majelismdpl.majelis_mdpl.R;
 
 public class WhatsappGroupActivity extends AppCompatActivity {
 
-    // Ganti dengan TAUNTAN GRUP WHATSAPP yang sebenarnya
     private static final String WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/invitecodeanda";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_whatsapp_grup); // Pastikan nama layout sesuai
+        setContentView(R.layout.activity_whatsapp_grup);
 
-        // Penanganan Window Insets (jika Anda ingin mempertahankan EdgeToEdge)
+        // Penanganan Window Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_whatsapp), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -34,13 +34,13 @@ public class WhatsappGroupActivity extends AppCompatActivity {
         });
 
         // 1. Setup Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar_whatsapp);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            // Matikan title bawaan karena kita menggunakan TextView custom
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            // BARIS INI DIHAPUS/DIKOMENTARI agar judul dari XML (app:title) muncul.
+            // getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         // 2. Listener untuk tombol back di Toolbar
@@ -62,9 +62,6 @@ public class WhatsappGroupActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Fungsi untuk membuka tautan Grup WhatsApp
-     */
     private void openWhatsappGroup() {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -72,7 +69,7 @@ public class WhatsappGroupActivity extends AppCompatActivity {
             startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            // Tambahkan Toast jika aplikasi WhatsApp atau browser tidak dapat dibuka.
+            Toast.makeText(this, "Gagal membuka WhatsApp. Pastikan aplikasi terinstal.", Toast.LENGTH_LONG).show();
         }
     }
 }

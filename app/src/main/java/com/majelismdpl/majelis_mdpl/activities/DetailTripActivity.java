@@ -67,11 +67,9 @@ public class DetailTripActivity extends AppCompatActivity {
 
         // Ganti kode ini agar dapat data dari API/Model trip
         List<String> pesertaThumbs = new ArrayList<>();
-        pesertaThumbs.add("https://randomuser.me/api/portraits/men/1.jpg");
-        pesertaThumbs.add("https://randomuser.me/api/portraits/women/2.jpg");
-        pesertaThumbs.add("https://randomuser.me/api/portraits/men/3.jpg");
-        pesertaThumbs.add("https://randomuser.me/api/portraits/women/4.jpg");
-        pesertaThumbs.add("https://randomuser.me/api/portraits/men/5.jpg");
+        pesertaThumbs.add("https://avatars.githubusercontent.com/u/197549162?s=60&v=4");
+        pesertaThumbs.add("https://avatars.githubusercontent.com/u/197548872?s=60&v=4");
+        pesertaThumbs.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH9H1Lm4xJeC8O9nEbSoWcOwDvy_3w0SK6sw&s");
         previewAdapter.submitList(pesertaThumbs);
 
         // Nanti: ketika sudah ada API peserta, isi pesertaThumbs dari List<Peserta> atau List<PesertaHistory>:

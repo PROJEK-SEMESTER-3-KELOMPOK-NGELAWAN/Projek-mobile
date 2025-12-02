@@ -15,9 +15,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,7 +60,8 @@ public class DokumentasiActivity extends AppCompatActivity {
 
         initViews();
         setupToolbar();
-        setupWindowInsets();
+        // Hapus setupWindowInsets() karena sudah dihandle oleh EdgeToEdge dan fitsSystemWindows="true"
+
         getUserId();
 
         if (userId > 0) {
@@ -89,28 +87,20 @@ public class DokumentasiActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar_dokumentasi);
+        // PERBAIKAN: Gunakan ID toolbar yang sebenarnya (R.id.toolbar)
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            // 💡 PERBAIKAN: Set display title menjadi TRUE
+            // Perbaikan ini (setTitle) tidak diperlukan jika menggunakan app:title di XML
+            // Namun, karena ada di kode Anda, kita biarkan saja (atau hapus jika ingin lebih bersih)
             getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-            // 💡 PERBAIKAN: Set judul secara eksplisit
             getSupportActionBar().setTitle("Dokumentasi Trip");
         }
 
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
-    }
-
-    private void setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 
     private void getUserId() {
@@ -178,9 +168,10 @@ public class DokumentasiActivity extends AppCompatActivity {
                         String status = dokumentasiResponse.getStatus();
 
                         if ("trip_not_done".equals(status)) {
-                            showEmptyState("Trip Belum Selesai", message, false);
+                            showEmptyState("Trip Belum Selesai", "Anda belum memiliki trip yang selesai.", false);
                         } else {
-                            showEmptyState("Dokumentasi Tidak Tersedia", message, false);
+                            // Mengambil pesan default dari layout jika API tidak menyediakan pesan yang spesifik
+                            showEmptyState("Dokumentasi Tidak Tersedia", "Anda belum memiliki trip yang selesai.", false);
                         }
                     }
                 } else {
@@ -232,6 +223,7 @@ public class DokumentasiActivity extends AppCompatActivity {
         emptyStateCard.setVisibility(View.VISIBLE);
 
         tvEmptyTitle.setText(title);
+        // Mengubah pesan deskripsi di empty state
         tvEmptyDescription.setText(message);
         btnRetry.setVisibility(showRetry ? View.VISIBLE : View.GONE);
     }

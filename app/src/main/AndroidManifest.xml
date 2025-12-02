@@ -38,6 +38,7 @@
         android:theme="@style/Theme.Majelis_MDPL"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".activities.SOS_Activity"
             android:exported="false" />
@@ -87,32 +88,32 @@
             android:name=".activities.EditProfileActivity"
             android:exported="false"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.OAuthCallbackActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoDisplay">
-            <intent-filter android:priority="100">
-                <action android:name="android.intent.action.VIEW" />
+            android:windowSoftInputMode="adjustResize" /> <activity
+        android:name=".activities.OAuthCallbackActivity"
+        android:exported="true"
+        android:launchMode="singleTop"
+        android:screenOrientation="portrait"
+        android:theme="@android:style/Theme.NoDisplay">
+        <intent-filter android:priority="100">
+            <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="oauth"
-                    android:scheme="majelismdpl" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+            <data
+                android:host="oauth"
+                android:scheme="majelismdpl" />
+        </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="intent" />
-            </intent-filter>
-        </activity>
+            <data android:scheme="intent" />
+        </intent-filter>
+    </activity>
         <activity
             android:name=".activities.DetailTripActivity"
             android:exported="false"

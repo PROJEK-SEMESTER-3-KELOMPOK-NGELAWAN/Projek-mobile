@@ -7,31 +7,25 @@
     android:background="@color/cream_bg"
     android:id="@+id/main_whatsapp">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/toolbar_whatsapp"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        android:elevation="0dp"
-        android:minHeight="64dp"
-        android:paddingStart="0dp"
-        android:paddingEnd="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_back">
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/toolbar_title_whatsapp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:layout_marginBottom="8dp"
-            android:text="Grup WhatsApp Trip"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </androidx.appcompat.widget.Toolbar>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="23dp"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/black"
+            app:title="Gabung WhatsApp Trip"
+            app:titleCentered="true"
+            app:titleTextColor="@color/black"
+            android:elevation="0dp" /> </com.google.android.material.appbar.AppBarLayout>
 
     <View
         android:id="@+id/separator_whatsapp"
@@ -47,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white"
-        app:cardCornerRadius="30dp"
+        app:cardCornerRadius="15dp"
         app:cardElevation="4dp"
         app:layout_constraintTop_toBottomOf="@id/separator_whatsapp"
         android:layout_marginTop="48dp"
@@ -92,7 +86,7 @@
                 android:text="Gabung Sekarang"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:cornerRadius="30dp" />
+                app:cornerRadius="15dp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

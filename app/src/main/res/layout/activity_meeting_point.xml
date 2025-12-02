@@ -4,40 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cream_light">
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="25dp"
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_meeting_point"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/white"
-        app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/black"
-        app:titleCentered="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <TextView
-            android:id="@+id/toolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Titik Kumpul"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_gravity="center" />
-    </com.google.android.material.appbar.MaterialToolbar>
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="25dp"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/black"
+            app:title="Titik Kumpul"
+            app:titleCentered="true"
+            app:titleTextColor="@color/black"
+            android:elevation="0dp" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMeetingPoints"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:padding="16dp"
-        android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="0dp" android:paddingTop="8dp" android:paddingBottom="8dp"
+        android:paddingHorizontal="0dp" android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_meeting_point" app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/emptyText"
@@ -49,26 +48,27 @@
         android:gravity="center"
         android:visibility="gone"
         android:padding="20dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_meeting_point" app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ups! Sepertinya Anda belum memiliki trip aktif saat ini."
-            android:textColor="@color/brown_dark"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="12dp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ups! Sepertinya Anda belum memiliki trip aktif saat ini."
+        android:textColor="@color/brown_dark"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"/>
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Jangan khawatir! Mulai perjalanan Anda dengan pesan trip baru sekarang."
-            android:textColor="@color/brown_text"
-            android:textSize="16sp"
-            android:gravity="center" />
-    </LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jangan khawatir! Mulai perjalanan Anda dengan pesan trip baru sekarang."
+        android:textColor="@color/brown_text"
+        android:textSize="16sp"
+        android:gravity="center" />
+</LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout; // Perubahan: gunakan LinearLayout untuk emptyText
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,24 +45,26 @@ public class MeetingPointActivity extends AppCompatActivity {
     private ActivityMeetingPointBinding binding;
     private SessionManager sessionManager;
     private RecyclerView rvMeetingPoints;
+    private LinearLayout emptyText;
+
     private MeetingPointAdapter adapter;
     private List<MeetingPoint> meetingPoints = new ArrayList<>();
-    private LinearLayout emptyText; // Perubahan: LinearLayout (bukan TextView)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMeetingPointBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        emptyText = findViewById(R.id.emptyText);
+
+        // PERBAIKAN: Gunakan binding untuk inisialisasi view
+        emptyText = binding.emptyText;
+        rvMeetingPoints = binding.rvMeetingPoints;
 
         sessionManager = SessionManager.getInstance(this);
         MaterialToolbar toolbar = binding.toolbar;
         toolbar.setNavigationOnClickListener(v -> finish());
-        TextView toolbarTitle = binding.toolbarTitle;
-        toolbarTitle.setText("Titik Kumpul");
 
-        rvMeetingPoints = findViewById(R.id.rvMeetingPoints);
+        // Setup RecyclerView
         rvMeetingPoints.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MeetingPointAdapter(meetingPoints, this);
         rvMeetingPoints.setAdapter(adapter);
@@ -75,28 +77,45 @@ public class MeetingPointActivity extends AppCompatActivity {
             return;
         }
 
+
+        if (meetingPoints.isEmpty()) {
+            rvMeetingPoints.setVisibility(View.VISIBLE);
+            adapter.notifyDataSetChanged();
+            Log.d("MeetingPointActivity", "✅ Simulating local data.");
+        }
+        // =========================================================================
+
         loadMeetingPointsFromApi(user.getId());
     }
 
     private void loadMeetingPointsFromApi(int idUser) {
+        // Jika data simulasi ada, kosongkan dulu sebelum memuat dari API
+        // meetingPoints.clear(); // Opsional: Hapus baris ini jika Anda ingin melihat simulasi dulu
+
         ApiService api = ApiClient.getApiService();
         Call<MeetingPointResponse> call = api.getUserMeetingPoint(idUser);
         call.enqueue(new Callback<MeetingPointResponse>() {
             @Override
-            public void onResponse(Call<MeetingPointResponse> call, Response<MeetingPointResponse> response) {
+            public void onResponse(@NonNull Call<MeetingPointResponse> call, @NonNull Response<MeetingPointResponse> response) {
                 Log.d("MeetingPointActivity", "API Response success: " + (response.body() != null ? response.body().isSuccess() : "null"));
+
+                // Mulai dengan asumsi tidak ada data
+                meetingPoints.clear();
+                adapter.notifyDataSetChanged();
+
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess() && response.body().getData() != null && !response.body().getData().isEmpty()) {
-                    meetingPoints.clear();
                     meetingPoints.addAll(response.body().getData());
                     adapter.notifyDataSetChanged();
-                    emptyText.setVisibility(View.GONE); // sembunyikan pesan jika data ada
+                    emptyText.setVisibility(View.GONE);
+                    rvMeetingPoints.setVisibility(View.VISIBLE);
+                    Log.d("MeetingPointActivity", "✅ Data API dimuat: " + meetingPoints.size() + " item.");
                 } else {
                     showMeetingPointsNotFound();
                 }
             }
 
             @Override
-            public void onFailure(Call<MeetingPointResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MeetingPointResponse> call, @NonNull Throwable t) {
                 Log.e("MeetingPointActivity", "API Failure: ", t);
                 showMeetingPointsNotFound();
             }
@@ -106,7 +125,9 @@ public class MeetingPointActivity extends AppCompatActivity {
     private void showMeetingPointsNotFound() {
         meetingPoints.clear();
         adapter.notifyDataSetChanged();
-        emptyText.setVisibility(View.VISIBLE); // tampilkan pesan kosong
+        rvMeetingPoints.setVisibility(View.GONE);
+        emptyText.setVisibility(View.VISIBLE);
+        Log.d("MeetingPointActivity", "❌ Menampilkan Empty State.");
     }
 
     private static Date parseTanggalTrip(String tanggal, String waktu) {
@@ -129,6 +150,7 @@ public class MeetingPointActivity extends AppCompatActivity {
     }
 
     private static class MeetingPointAdapter extends RecyclerView.Adapter<MeetingPointAdapter.MeetingPointViewHolder> {
+        // ... (Kode adapter tidak berubah)
 
         private List<MeetingPoint> meetingPoints;
         private Context context;
