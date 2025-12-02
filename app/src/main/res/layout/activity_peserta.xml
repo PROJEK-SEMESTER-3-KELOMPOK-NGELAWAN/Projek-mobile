@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cream_bg"
-    tools:context=".activities.PesertaActivity">
+    tools:context="com.majelismdpl.majelis_mdpl.activities.PesertaActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:id="@+id/tv_peserta_trip_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             android:text="Halaman untuk menampilkan daftar peserta."
             android:textAlignment="center"
             android:textColor="@color/brown_dark"
@@ -51,15 +51,28 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:text="Peserta tidak tersedia"
-            android:textColor="@color/brown_dark"
+            android:textColor="@color/black"
             android:textSize="15sp"
             android:visibility="gone" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_peserta"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="16dp"
-            android:layout_weight="1" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/white">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_peserta"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                tools:listitem="@layout/item_peserta" />
+
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

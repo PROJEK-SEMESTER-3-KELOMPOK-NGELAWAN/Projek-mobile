@@ -289,29 +289,28 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="2dp"
         android:gravity="center_horizontal"
         android:text="Pastikan lokasimu aman sebelum memanggil."
         android:textColor="@color/tripGray"
-        android:textSize="12sp" />
+        android:textSize="12sp"/>
 
     <!-- Tombol Batalkan -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancel"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="350dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginHorizontal="18dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:text="Batalkan"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@color/tripRed"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/tripRed"
+        app:backgroundTint="@color/white"
         app:cornerRadius="26dp"
-        app:strokeColor="#FF5543"
+        app:strokeColor="@color/tripRed"
         app:strokeWidth="1.5dp" />
 
 </LinearLayout>

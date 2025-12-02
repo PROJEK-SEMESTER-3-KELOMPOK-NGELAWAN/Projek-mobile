@@ -73,7 +73,7 @@
                     android:id="@+id/rv_trips"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="8dp"
                     android:padding="2dp"
                     android:clipToPadding="false"
                     android:scrollbars="horizontal"
@@ -359,18 +359,17 @@
                                 android:layout_height="wrap_content"
                                 android:text="Lihat Foto"
                                 android:textColor="@color/tripGray"
-                                android:textSize="12sp" />
+                                android:textSize="12sp" />     0
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
                 </GridLayout>
 
-                <!-- Tombol SOS tetap sama -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_sos"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="4dp"
                     android:text="SOS Tombol Darurat"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"

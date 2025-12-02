@@ -51,169 +51,166 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"> <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivProfileEdit"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:padding="4dp"
-            android:src="@drawable/ic_aplikasi_majelismdpl"
-            android:background="#E0E0E0"
-            app:shapeAppearanceOverlay="@style/CircularImageView"
-            android:elevation="2dp"
-            android:clickable="true"
-            android:focusable="true" />
-
-        <TextView
-            android:id="@+id/tvGantiFoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="Ganti Foto"
-            android:textColor="@color/brown_text"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="8dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
+        android:layout_weight="1">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxCornerRadiusTopStart="15dp"
-            app:boxCornerRadiusTopEnd="15dp"
-            app:boxCornerRadiusBottomStart="15dp"
-            app:boxCornerRadiusBottomEnd="15dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="#868686"
-            app:hintTextColor="@color/text_input_colors">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etUsername"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfileEdit"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_aplikasi_majelismdpl"
+                android:background="#E0E0E0"
+                app:shapeAppearanceOverlay="@style/CircularImageView"
+                android:elevation="2dp"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/tvGantiFoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="32dp"
+                android:text="Ganti Foto"
+                android:textColor="@color/brown_text"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"
-                android:inputType="textPersonName"
-                android:textCursorDrawable="@drawable/cursor_black" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="16dp"
+                app:boxCornerRadiusTopStart="15dp"
+                app:boxCornerRadiusTopEnd="15dp"
+                app:boxCornerRadiusBottomStart="15dp"
+                app:boxCornerRadiusBottomEnd="15dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#868686"
+                app:hintTextColor="@color/text_input_colors">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxCornerRadiusTopStart="15dp"
-            app:boxCornerRadiusTopEnd="15dp"
-            app:boxCornerRadiusBottomStart="15dp"
-            app:boxCornerRadiusBottomEnd="15dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="#868686"
-            app:hintTextColor="@color/text_input_colors">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Username"
+                    android:inputType="textPersonName"
+                    android:textCursorDrawable="@drawable/cursor_black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etEmail"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:textCursorDrawable="@drawable/cursor_black" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="16dp"
+                app:boxCornerRadiusTopStart="15dp"
+                app:boxCornerRadiusTopEnd="15dp"
+                app:boxCornerRadiusBottomStart="15dp"
+                app:boxCornerRadiusBottomEnd="15dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#868686"
+                app:hintTextColor="@color/text_input_colors">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:boxCornerRadiusTopStart="15dp"
-            app:boxCornerRadiusTopEnd="15dp"
-            app:boxCornerRadiusBottomStart="15dp"
-            app:boxCornerRadiusBottomEnd="15dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="#868686"
-            app:hintTextColor="@color/text_input_colors">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:textCursorDrawable="@drawable/cursor_black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etWhatsapp"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="No.WhatsApp"
-                android:inputType="phone"
-                android:textCursorDrawable="@drawable/cursor_black" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="16dp"
+                app:boxCornerRadiusTopStart="15dp"
+                app:boxCornerRadiusTopEnd="15dp"
+                app:boxCornerRadiusBottomStart="15dp"
+                app:boxCornerRadiusBottomEnd="15dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#868686"
+                app:hintTextColor="@color/text_input_colors">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilAlamat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            app:boxCornerRadiusTopStart="15dp"
-            app:boxCornerRadiusTopEnd="15dp"
-            app:boxCornerRadiusBottomStart="15dp"
-            app:boxCornerRadiusBottomEnd="15dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="#868686"
-            app:hintTextColor="@color/text_input_colors">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etWhatsapp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="No.WhatsApp"
+                    android:inputType="phone"
+                    android:textCursorDrawable="@drawable/cursor_black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etAlamat"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilAlamat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Alamat"
-                android:inputType="textMultiLine"
-                android:minLines="1"
-                android:gravity="top"
-                android:textCursorDrawable="@drawable/cursor_black" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginBottom="32dp"
+                app:boxCornerRadiusTopStart="15dp"
+                app:boxCornerRadiusTopEnd="15dp"
+                app:boxCornerRadiusBottomStart="15dp"
+                app:boxCornerRadiusBottomEnd="15dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#868686"
+                app:hintTextColor="@color/text_input_colors">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnChangePassword"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Ubah Kata Sandi"
-            android:backgroundTint="@color/brown_text"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            app:cornerRadius="15dp"
-            app:strokeColor="@color/black"
-            app:strokeWidth="1dp"
-            android:layout_marginBottom="3dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAlamat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Alamat"
+                    android:inputType="textMultiLine"
+                    android:minLines="1"
+                    android:gravity="top"
+                    android:textCursorDrawable="@drawable/cursor_black" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSimpan"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Simpan Perubahan"
-            android:backgroundTint="@color/brown_text"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            app:cornerRadius="15dp"
-            app:strokeColor="@color/black"
-            app:strokeWidth="1dp"
-            android:layout_marginBottom="3dp"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChangePassword"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Ubah Kata Sandi"
+                android:backgroundTint="@color/brown_text"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:cornerRadius="15dp"
+                android:layout_marginBottom="3dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBatal"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Batal"
-            android:backgroundTint="#F2F2F2"
-            android:textSize="16dp"
-            android:textColor="#F44336"
-            android:textStyle="bold"
-            app:cornerRadius="15dp"
-            app:strokeColor="#FF8B8B"
-            app:strokeWidth="1dp">
-        </com.google.android.material.button.MaterialButton>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSimpan"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Simpan Perubahan"
+                android:backgroundTint="@color/brown_text"
+                android:textColor="#FFFFFF"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                app:cornerRadius="15dp"
+                android:layout_marginBottom="3dp"/>
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBatal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Batal"
+                android:backgroundTint="#F2F2F2"
+                android:textSize="16dp"
+                android:textColor="#F44336"
+                android:textStyle="bold"
+                app:cornerRadius="15dp"
+                app:strokeColor="#FF8B8B"
+                app:strokeWidth="1dp">
+            </com.google.android.material.button.MaterialButton>
+
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>
