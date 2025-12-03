@@ -67,9 +67,10 @@ public class DetailTripActivity extends AppCompatActivity {
 
         // Ganti kode ini agar dapat data dari API/Model trip
         List<String> pesertaThumbs = new ArrayList<>();
-        pesertaThumbs.add("https://avatars.githubusercontent.com/u/197549162?s=60&v=4");
-        pesertaThumbs.add("https://avatars.githubusercontent.com/u/197548872?s=60&v=4");
-        pesertaThumbs.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRH9H1Lm4xJeC8O9nEbSoWcOwDvy_3w0SK6sw&s");
+        pesertaThumbs.add("https://www.androidponsel.com/wp-content/uploads/2023/04/profil-kosong-bulat.jpg");
+        pesertaThumbs.add("https://www.androidponsel.com/wp-content/uploads/2023/04/profil-kosong-bulat.jpg");
+        pesertaThumbs.add("https://www.androidponsel.com/wp-content/uploads/2023/04/profil-kosong-bulat.jpg");
+        pesertaThumbs.add("https://www.androidponsel.com/wp-content/uploads/2023/04/profil-kosong-bulat.jpg");
         previewAdapter.submitList(pesertaThumbs);
 
         // Nanti: ketika sudah ada API peserta, isi pesertaThumbs dari List<Peserta> atau List<PesertaHistory>:

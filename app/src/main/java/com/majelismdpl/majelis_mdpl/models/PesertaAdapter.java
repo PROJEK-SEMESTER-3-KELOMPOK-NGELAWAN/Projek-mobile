@@ -121,7 +121,7 @@ public class PesertaAdapter extends ListAdapter<Peserta, PesertaAdapter.PesertaV
                 if (drawableId != 0) {
                     binding.imgAvatar.setImageResource(drawableId);
                 } else {
-                    binding.imgAvatar.setImageResource(R.drawable.dimasdwi); // Fallback
+                    binding.imgAvatar.setImageResource(R.drawable.profil_kosong_bulat); // Fallback
                 }
             } else {
                 binding.imgAvatar.setImageResource(R.drawable.dimas_gontor); // Fallback

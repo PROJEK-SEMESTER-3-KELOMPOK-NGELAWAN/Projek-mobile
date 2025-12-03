@@ -20,6 +20,13 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+// PENTING: Import untuk Insets Handling
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.graphics.Insets;
+import com.google.android.material.appbar.AppBarLayout; // Import AppBarLayout
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -71,6 +78,47 @@ public class EditProfileActivity extends AppCompatActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         setContentView(R.layout.activity_edit_profile);
+
+        // =======================================================
+        // KODE PERBAIKAN STATUS BAR (Edge-to-Edge Insets Handling)
+        // =======================================================
+
+        // 1. Aktifkan Edge-to-Edge: Izinkan konten menggambar di belakang status/navigation bar
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // 2. Dapatkan View yang diperlukan
+        View rootView = findViewById(android.R.id.content).getRootView();
+        AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
+
+        // --- A. Penanganan Root View (Untuk Navigation Bar) ---
+        // Tujuan: Terapkan padding BOTTOM untuk Navigation Bar, tapi TOP dibuat 0
+        // agar header menempel ke atas.
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, windowInsets) -> {
+            Insets systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Terapkan padding BOTTOM untuk Navigation Bar, TOP dibuat 0
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            // Jangan konsumsi insets, agar AppBarLayout bisa menerima insets TOP
+            return windowInsets;
+        });
+
+        // --- B. Penanganan AppBarLayout (Untuk Status Bar) ---
+        // Tujuan: Terapkan padding TOP untuk Status Bar, sehingga konten (Toolbar)
+        // didorong ke bawah area status bar, namun latar belakang AppBarLayout tetap full.
+        ViewCompat.setOnApplyWindowInsetsListener(appBarLayout, (v, windowInsets) -> {
+            Insets systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Terapkan padding TOP untuk Status Bar, padding lain diabaikan
+            v.setPadding(0, systemBars.top, 0, 0);
+
+            // Konsumsi insets
+            return WindowInsetsCompat.CONSUMED;
+        });
+        // =======================================================
+        // AKHIR KODE PERBAIKAN STATUS BAR
+        // =======================================================
+
 
         prefManager = SessionManager.getInstance(this);
 
