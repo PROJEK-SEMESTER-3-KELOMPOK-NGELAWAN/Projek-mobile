@@ -19,13 +19,13 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="23dp"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:navigationIconTint="@color/black"
             app:title="Gabung WhatsApp Trip"
             app:titleCentered="true"
             app:titleTextColor="@color/black"
-            android:elevation="0dp" /> </com.google.android.material.appbar.AppBarLayout>
+            android:elevation="0dp" />
+    </com.google.android.material.appbar.AppBarLayout>
 
     <View
         android:id="@+id/separator_whatsapp"

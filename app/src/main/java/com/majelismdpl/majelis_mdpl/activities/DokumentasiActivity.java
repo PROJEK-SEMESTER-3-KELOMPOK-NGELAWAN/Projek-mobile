@@ -17,6 +17,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.graphics.Insets; // Import untuk Insets
+import androidx.core.view.ViewCompat; // Import untuk ViewCompat
+import androidx.core.view.WindowInsetsCompat; // Import untuk WindowInsets
+import com.google.android.material.appbar.AppBarLayout; // Import AppBarLayout
 
 import com.google.android.material.button.MaterialButton;
 import com.majelismdpl.majelis_mdpl.R;
@@ -60,7 +64,46 @@ public class DokumentasiActivity extends AppCompatActivity {
 
         initViews();
         setupToolbar();
-        // Hapus setupWindowInsets() karena sudah dihandle oleh EdgeToEdge dan fitsSystemWindows="true"
+
+        // =======================================================
+        // KODE PERBAIKAN STATUS BAR (Edge-to-Edge Insets Handling)
+        // =======================================================
+
+        // Dapatkan View yang diperlukan
+        View rootContainer = findViewById(R.id.main); // ID root layout Anda
+        AppBarLayout appBarLayout = findViewById(R.id.toolbar_dokumentasi);
+        // Toolbar sudah diinisialisasi di setupToolbar() tapi kita perlu referensi di sini
+        // Toolbar toolbar = findViewById(R.id.toolbar);
+
+        // A. Penanganan untuk Container Utama (Root Layout: R.id.main)
+        // Tujuan: Mengatur padding agar RecyclerView/Konten utama tidak tertutup Navigation Bar.
+        // Padding atas dibuat 0 agar AppBarLayout bisa memanjang ke atas.
+        ViewCompat.setOnApplyWindowInsetsListener(rootContainer, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Padding TOP dibuat 0, Padding BOTTOM untuk Navigation Bar.
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            // Return insets.
+            return insets;
+        });
+
+        // B. Penanganan untuk AppBarLayout (R.id.toolbar_dokumentasi)
+        // Tujuan: Menerapkan padding atas (tinggi Status Bar) HANYA pada AppBarLayout,
+        // sehingga judul dan ikon terlihat aman di bawah Status Bar.
+        ViewCompat.setOnApplyWindowInsetsListener(appBarLayout, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Atur padding: HANYA TOP yang menggunakan tinggi Status Bar
+            v.setPadding(0, systemBars.top, 0, 0);
+
+            // Konsumsi insets.
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+        // =======================================================
+        // AKHIR KODE PERBAIKAN STATUS BAR
+        // =======================================================
 
         getUserId();
 
@@ -87,15 +130,11 @@ public class DokumentasiActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        // PERBAIKAN: Gunakan ID toolbar yang sebenarnya (R.id.toolbar)
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-            // Perbaikan ini (setTitle) tidak diperlukan jika menggunakan app:title di XML
-            // Namun, karena ada di kode Anda, kita biarkan saja (atau hapus jika ingin lebih bersih)
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle("Dokumentasi Trip");
         }

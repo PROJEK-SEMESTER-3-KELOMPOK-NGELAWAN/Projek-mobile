@@ -20,7 +20,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="24dp"
             app:navigationIcon="@drawable/ic_arrow_back"
             app:navigationIconTint="@color/black"
             app:title="Dokumentasi Trip"
@@ -36,7 +35,8 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:indeterminateTint="@color/brown_dark"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_dokumentasi"  app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_dokumentasi"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
