@@ -8,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,6 +16,7 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
+// import android.view.ViewTreeObserver; // Dihapus karena menggunakan smoothScroll
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -59,10 +58,10 @@ public class HomeFragment extends Fragment {
     private TripsAdapter tripsAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    // Lebar card item fix (harus sama dengan item_trip.xml)
+    // itemWidthPx tidak lagi digunakan untuk perhitungan offset, tetapi dibiarkan
+    // untuk menghindari error pada kode lama yang mungkin masih ada.
     private int itemWidthPx = 0;
 
-    // Tambahan: komponen empty state
     private LinearLayout layoutEmptyState;
     private MaterialButton btnCariTripBaru;
 
@@ -101,6 +100,8 @@ public class HomeFragment extends Fragment {
                                        @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 int position = parent.getChildAdapterPosition(view);
                 int itemCount = parent.getAdapter() != null ? parent.getAdapter().getItemCount() : 0;
+
+                // Aturan spacing untuk item
                 if (position == 0) {
                     outRect.left = 0;
                     outRect.right = spacingPx / 2;
@@ -116,7 +117,7 @@ public class HomeFragment extends Fragment {
 
         new LinearSnapHelper().attachToRecyclerView(binding.rvTrips);
 
-        // Samakan dengan item_trip.xml layout_width
+        // itemWidthPx tetap dihitung (opsional, untuk memastikan konsistensi)
         itemWidthPx = Math.round(310 * getResources().getDisplayMetrics().density);
 
         swipeRefreshLayout = requireView().findViewById(R.id.swipeRefreshLayout);
@@ -157,7 +158,7 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        // ============ TAMBAHAN: BUTTON SOS LISTENER ============
+        // ============ BUTTON SOS LISTENER ============
         binding.btnSos.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), SOS_Activity.class);
             startActivity(intent);
@@ -165,21 +166,24 @@ public class HomeFragment extends Fragment {
         // =======================================================
     }
 
+    // =======================================================
+    // PERBAIKAN: Metode untuk memusatkan item pertama menggunakan smoothScroll
+    // =======================================================
     private void centerFirstItemIfPossible() {
-        if (!(binding.rvTrips.getLayoutManager() instanceof LinearLayoutManager)) return;
+        if (tripList.isEmpty()) return;
 
-        LinearLayoutManager lm = (LinearLayoutManager) binding.rvTrips.getLayoutManager();
-        int recyclerViewWidth = binding.rvTrips.getWidth();
-
-        if (recyclerViewWidth == 0 || itemWidthPx == 0) return;
-
-        int offset = (recyclerViewWidth - itemWidthPx) / 2;
-
-        binding.rvTrips.post(() -> {
-            lm.scrollToPositionWithOffset(0, offset);
-            Log.d(TAG, "Forced centering to position 0 with offset: " + offset);
+        // Gunakan post() untuk memastikan scroll terjadi setelah RecyclerView selesai di-layout
+        binding.rvTrips.post(new Runnable() {
+            @Override
+            public void run() {
+                // Scroll halus ke posisi 0. LinearSnapHelper akan otomatis "menjepret"
+                // item ini ke posisi tengah yang paling mendekati (terutama karena padding tepi)
+                binding.rvTrips.smoothScrollToPosition(0);
+                Log.d(TAG, "Forced smooth scroll to position 0 via post().");
+            }
         });
     }
+    // =======================================================
 
     private void loadUserData() {
         User user = sessionManager.getUser();
@@ -235,7 +239,9 @@ public class HomeFragment extends Fragment {
                                     layoutEmptyState.setVisibility(View.GONE);
                                     binding.rvTrips.setVisibility(View.VISIBLE);
 
+                                    // PANGGIL SOLUSI smoothScroll
                                     centerFirstItemIfPossible();
+
                                 } else {
                                     setDefaultTripData();
                                     layoutEmptyState.setVisibility(View.VISIBLE);
