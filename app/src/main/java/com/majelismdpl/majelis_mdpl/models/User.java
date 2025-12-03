@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class User {
 
+    // Field id dari API
     @SerializedName("id_user")
     private int idUser;
 
@@ -19,8 +20,10 @@ public class User {
     @SerializedName("alamat")
     private String alamat;
 
+    // URL atau path foto profil yang dikirim server
+    // (bisa foto_url penuh atau nanti diisi manual dari foto_profil)
     @SerializedName("foto_url")
-    private String foto_url;
+    private String fotoUrl;
 
     @SerializedName("password")
     private String password;
@@ -30,27 +33,81 @@ public class User {
 
     public User() {}
 
-    // Getters
-    public int getId() { return idUser; } // Untuk kompatibilitas legacy
-    public int getIdUser() { return idUser; }
-    public String getUsername() { return username; }
-    public String getEmail() { return email; }
-    public String getAlamat() { return alamat; }
-    public String getFotoUrl() { return foto_url; }
-    public String getWhatsapp() { return whatsapp; }
-    public String getPassword() { return password; }
-    public String getRole() { return role; }
+    // ===== GETTER (KOMPATIBILITAS LAMA & BARU) =====
+    // Dipakai banyak file lama, jangan dihapus
+    public int getId() {
+        return idUser;
+    }
 
-    // Setters
-    public void setId(int idUser) { this.idUser = idUser; } // Untuk kompatibilitas legacy
-    public void setIdUser(int idUser) { this.idUser = idUser; }
-    public void setUsername(String username) { this.username = username; }
-    public void setEmail(String email) { this.email = email; }
-    public void setWhatsapp(String whatsapp) { this.whatsapp = whatsapp; }
-    public void setAlamat(String alamat) { this.alamat = alamat; }
-    public void setPassword(String password) { this.password = password; }
-    public void setFotoUrl(String foto_url) { this.foto_url = foto_url; }
-    public void setRole(String role) { this.role = role; }
+    public int getIdUser() {
+        return idUser;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getWhatsapp() {
+        return whatsapp;
+    }
+
+    public String getAlamat() {
+        return alamat;
+    }
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    // ===== SETTER (KOMPATIBILITAS LAMA & BARU) =====
+    // Dipakai banyak file lama, jangan dihapus
+    public void setId(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public void setIdUser(int idUser) {
+        this.idUser = idUser;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setWhatsapp(String whatsapp) {
+        this.whatsapp = whatsapp;
+    }
+
+    public void setAlamat(String alamat) {
+        this.alamat = alamat;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     @Override
     public String toString() {

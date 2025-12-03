@@ -26,7 +26,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.api.ApiClient;
 import com.majelismdpl.majelis_mdpl.api.ApiService;
-import com.majelismdpl.majelis_mdpl.activities.ResetPasswordActivity;
 import com.majelismdpl.majelis_mdpl.models.EditProfileRequest;
 import com.majelismdpl.majelis_mdpl.models.RegisterResponse;
 import com.majelismdpl.majelis_mdpl.models.User;
@@ -39,6 +38,7 @@ import java.io.InputStream;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,8 +46,8 @@ import retrofit2.Response;
 public class EditProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfileActivity";
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-    // Hapus etEmail dari deklarasi
     private TextInputEditText etUsername, etWhatsapp, etAlamat;
     private MaterialButton btnSimpan, btnBatal, btnChangePassword;
     private ShapeableImageView ivProfileEdit;
@@ -59,65 +59,51 @@ public class EditProfileActivity extends AppCompatActivity {
     private boolean isFotoBerubah = false;
     private Uri selectedImageUri = null;
 
-    // LOADER
     private FrameLayout loadingOverlay;
     private ProgressBar progressBar;
 
-    // --- Konstanta untuk Mode Alur Password Change ---
     public static final String EXTRA_PASSWORD_CHANGE_MODE = "password_change_mode";
     public static final int MODE_PROFILE_CHANGE = 2;
-    // -----------------------------------------------------------
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Opsional: Untuk memastikan keyboard menyesuaikan, meskipun sudah di Manifest
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-
         setContentView(R.layout.activity_edit_profile);
 
         prefManager = SessionManager.getInstance(this);
 
-        // LOADER INIT
         loadingOverlay = findViewById(R.id.loadingOverlay);
         progressBar = findViewById(R.id.progressBar);
 
-        // Registrasi Activity Result Launcher
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.OpenDocument(),
                 uri -> {
                     if (uri != null) {
                         try {
-                            // ✅ KODE INI SUDAH BENAR: Mengambil izin akses persisten
                             getContentResolver().takePersistableUriPermission(
                                     uri,
                                     Intent.FLAG_GRANT_READ_URI_PERMISSION
                             );
-
                             ivProfileEdit.setImageURI(uri);
                             selectedImageUri = uri;
                             isFotoBerubah = true;
-
                             Log.d(TAG, "Foto dipilih: " + uri.toString());
-
                         } catch (SecurityException e) {
                             e.printStackTrace();
                             Toast.makeText(this, "Gagal mengambil gambar", Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
+                }
+        );
 
-        // Hubungkan View
         etUsername = findViewById(R.id.etUsername);
-        // HAPUS: etEmail = findViewById(R.id.etEmail);
         etWhatsapp = findViewById(R.id.etWhatsapp);
         etAlamat = findViewById(R.id.etAlamat);
-
         btnSimpan = findViewById(R.id.btnSimpan);
         btnBatal = findViewById(R.id.btnBatal);
         btnChangePassword = findViewById(R.id.btnChangePassword);
-
         ivProfileEdit = findViewById(R.id.ivProfileEdit);
         tvGantiFoto = findViewById(R.id.tvGantiFoto);
 
@@ -130,14 +116,11 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
         });
 
-        // Listener Tombol Ubah Kata Sandi Baru
         if (btnChangePassword != null) {
             btnChangePassword.setOnClickListener(v -> navigateToPasswordChangeFlow());
         }
 
-        View.OnClickListener gantiFotoListener = v -> {
-            pickImageLauncher.launch(new String[]{"image/*"});
-        };
+        View.OnClickListener gantiFotoListener = v -> pickImageLauncher.launch(new String[]{"image/*"});
         ivProfileEdit.setOnClickListener(gantiFotoListener);
         tvGantiFoto.setOnClickListener(gantiFotoListener);
     }
@@ -150,15 +133,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void loadAndPopulateUserData() {
         currentUser = prefManager.getUser();
-
         if (currentUser == null) {
             Toast.makeText(this, "Error: Data user tidak ditemukan", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-
         etUsername.setText(currentUser.getUsername());
-        // HAPUS: etEmail.setText(currentUser.getEmail());
         etWhatsapp.setText(currentUser.getWhatsapp());
         etAlamat.setText(currentUser.getAlamat());
     }
@@ -167,7 +147,6 @@ public class EditProfileActivity extends AppCompatActivity {
         String savedUri = prefManager.getProfilePhotoUri();
         if (savedUri != null && !savedUri.isEmpty()) {
             try {
-                // Saat memuat, coba ambil izin persisten lagi (seperti di ProfileFragment)
                 Uri uri = Uri.parse(savedUri);
                 getContentResolver().takePersistableUriPermission(
                         uri,
@@ -175,10 +154,9 @@ public class EditProfileActivity extends AppCompatActivity {
                 );
                 ivProfileEdit.setImageURI(uri);
             } catch (SecurityException | IllegalArgumentException e) {
-                // Jika URI tidak dapat diakses, kembali ke default
                 Log.e(TAG, "Error loading saved profile image: " + e.getMessage());
                 ivProfileEdit.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
-                prefManager.setProfilePhotoUri(null); // Hapus URI yang rusak
+                prefManager.setProfilePhotoUri(null);
             }
         } else {
             ivProfileEdit.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
@@ -193,7 +171,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void saveProfileIfChanged() {
         String newUsername = textOf(etUsername);
-        // Tentukan newEmail dari data user lama karena field input dihapus.
         String newEmail = currentUser.getEmail();
         String newWhatsapp = textOf(etWhatsapp);
         String newAddress = textOf(etAlamat);
@@ -204,45 +181,45 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         boolean isUsernameChanged = !newUsername.equals(currentUser.getUsername());
-        // HAPUS: boolean isEmailChanged = !newEmail.equals(currentUser.getEmail());
         boolean isWhatsappChanged = !newWhatsapp.equals(currentUser.getWhatsapp());
         boolean isAlamatChanged = !newAddress.equals(currentUser.getAlamat());
-        boolean isFotoBerubah = this.isFotoBerubah;
+        boolean isFotoBerubahLocal = this.isFotoBerubah;
 
-        boolean isDataBerubah = isUsernameChanged ||
-                /* isEmailChanged || */ // Referensi dihapus
-                isWhatsappChanged ||
-                isAlamatChanged ||
-                isFotoBerubah;
+        boolean isDataBerubah = isUsernameChanged || isWhatsappChanged || isAlamatChanged || isFotoBerubahLocal;
 
-        if (isDataBerubah) {
-            currentUser.setUsername(newUsername);
-            currentUser.setEmail(newEmail); // Email tetap dikirim, nilainya dari data user yang ada
-            currentUser.setWhatsapp(newWhatsapp);
-            currentUser.setAlamat(newAddress);
-
-            prefManager.updateUser(currentUser);
-
-            showLoading(true);
-
-            String emptyPassword = "";
-
-            if (isFotoBerubah && selectedImageUri != null) {
-                // Gunakan newEmail yang nilainya diambil dari data user lama
-                uploadProfileWithPhoto(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
-            } else {
-                // Gunakan newEmail yang nilainya diambil dari data user lama
-                updateProfileToServer(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
-            }
-
-        } else {
+        if (!isDataBerubah) {
             Toast.makeText(this, "Data anda belum diperbarui", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        currentUser.setUsername(newUsername);
+        currentUser.setEmail(newEmail);
+        currentUser.setWhatsapp(newWhatsapp);
+        currentUser.setAlamat(newAddress);
+        prefManager.updateUser(currentUser);
+
+        showLoading(true);
+        btnSimpan.setEnabled(false);
+        btnSimpan.setText("Menyimpan...");
+
+        String emptyPassword = "";
+
+        if (isFotoBerubahLocal && selectedImageUri != null) {
+            uploadProfileWithPhoto(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
+        } else {
+            updateProfileToServer(newUsername, newEmail, newWhatsapp, newAddress, emptyPassword);
         }
     }
 
     private void uploadProfileWithPhoto(String username, String email, String whatsapp,
                                         String alamat, String password) {
         try {
+            if (selectedImageUri == null) {
+                Toast.makeText(this, "Foto belum dipilih", Toast.LENGTH_SHORT).show();
+                showLoading(false);
+                return;
+            }
+
             File file = getFileFromUri(selectedImageUri);
             if (file == null) {
                 Toast.makeText(this, "Gagal membaca file foto", Toast.LENGTH_SHORT).show();
@@ -250,8 +227,17 @@ public class EditProfileActivity extends AppCompatActivity {
                 return;
             }
 
+            if (file.length() > MAX_FILE_SIZE) {
+                Toast.makeText(this, "Ukuran foto maksimal 2 MB", Toast.LENGTH_SHORT).show();
+                showLoading(false);
+                return;
+            }
+
+            String mimeType = getContentResolver().getType(selectedImageUri);
+            if (mimeType == null) mimeType = "image/jpeg";
+
             RequestBody requestFile = RequestBody.create(
-                    MediaType.parse(getContentResolver().getType(selectedImageUri)),
+                    MediaType.parse(mimeType),
                     file
             );
 
@@ -261,18 +247,24 @@ public class EditProfileActivity extends AppCompatActivity {
                     requestFile
             );
 
-            RequestBody idUserBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(currentUser.getIdUser()));
+            RequestBody idUserBody = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    String.valueOf(currentUser.getIdUser())
+            );
             RequestBody usernameBody = RequestBody.create(MediaType.parse("text/plain"), username);
-            RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email); // email masih dikirim ke API
+            RequestBody emailBody = RequestBody.create(MediaType.parse("text/plain"), email);
             RequestBody whatsappBody = RequestBody.create(MediaType.parse("text/plain"), whatsapp);
             RequestBody alamatBody = RequestBody.create(MediaType.parse("text/plain"), alamat);
-            RequestBody passwordBody = RequestBody.create(MediaType.parse("text/plain"), password.isEmpty() ? "" : password);
+            RequestBody passwordBody = RequestBody.create(
+                    MediaType.parse("text/plain"),
+                    password == null ? "" : password
+            );
 
             ApiService apiService = ApiClient.getApiService();
             Call<RegisterResponse> call = apiService.editProfileWithPhoto(
                     idUserBody,
                     usernameBody,
-                    emailBody, // email body
+                    emailBody,
                     whatsappBody,
                     alamatBody,
                     passwordBody,
@@ -288,17 +280,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     if (response.isSuccessful() && response.body() != null) {
                         RegisterResponse body = response.body();
-
                         if (body.isSuccess()) {
-                            // ⭐ PERBAIKAN: Menyimpan URI persisten ke SessionManager setelah sukses
                             if (selectedImageUri != null) {
                                 prefManager.setProfilePhotoUri(selectedImageUri.toString());
                             }
-
                             Toast.makeText(EditProfileActivity.this,
                                     "Profil dan foto berhasil diperbarui",
                                     Toast.LENGTH_SHORT).show();
-
                             setResult(Activity.RESULT_OK);
                             finish();
                         } else {
@@ -307,8 +295,14 @@ public class EditProfileActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     } else {
+                        ResponseBody errorBody = response.errorBody();
+                        String err = "";
+                        try {
+                            err = errorBody != null ? errorBody.string() : "null";
+                        } catch (Exception ignored) {}
+                        Log.e(TAG, "Upload gagal. code=" + response.code() + " body=" + err);
                         Toast.makeText(EditProfileActivity.this,
-                                "Gagal upload ke server",
+                                "Gagal upload ke server (" + response.code() + ")",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -318,7 +312,6 @@ public class EditProfileActivity extends AppCompatActivity {
                     showLoading(false);
                     btnSimpan.setEnabled(true);
                     btnSimpan.setText("Simpan");
-
                     Log.e(TAG, "Upload error: " + t.getMessage(), t);
                     Toast.makeText(EditProfileActivity.this,
                             "Error: " + t.getMessage(),
@@ -342,10 +335,10 @@ public class EditProfileActivity extends AppCompatActivity {
         EditProfileRequest request = new EditProfileRequest(
                 currentUser.getIdUser(),
                 username,
-                email, // email masih dikirim ke API
+                email,
                 whatsapp,
                 alamat,
-                password.isEmpty() ? "" : password
+                password == null ? "" : password
         );
 
         Call<RegisterResponse> call = apiService.editProfile(request);
@@ -359,12 +352,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null) {
                     RegisterResponse body = response.body();
-
                     if (body.isSuccess()) {
                         Toast.makeText(EditProfileActivity.this,
                                 "Profil berhasil diperbarui",
                                 Toast.LENGTH_SHORT).show();
-
                         setResult(Activity.RESULT_OK);
                         finish();
                     } else {
@@ -384,7 +375,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 showLoading(false);
                 btnSimpan.setEnabled(true);
                 btnSimpan.setText("Simpan");
-
                 Toast.makeText(EditProfileActivity.this,
                         "Error: " + t.getMessage(),
                         Toast.LENGTH_LONG).show();
@@ -393,12 +383,14 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private File getFileFromUri(Uri uri) {
-        // ... (metode ini tidak berubah)
         try {
             String fileName = getFileName(uri);
             File file = new File(getCacheDir(), fileName);
 
             InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream == null) {
+                return null;
+            }
             FileOutputStream outputStream = new FileOutputStream(file);
 
             byte[] buffer = new byte[1024];
@@ -407,10 +399,9 @@ public class EditProfileActivity extends AppCompatActivity {
                 outputStream.write(buffer, 0, length);
             }
 
+            outputStream.flush();
             outputStream.close();
-            if (inputStream != null) {
-                inputStream.close();
-            }
+            inputStream.close();
 
             return file;
         } catch (Exception e) {
@@ -420,9 +411,8 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private String getFileName(Uri uri) {
-        // ... (metode ini tidak berubah)
         String result = null;
-        if (uri.getScheme().equals("content")) {
+        if ("content".equals(uri.getScheme())) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             try {
                 if (cursor != null && cursor.moveToFirst()) {
@@ -432,18 +422,16 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 }
             } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
+                if (cursor != null) cursor.close();
             }
         }
         if (result == null) {
             result = uri.getPath();
+            if (result == null) result = "image_" + System.currentTimeMillis();
             int cut = result.lastIndexOf('/');
             if (cut != -1) {
                 result = result.substring(cut + 1);
             }
-            // Pastikan ekstensi .jpg ditambahkan jika tidak ada
             if (!result.contains(".")) {
                 result += ".jpg";
             }
@@ -452,9 +440,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private String textOf(TextInputEditText editText) {
-        if (editText == null || editText.getText() == null) {
-            return "";
-        }
+        if (editText == null || editText.getText() == null) return "";
         return editText.getText().toString().trim();
     }
 }
