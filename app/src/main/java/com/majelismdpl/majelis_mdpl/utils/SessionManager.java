@@ -204,6 +204,13 @@ public class SessionManager {
 
     // --- Metode untuk Foto Profil (Disimpan di SharedPref) ---
 
+    /**
+     * Alias untuk setProfilePhotoUri, digunakan di ProfileFragment.
+     */
+    public void saveProfilePhotoUri(String uriString) {
+        setProfilePhotoUri(uriString);
+    }
+
     public void setProfilePhotoUri(String uriString) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (uriString != null) {

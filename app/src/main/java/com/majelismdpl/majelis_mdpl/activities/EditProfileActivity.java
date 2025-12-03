@@ -89,6 +89,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 uri -> {
                     if (uri != null) {
                         try {
+                            // ✅ KODE INI SUDAH BENAR: Mengambil izin akses persisten
                             getContentResolver().takePersistableUriPermission(
                                     uri,
                                     Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -166,9 +167,18 @@ public class EditProfileActivity extends AppCompatActivity {
         String savedUri = prefManager.getProfilePhotoUri();
         if (savedUri != null && !savedUri.isEmpty()) {
             try {
-                ivProfileEdit.setImageURI(Uri.parse(savedUri));
+                // Saat memuat, coba ambil izin persisten lagi (seperti di ProfileFragment)
+                Uri uri = Uri.parse(savedUri);
+                getContentResolver().takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                );
+                ivProfileEdit.setImageURI(uri);
             } catch (SecurityException | IllegalArgumentException e) {
+                // Jika URI tidak dapat diakses, kembali ke default
+                Log.e(TAG, "Error loading saved profile image: " + e.getMessage());
                 ivProfileEdit.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
+                prefManager.setProfilePhotoUri(null); // Hapus URI yang rusak
             }
         } else {
             ivProfileEdit.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
@@ -280,7 +290,10 @@ public class EditProfileActivity extends AppCompatActivity {
                         RegisterResponse body = response.body();
 
                         if (body.isSuccess()) {
-                            prefManager.setProfilePhotoUri(selectedImageUri.toString());
+                            // ⭐ PERBAIKAN: Menyimpan URI persisten ke SessionManager setelah sukses
+                            if (selectedImageUri != null) {
+                                prefManager.setProfilePhotoUri(selectedImageUri.toString());
+                            }
 
                             Toast.makeText(EditProfileActivity.this,
                                     "Profil dan foto berhasil diperbarui",
@@ -429,6 +442,10 @@ public class EditProfileActivity extends AppCompatActivity {
             int cut = result.lastIndexOf('/');
             if (cut != -1) {
                 result = result.substring(cut + 1);
+            }
+            // Pastikan ekstensi .jpg ditambahkan jika tidak ada
+            if (!result.contains(".")) {
+                result += ".jpg";
             }
         }
         return result;

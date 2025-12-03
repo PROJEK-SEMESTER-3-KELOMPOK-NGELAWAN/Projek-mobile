@@ -72,6 +72,8 @@ public class ProfileFragment extends Fragment {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             // Refresh data dari server
                             fetchProfileFromServer();
+                            // Panggil ulang populateProfileDataFromCache untuk memuat foto terbaru
+                            populateProfileDataFromCache();
                             if (getContext() != null) {
                                 Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
                             }
@@ -97,7 +99,7 @@ public class ProfileFragment extends Fragment {
         // Setup SwipeRefreshLayout
         setupSwipeRefresh();
 
-        // Tampilkan data dari cache dulu
+        // Tampilkan data dari cache dulu, termasuk foto profil
         populateProfileDataFromCache();
 
         // Kemudian fetch data terbaru dari server
@@ -138,6 +140,7 @@ public class ProfileFragment extends Fragment {
 
     /**
      * Mengisi data dari cache/SharedPreferences (untuk tampilan cepat)
+     * TERMASUK PERBAIKAN LOGIKA FOTO PROFIL
      */
     private void populateProfileDataFromCache() {
         if (getContext() == null) return;
@@ -157,9 +160,28 @@ public class ProfileFragment extends Fragment {
                 String fotoUriString = SessionManager.getInstance(getContext()).getProfilePhotoUri();
                 if (fotoUriString != null && !fotoUriString.isEmpty()) {
                     try {
-                        ivProfile.setImageURI(Uri.parse(fotoUriString));
+                        Uri photoUri = Uri.parse(fotoUriString);
+
+                        // 🔑 PERBAIKAN: Coba ambil izin akses persisten untuk URI
+                        if (photoUri.getScheme() != null && photoUri.getScheme().equals("content")) {
+                            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                            // Memastikan izin akses persisten tetap ada setelah sesi dimulai kembali
+                            getContext().getContentResolver().takePersistableUriPermission(photoUri, takeFlags);
+                        }
+
+                        ivProfile.setImageURI(photoUri);
+                        Log.d(TAG, "Foto profil dimuat dari URI: " + fotoUriString);
+
                     } catch (SecurityException | IllegalArgumentException e) {
-                        Log.e(TAG, "Error loading profile image: " + e.getMessage());
+                        // URI tidak bisa diakses (izin hilang/URI tidak valid), kembali ke default
+                        Log.e(TAG, "Error loading profile image (Security/Illegal Args). Reverting to default: " + e.getMessage());
+                        ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
+
+                        // Hapus URI yang rusak dari cache
+                        SessionManager.getInstance(getContext()).saveProfilePhotoUri(null);
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "General error loading profile image: " + e.getMessage());
                         ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
                     }
                 } else {
@@ -361,5 +383,7 @@ public class ProfileFragment extends Fragment {
         super.onResume();
         // Refresh data saat fragment kembali aktif
         fetchProfileFromServer();
+        // Panggil kembali populateProfileDataFromCache saat onResume (penting untuk foto)
+        populateProfileDataFromCache();
     }
 }
