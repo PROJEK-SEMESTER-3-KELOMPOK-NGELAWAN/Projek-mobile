@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.activities.EditProfileActivity;
 import com.majelismdpl.majelis_mdpl.activities.LoginActivity;
@@ -39,6 +41,7 @@ import retrofit2.Response;
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
+    private static final String BASE_IMAGE_URL = "https://majelismdpl.my.id/";
 
     private ImageView ivProfile;
     private TextView tvNamaPengguna;
@@ -66,7 +69,6 @@ public class ProfileFragment extends Fragment {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             fetchProfileFromServer();
-                            populateProfileDataFromCache();
                             if (getContext() != null) {
                                 Toast.makeText(getContext(), "Profil berhasil diperbarui", Toast.LENGTH_SHORT).show();
                             }
@@ -113,31 +115,62 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Build full photo URL dari berbagai format input
+     * @param raw bisa berupa: foto_url (full URL), foto_profil (path), atau filename saja
+     * @return Full URL yang siap diload Glide
+     */
     private String buildFullPhotoUrl(String raw) {
-        if (raw == null || raw.isEmpty()) return null;
-        if (raw.startsWith("http")) {
-            return raw; // sudah URL penuh dari server
+        if (raw == null || raw.isEmpty() || raw.equals("default.jpg")) {
+            return null;
         }
-        String base = ApiClient.getBaseUrl();
+
+        // Sudah URL lengkap
+        if (raw.startsWith("http://") || raw.startsWith("https://")) {
+            Log.d(TAG, "Photo URL sudah lengkap: " + raw);
+            return raw;
+        }
+
+        String base = BASE_IMAGE_URL;
         if (!base.endsWith("/")) base += "/";
-        if (!raw.startsWith("img/")) {
-            raw = "img/profile/" + raw;
+
+        // Cek apakah sudah ada path img/profile/
+        if (raw.startsWith("img/profile/")) {
+            String fullUrl = base + raw;
+            Log.d(TAG, "Photo URL dengan path: " + fullUrl);
+            return fullUrl;
         }
-        return base + raw;
+
+        // Cuma filename, tambahkan path
+        String fullUrl = base + "img/profile/" + raw;
+        Log.d(TAG, "Photo URL dari filename: " + fullUrl);
+        return fullUrl;
     }
 
-    private void loadImageIntoView(String url) {
-        if (getContext() == null) return;
+    /**
+     * Load image ke ImageView menggunakan Glide
+     */
+    private void loadProfileImage(String url) {
+        if (getContext() == null || ivProfile == null) return;
+
         if (url == null || url.isEmpty()) {
+            Log.d(TAG, "URL kosong, gunakan default image");
             ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
             return;
         }
-        Glide.with(requireContext())
-                .load(url)
+
+        Log.d(TAG, "Loading profile image from: " + url);
+
+        RequestOptions requestOptions = new RequestOptions()
                 .placeholder(R.drawable.ic_aplikasi_majelismdpl)
                 .error(R.drawable.ic_aplikasi_majelismdpl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop();
+
+        Glide.with(requireContext())
+                .load(url)
+                .apply(requestOptions)
                 .into(ivProfile);
-        Log.d(TAG, "Foto profil dimuat dari URL: " + url);
     }
 
     private void populateProfileDataFromCache() {
@@ -154,31 +187,16 @@ public class ProfileFragment extends Fragment {
                 tvEmail.setText(user.getEmail() != null ? user.getEmail() : "-");
                 tvAlamat.setText(user.getAlamat() != null ? user.getAlamat() : "-");
 
-                String fotoUrl = buildFullPhotoUrl(user.getFotoUrl());
-                if (fotoUrl != null) {
-                    loadImageIntoView(fotoUrl);
-                    return;
+                // Prioritas: foto_url > foto_profil
+                String photoSource = user.getFotoUrl();
+                if (photoSource == null || photoSource.isEmpty()) {
+                    photoSource = user.getFotoProfil();
                 }
 
-                String fotoUriString = SessionManager.getInstance(getContext()).getProfilePhotoUri();
-                if (fotoUriString != null && !fotoUriString.isEmpty()) {
-                    try {
-                        Uri photoUri = Uri.parse(fotoUriString);
-                        if ("content".equals(photoUri.getScheme())) {
-                            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                            requireContext().getContentResolver()
-                                    .takePersistableUriPermission(photoUri, takeFlags);
-                        }
-                        ivProfile.setImageURI(photoUri);
-                        Log.d(TAG, "Foto profil dimuat dari URI lokal: " + fotoUriString);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error loading profile image from URI, use default: " + e.getMessage());
-                        ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
-                        SessionManager.getInstance(getContext()).saveProfilePhotoUri(null);
-                    }
-                } else {
-                    ivProfile.setImageResource(R.drawable.ic_aplikasi_majelismdpl);
-                }
+                String fullUrl = buildFullPhotoUrl(photoSource);
+                loadProfileImage(fullUrl);
+
+                Log.d(TAG, "Cache data loaded, photo source: " + photoSource);
             }
 
         } catch (Exception e) {
@@ -214,13 +232,17 @@ public class ProfileFragment extends Fragment {
 
                     if (profileResponse.isSuccess() && profileResponse.getData() != null) {
                         ProfileResponse.UserData userData = profileResponse.getData();
+
+                        Log.d(TAG, "Server response - foto_url: " + userData.getFotoUrl() +
+                                ", foto_profil: " + userData.getFotoProfil());
+
                         updateUI(userData);
                         updateCache(userData);
                         Log.d(TAG, "Profil berhasil diambil dari server");
                     } else {
-                        Toast.makeText(getContext(),
-                                profileResponse.getMessage(),
-                                Toast.LENGTH_SHORT).show();
+                        String msg = profileResponse.getMessage() != null ?
+                                profileResponse.getMessage() : "Gagal mengambil profil";
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.e(TAG, "Response error: " + response.code());
@@ -257,10 +279,16 @@ public class ProfileFragment extends Fragment {
         tvEmail.setText(userData.getEmail() != null ? userData.getEmail() : "-");
         tvAlamat.setText(userData.getAlamat() != null ? userData.getAlamat() : "-");
 
-        String raw = userData.getFotoUrl();
-        if (raw == null || raw.isEmpty()) raw = userData.getFotoProfil();
-        String fullUrl = buildFullPhotoUrl(raw);
-        loadImageIntoView(fullUrl);
+        // Prioritas: foto_url (full URL dari server) > foto_profil (path relatif)
+        String photoSource = userData.getFotoUrl();
+        if (photoSource == null || photoSource.isEmpty()) {
+            photoSource = userData.getFotoProfil();
+        }
+
+        String fullUrl = buildFullPhotoUrl(photoSource);
+        loadProfileImage(fullUrl);
+
+        Log.d(TAG, "UI Updated with photo: " + fullUrl);
     }
 
     private void updateCache(ProfileResponse.UserData userData) {
@@ -275,12 +303,13 @@ public class ProfileFragment extends Fragment {
                 user.setAlamat(userData.getAlamat());
                 user.setRole(userData.getRole());
 
-                String raw = userData.getFotoUrl();
-                if (raw == null || raw.isEmpty()) raw = userData.getFotoProfil();
-                user.setFotoUrl(raw);
+                // Simpan kedua field foto
+                user.setFotoUrl(userData.getFotoUrl());
+                user.setFotoProfil(userData.getFotoProfil());
 
                 SessionManager.getInstance(getContext()).updateUser(user);
-                Log.d(TAG, "Cache profil berhasil diupdate");
+                Log.d(TAG, "Cache profil berhasil diupdate - fotoUrl: " + userData.getFotoUrl() +
+                        ", fotoProfil: " + userData.getFotoProfil());
             }
         } catch (Exception e) {
             Log.e(TAG, "Gagal update cache: " + e.getMessage(), e);
@@ -329,6 +358,5 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
         fetchProfileFromServer();
-        populateProfileDataFromCache();
     }
 }

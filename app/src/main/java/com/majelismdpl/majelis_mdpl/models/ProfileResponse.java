@@ -35,11 +35,11 @@ public class ProfileResponse {
         @SerializedName("alamat")
         private String alamat;
 
-        // img/profile/xxx.jpg
+        // path relatif: img/profile/xxx.jpg
         @SerializedName("foto_profil")
         private String fotoProfil;
 
-        // https://majelismdpl.my.id/img/profile/xxx.jpg
+        // URL lengkap: https://majelismdpl.my.id/img/profile/xxx.jpg
         @SerializedName("foto_url")
         private String fotoUrl;
 
@@ -49,6 +49,7 @@ public class ProfileResponse {
         @SerializedName("email_verified")
         private boolean emailVerified;
 
+        // ===== GETTERS =====
         public int getIdUser() { return idUser; }
         public String getUsername() { return username; }
         public String getEmail() { return email; }
@@ -59,6 +60,19 @@ public class ProfileResponse {
         public String getRole() { return role; }
         public boolean isEmailVerified() { return emailVerified; }
 
+        /**
+         * Helper method untuk mendapatkan URL foto yang valid
+         * Prioritas: foto_url > foto_profil
+         */
+        public String getValidPhotoUrl() {
+            if (fotoUrl != null && !fotoUrl.isEmpty()) {
+                return fotoUrl;
+            }
+            return fotoProfil;
+        }
+
+        // ===== SETTERS =====
+        public void setIdUser(int idUser) { this.idUser = idUser; }
         public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
         public void setFotoProfil(String fotoProfil) { this.fotoProfil = fotoProfil; }
         public void setUsername(String username) { this.username = username; }
@@ -66,5 +80,6 @@ public class ProfileResponse {
         public void setWhatsapp(String whatsapp) { this.whatsapp = whatsapp; }
         public void setAlamat(String alamat) { this.alamat = alamat; }
         public void setRole(String role) { this.role = role; }
+        public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
     }
 }

@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class User {
 
-    // Field id dari API
     @SerializedName("id_user")
     private int idUser;
 
@@ -20,10 +19,13 @@ public class User {
     @SerializedName("alamat")
     private String alamat;
 
-    // URL atau path foto profil yang dikirim server
-    // (bisa foto_url penuh atau nanti diisi manual dari foto_profil)
+    // URL lengkap foto profil dari server
     @SerializedName("foto_url")
     private String fotoUrl;
+
+    // Path relatif foto profil (fallback)
+    @SerializedName("foto_profil")
+    private String fotoProfil;
 
     @SerializedName("password")
     private String password;
@@ -33,8 +35,7 @@ public class User {
 
     public User() {}
 
-    // ===== GETTER (KOMPATIBILITAS LAMA & BARU) =====
-    // Dipakai banyak file lama, jangan dihapus
+    // ===== GETTER =====
     public int getId() {
         return idUser;
     }
@@ -63,6 +64,10 @@ public class User {
         return fotoUrl;
     }
 
+    public String getFotoProfil() {
+        return fotoProfil;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -71,8 +76,18 @@ public class User {
         return role;
     }
 
-    // ===== SETTER (KOMPATIBILITAS LAMA & BARU) =====
-    // Dipakai banyak file lama, jangan dihapus
+    /**
+     * Helper method untuk mendapatkan URL foto yang valid
+     * Prioritas: foto_url > foto_profil
+     */
+    public String getValidPhotoUrl() {
+        if (fotoUrl != null && !fotoUrl.isEmpty()) {
+            return fotoUrl;
+        }
+        return fotoProfil;
+    }
+
+    // ===== SETTER =====
     public void setId(int idUser) {
         this.idUser = idUser;
     }
@@ -101,6 +116,10 @@ public class User {
         this.fotoUrl = fotoUrl;
     }
 
+    public void setFotoProfil(String fotoProfil) {
+        this.fotoProfil = fotoProfil;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -116,6 +135,7 @@ public class User {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
+                ", fotoUrl='" + fotoUrl + '\'' +
                 '}';
     }
 }
