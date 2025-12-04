@@ -20,6 +20,7 @@ import com.majelismdpl.majelis_mdpl.R;
 import com.majelismdpl.majelis_mdpl.api.ApiClient;
 import com.majelismdpl.majelis_mdpl.api.ApiService;
 import com.majelismdpl.majelis_mdpl.models.LoginResponse;
+import com.majelismdpl.majelis_mdpl.utils.SessionManager; // 1. Import SessionManager
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,11 +28,9 @@ import retrofit2.Response;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-    // --- Konstanta untuk mode alur ---
     public static final String EXTRA_PASSWORD_CHANGE_MODE = "password_change_mode";
     public static final int MODE_FORGOT_PASSWORD = 1;
     public static final int MODE_PROFILE_CHANGE = 2;
-    // ------------------------------------
 
     private TextInputEditText inputNewPassword;
     private TextInputEditText inputConfirmPassword;
@@ -39,10 +38,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private TextView passwordLengthHint;
     private ImageButton backButton;
 
-    // Untuk menyimpan mode dan data yang diterima
     private int currentMode;
     private String userEmail;
     private ApiService apiService;
+
+    // 2. Tambahkan variabel SessionManager
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +51,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_change_password);
 
-        // Inisialisasi API Service
         apiService = ApiClient.getRetrofitInstance().create(ApiService.class);
 
-        // 1. Ambil mode dan email dari Intent
+        // 3. Inisialisasi SessionManager (Sama seperti di LoginActivity)
+        sessionManager = SessionManager.getInstance(this);
+
         currentMode = getIntent().getIntExtra(EXTRA_PASSWORD_CHANGE_MODE, MODE_FORGOT_PASSWORD);
         userEmail = getIntent().getStringExtra("USER_EMAIL");
 
@@ -78,19 +80,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleChangePassword();
-            }
-        });
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        buttonSave.setOnClickListener(v -> handleChangePassword());
+        backButton.setOnClickListener(v -> onBackPressed());
     }
 
     private void handleChangePassword() {
@@ -101,13 +92,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
             buttonSave.setEnabled(false);
 
             if (currentMode == MODE_FORGOT_PASSWORD) {
-                // Panggil API untuk reset password dari lupa password
                 saveNewPasswordForgot(userEmail, newPassword);
             } else if (currentMode == MODE_PROFILE_CHANGE) {
-                // Panggil API untuk ubah password dari profile
-                // Implementasi sesuai kebutuhan profile change
-                Toast.makeText(this, "Fitur ubah password dari profile", Toast.LENGTH_SHORT).show();
-                buttonSave.setEnabled(true);
+                // Untuk ganti password dari profil, biasanya juga minta logout agar login ulang
+                saveNewPasswordForgot(userEmail, newPassword);
             }
         }
     }
@@ -122,7 +110,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     LoginResponse apiResponse = response.body();
                     if (apiResponse.isSuccess()) {
                         Toast.makeText(ChangePasswordActivity.this,
-                                "Kata sandi berhasil diubah!", Toast.LENGTH_LONG).show();
+                                "Kata sandi berhasil diubah! Silakan login kembali.", Toast.LENGTH_LONG).show();
+
                         navigateToLogin();
                     } else {
                         Toast.makeText(ChangePasswordActivity.this,
@@ -149,8 +138,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         if (newPass.isEmpty() || confirmPass.isEmpty()) {
             Toast.makeText(this, "Mohon isi semua kolom kata sandi.", Toast.LENGTH_SHORT).show();
-            if (newPass.isEmpty()) inputNewPassword.setError("Kata sandi baru wajib diisi");
-            if (confirmPass.isEmpty()) inputConfirmPassword.setError("Konfirmasi wajib diisi");
+            if (newPass.isEmpty()) inputNewPassword.setError("Wajib diisi");
+            if (confirmPass.isEmpty()) inputConfirmPassword.setError("Wajib diisi");
             return false;
         }
 
@@ -171,8 +160,19 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void navigateToLogin() {
+        // 4. GUNAKAN SESSION MANAGER UNTUK LOGOUT
+        // Ini akan otomatis menggunakan SharedPreferences yang SAMA dengan LoginActivity
+        if (sessionManager != null) {
+            sessionManager.logout();
+        }
+
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        if (userEmail != null) {
+            intent.putExtra("EMAIL_FOR_LOGIN", userEmail);
+        }
+
         startActivity(intent);
         finish();
     }
