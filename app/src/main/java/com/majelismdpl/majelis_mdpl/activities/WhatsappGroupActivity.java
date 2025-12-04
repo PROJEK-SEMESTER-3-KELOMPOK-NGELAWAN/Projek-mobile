@@ -21,7 +21,7 @@ import com.majelismdpl.majelis_mdpl.R;
 public class WhatsappGroupActivity extends AppCompatActivity {
 
     // Ganti dengan URL grup WhatsApp yang sebenarnya
-    private static final String WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/invitecodeanda";
+    private static final String WHATSAPP_GROUP_URL = "https://chat.whatsapp.com/FXB4AEnGJOp2WnO09H00zN";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

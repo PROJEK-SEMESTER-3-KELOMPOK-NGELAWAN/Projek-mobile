@@ -15,6 +15,7 @@ import com.majelismdpl.majelis_mdpl.models.PreviewPesertaAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.net.Uri;
 
 public class DetailTripActivity extends AppCompatActivity {
 
@@ -39,9 +40,13 @@ public class DetailTripActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        binding.btnBooking.setOnClickListener(v ->
-                Toast.makeText(DetailTripActivity.this, "Membuka halaman booking...", Toast.LENGTH_SHORT).show()
-        );
+        binding.btnBooking.setOnClickListener(v -> {
+            String url = "https://majelismdpl.my.id";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        });
+
 
         binding.tvLihatSemua.setOnClickListener(v -> {
             if (currentTripId != null && !currentTripId.isEmpty()) {
