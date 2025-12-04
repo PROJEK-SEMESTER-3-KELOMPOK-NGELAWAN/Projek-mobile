@@ -8,18 +8,104 @@
     android:background="@drawable/gambar"
     tools:context=".activities.LoginActivity">
 
+    <!-- ============================================== -->
+    <!-- ELEMEN WELCOME (Bagian Tetap) -->
+    <!-- ============================================== -->
+
     <ImageView
         android:id="@+id/mdplLogo"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:layout_marginTop="60dp"
         android:contentDescription="Logo Majelis MDPL"
         android:src="@drawable/icon_mdpl"
         app:layout_constraintBottom_toTopOf="@+id/loginContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.483" />
+
+    <TextView
+        android:id="@+id/appTagline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mdplLogo" />
+
+    <TextView
+        android:id="@+id/welcomeBackText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:lineSpacingExtra="4dp"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"
+        android:text="Siap untuk Petualangan Selanjutnya?"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/welcomeSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UnknownId" />
+
+    <TextView
+        android:id="@+id/welcomeSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:paddingBottom="24dp"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="Jelajahi destinasi impianmu bersama kami."
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/signInButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="InvalidId" />
+
+    <!-- Tombol yang Memicu Animasi Login CardView -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/signInButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="95dp"
+        android:text="MASUK"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@android:color/transparent"
+        app:cornerRadius="15dp"
+        app:iconGravity="end"
+        app:iconPadding="16dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="@android:color/white"
+        app:strokeWidth="2dp" />
+
+    <!-- ============================================== -->
+    <!-- CARDVIEW LOGIN (Diposisikan di luar layar di awal) -->
+    <!-- ============================================== -->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/loginContainer"
@@ -28,13 +114,14 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:elevation="8dp"
+        android:visibility="invisible"
         app:cardBackgroundColor="#D9FFFFFF"
         app:cardCornerRadius="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9">
+        app:layout_constraintTop_toBottomOf="@id/signInButton"
+        app:layout_constraintVertical_bias="1.0"> <!-- Posisi awal di bawah tombol SignIn (di luar layar) -->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -94,8 +181,7 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:textColor="#000000"
-                    android:textColorHint="#000000"
-                    tools:layout_editor_absoluteX="24dp" />
+                    android:textColorHint="#000000" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -128,8 +214,7 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:textColor="#000000"
-                    android:textColorHint="#000000"
-                    tools:layout_editor_absoluteX="24dp" />
+                    android:textColorHint="#000000" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -193,8 +278,7 @@
                 app:iconSize="24dp"
                 app:iconTint="@null"
                 app:layout_constraintTop_toBottomOf="@id/orDividerText"
-                app:strokeColor="#000000"
-                tools:layout_editor_absoluteX="24dp" />
+                app:strokeColor="#000000" />
 
             <TextView
                 android:id="@+id/registerLinkText1"

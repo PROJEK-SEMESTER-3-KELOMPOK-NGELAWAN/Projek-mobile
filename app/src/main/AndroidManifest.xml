@@ -54,22 +54,24 @@
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Majelis_MDPL.FullScreen"> <!-- Menggunakan tema layar penuh di Splash -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.WelcomeActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
+        <!-- PERBAIKAN: WelcomeActivity dihapus -->
+
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/Theme.Majelis_MDPL.FullScreen" /> <!-- PENTING: Menerapkan tema FullScreen -->
+
         <activity
             android:name=".activities.RegisterActivity"
             android:exported="false"
@@ -89,31 +91,32 @@
             android:exported="false"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" /> <activity
-        android:name=".activities.OAuthCallbackActivity"
-        android:exported="true"
-        android:launchMode="singleTop"
-        android:screenOrientation="portrait"
-        android:theme="@android:style/Theme.NoDisplay">
-        <intent-filter android:priority="100">
-            <action android:name="android.intent.action.VIEW" />
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activities.OAuthCallbackActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data
-                android:host="oauth"
-                android:scheme="majelismdpl" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
+                <data
+                    android:host="oauth"
+                    android:scheme="majelismdpl" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
-            <data android:scheme="intent" />
-        </intent-filter>
-    </activity>
+                <data android:scheme="intent" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.DetailTripActivity"
             android:exported="false"

@@ -104,4 +104,14 @@
         <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">18sp</item>
     </style>
+
+    <style name="Theme.Majelis_MDPL.FullScreen" parent="Theme.Majelis_MDPL">
+        <!-- Mengatur Status Bar menjadi transparan -->
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- Memastikan tidak ada ActionBar agar layout bisa full screen -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

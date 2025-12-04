@@ -300,7 +300,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCancel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:text="Batalkan"
@@ -308,7 +308,7 @@
         android:textColor="@color/tripRed"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:backgroundTint="@color/white"
+        app:backgroundTint="#FFE7E7"
         app:cornerRadius="15dp"
         app:strokeColor="@color/tripRed"
         app:strokeWidth="1.5dp" />
