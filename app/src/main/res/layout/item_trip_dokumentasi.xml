@@ -84,7 +84,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
-            app:cornerRadius="15dp"
+            app:cornerRadius="10dp"
             android:backgroundTint="@color/brown_text"
             android:paddingStart="16dp"
             android:paddingEnd="16dp" />

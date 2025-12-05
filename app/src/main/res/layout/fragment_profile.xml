@@ -61,7 +61,7 @@
                     android:layout_marginTop="90dp"
                     android:elevation="4dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_aplikasi_majelismdpl"
+                    android:src="@drawable/profil_kosong_bulat"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
